@@ -28,15 +28,16 @@ job("Run on git push") {
             // push = false
 
             // path to Docker context (by default, context is working dir)
-             context = "docker buildx"
+             context = "docker buildx -f docker/Dockerfile.test --platform linux/arm64 && echo"
             // path to Dockerfile relative to the project root
             // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
             file = "docker/Dockerfile.test"
             // build-time variables
             // image labels
             labels["vendor"] = "connecta"
+            platform = "linux/arm64"
             // to add a raw list of additional build arguments, use
-            extraArgsForBuildCommand = listOf("--platform", "linux/arm64")
+//            extraArgsForBuildCommand = listOf("--platform", "linux/arm64")
             // to add a raw list of additional push arguments, use
             // extraArgsForPushCommand = listOf("...")
             // image tags
