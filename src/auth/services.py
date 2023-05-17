@@ -54,7 +54,7 @@ async def get_or_create_user_by_init_data(
     q = (
         select(User, Profile)
         .join(
-            Profile, and_(User.id == Profile.owner, Profile.is_active is True), isouter=True
+            Profile, and_(User.id == Profile.owner, Profile.is_active == True), isouter=True # noqa
         )  # noqa
         .where(User.tg_id == user_data.tg_id)
     )
@@ -136,7 +136,7 @@ async def expire_all_refresh_tokens_by_user_id(*, db_session, user_id) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id)
-        .values(DeviceSession.is_active is False)
+        .values(DeviceSession.is_active == False) # noqa
     )
     await db_session.execute(q)
 
