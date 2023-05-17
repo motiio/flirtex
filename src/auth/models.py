@@ -12,7 +12,7 @@ class User(Base, TimeStampMixin):
     __tablename__ = "user"
     id = Column(
         Integer,
-        Sequence("user_seq", start=1),
+        Sequence("core.user_seq", start=1),
         primary_key=True,
     )
     tg_id = Column(Integer, unique=True)
@@ -37,7 +37,7 @@ class DeviceSession(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     id = Column(
         Integer,
-        Sequence("refresh_token_seq", start=1),
+        Sequence("core.device_session_seq", start=1),
         primary_key=True,
     )
     user = Column(Integer, ForeignKey(User.id))
