@@ -54,7 +54,7 @@ ENV FASTAPI_ENV=development
 
 # Copying in our entrypoint
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-CMD chmod +x /docker-entrypoint.sh
+CMD chmod 777 /docker-entrypoint.sh
 
 # venv already has runtime deps installed we get a quicker install
 WORKDIR $PYSETUP_PATH
