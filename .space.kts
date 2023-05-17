@@ -37,7 +37,7 @@ job("Run on git push") {
             labels["vendor"] = "connecta"
             platform = "linux/arm64"
             // to add a raw list of additional build arguments, use
-//            extraArgsForBuildCommand = listOf("--platform", "linux/arm64")
+            extraArgsForBuildCommand = listOf("--no-cache")
             // to add a raw list of additional push arguments, use
             // extraArgsForPushCommand = listOf("...")
             // image tags
