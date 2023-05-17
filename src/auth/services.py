@@ -54,7 +54,7 @@ async def get_or_create_user_by_init_data(
     q = (
         select(User, Profile)
         .join(
-            Profile, and_(User.id == Profile.owner, Profile.is_active == True), isouter=True # noqa
+            Profile, and_(User.id == Profile.owner, Profile.is_active == True), isouter=True  # noqa
         )  # noqa
         .where(User.tg_id == user_data.tg_id)
     )
@@ -107,7 +107,7 @@ async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTok
         "exp": exp,
         "sub": str(user_id),
     }
-    new_refresh_token_value: str = jwt.encode(data, settings.JWT_SECRET, algorithm=["HS256"])
+    new_refresh_token_value: str = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
     q = (
         insert(DeviceSession)
         .values(
@@ -136,7 +136,7 @@ async def expire_all_refresh_tokens_by_user_id(*, db_session, user_id) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id)
-        .values(DeviceSession.is_active == False) # noqa
+        .values(DeviceSession.is_active == False)  # noqa
     )
     await db_session.execute(q)
 
@@ -145,7 +145,7 @@ async def expire_all_refresh_tokens_by_user_agent(*, db_session, user_id, user_a
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id, DeviceSession.user_agent == user_agent)
-        .values(DeviceSession.is_active == False)  # noqa
+        .values({"is_active": False})  # noqa
     )
     await db_session.execute(q)
 

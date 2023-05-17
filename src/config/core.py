@@ -1,8 +1,8 @@
-from pydantic import BaseSettings, Field, PostgresDsn
-from fastapi import Depends
-from src.constants import Environment
-from typing import Annotated
 from functools import lru_cache
+
+from pydantic import BaseSettings, Field, PostgresDsn
+
+from src.constants import Environment
 
 
 class Settings(BaseSettings):

@@ -5,14 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.requests import Request
 
-from src.config.core import settings, get_settings
-
+from src.config.core import settings
 
 async_engine = create_async_engine(
-        settings.DATABASE_URI,
-        pool_size=settings.DATABASE_ENGINE_POOL_SIZE,
-        max_overflow=settings.DATABASE_ENGINE_MAX_OVERFLOW,
-    )
+    settings.DATABASE_URI,
+    pool_size=settings.DATABASE_ENGINE_POOL_SIZE,
+    max_overflow=settings.DATABASE_ENGINE_MAX_OVERFLOW,
+)
 
 
 def get_db(request: Request):

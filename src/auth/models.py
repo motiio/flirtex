@@ -12,7 +12,7 @@ class User(Base, TimeStampMixin):
     __tablename__ = "user"
     id = Column(
         Integer,
-        Sequence("core.user_seq", start=1),
+        Sequence('user_seq', start=1, schema='core'),
         primary_key=True,
     )
     tg_id = Column(Integer, unique=True)
@@ -30,14 +30,14 @@ class User(Base, TimeStampMixin):
             "exp": exp,
             "sub": str(self.id),
         }
-        return jwt.encode(data, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+        return jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
 
 
 class DeviceSession(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     id = Column(
         Integer,
-        Sequence("core.device_session_seq", start=1),
+        Sequence("device_session_seq", start=1, schema='core'),
         primary_key=True,
     )
     user = Column(Integer, ForeignKey(User.id))
