@@ -61,7 +61,7 @@ job("Run on git push") {
             content = """
                 echo ${'$'}KEYBASE64 | base64 --decode > id_rsa
                 chmod 400 id_rsa
-                ssh -i id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${'$'}SSH_USER@${'$'}SERVER_IP "docker login connecta.registry.jetbrains.space --username ${'$'}HUB_USER --password "${'$'}HUB_TOKEN" && cd api && git pull origin test && docker build --file docker/Dockerfile.test --label "vendor=connecta" --tag connecta.registry.jetbrains.space/p/connecta/containers/api:latest --platform "linux/arm64" . && docker push connecta.registry.jetbrains.space/p/connecta/containers/api:latest && sh ../deploy_api.sh"
+                ssh -i id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${'$'}SSH_USER@${'$'}SERVER_IP "docker login connecta.registry.jetbrains.space --username ${'$'}HUB_USER --password "${'$'}HUB_TOKEN" && cd api && git pull origin test && docker build --file docker/Dockerfile.test --label "vendor=connecta" --tag connecta.registry.jetbrains.space/p/connecta/containers/api:latest --platform "linux/arm64" . && sh ../deploy_api.sh"
             """
         }
     }

@@ -10,7 +10,7 @@ from sqlalchemy import and_, insert, select, update
 from starlette.requests import Request
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
-from src.config.core import Settings
+from src.config.core import settings
 from src.profile.models import Profile
 
 from .models import DeviceSession, User
@@ -21,7 +21,7 @@ InvalidInitData = HTTPException(
 )
 
 
-def validate_init_data(*, init_data: str, settings: Settings) -> UserRead | None:
+def validate_init_data(*, init_data: str) -> UserRead | None:
     try:
         data = safe_parse_webapp_init_data(
             token=settings.BOT_TOKEN,

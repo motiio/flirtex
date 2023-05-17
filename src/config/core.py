@@ -33,5 +33,5 @@ class Settings(BaseSettings):
 def get_settings():
     return Settings()
 
-Settings = Annotated[Settings, Depends(get_settings)]
 
+settings = get_settings()
