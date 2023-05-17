@@ -1,0 +1,14 @@
+README.md
+CHANGELOG.md
+docker-compose.yml
+LICENSE
+.git
+.gitignore
+.github
+.idea
+.mypy_cache
+.ruff_cache
+docker
+.env
+.gitignore
+.space.kts
