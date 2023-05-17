@@ -21,7 +21,7 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 FROM python-base AS builder-base
 #CMD apt-get update \
 #    && apt-get install -y curl
-SHELL ["sh"]
+SHELL ["bash"]
 RUN echo $0
 RUN buildDeps="build-essential" \
     && apt-get update \

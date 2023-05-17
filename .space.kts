@@ -35,7 +35,7 @@ job("Run on git push") {
             // build-time variables
             // image labels
             labels["vendor"] = "connecta"
-            platform = "linux/arm64"
+            platform = "linux/amd64,linux/arm64
             // to add a raw list of additional build arguments, use
             extraArgsForBuildCommand = listOf("--no-cache")
             // to add a raw list of additional push arguments, use
