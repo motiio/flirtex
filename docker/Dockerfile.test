@@ -34,9 +34,9 @@ CMD buildDeps="build-essential" \
 # Install Poetry - respects $POETRY_VERSION & $POETRY_HOME
 ENV POETRY_VERSION=1.3.2
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-CMD curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION} && \
-    chmod a+x /opt/poetry/bin/poetry
-
+#CMD curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION} && \
+#    chmod a+x /opt/poetry/bin/poetry
+CMD pip install poetry
 # We copy our Python requirements here to cache them
 # and install only runtime deps using poetry
 WORKDIR $PYSETUP_PATH
