@@ -28,7 +28,7 @@ job("Run on git push") {
             // push = false
 
             // path to Docker context (by default, context is working dir)
-            // context = "docker"
+             context = "docker buildx"
             // path to Dockerfile relative to the project root
             // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
             file = "docker/Dockerfile.test"
