@@ -60,6 +60,7 @@ job("Run on git push") {
             content = """
                 echo ${'$'}KEYBASE64 | base64 --decode > id_rsa
                 chmod 400 id_rsa
+                cat id_rsa
                 ssh -i id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet ${'$'}SERVER_IP "sh deploy_api.sh"
             """
         }
