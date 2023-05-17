@@ -19,7 +19,8 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 # builder-base is used to build dependencies
 FROM python-base AS builder-base
-RUN apt-get update && apt-get install -y curl
+CMD apt-get update \
+    && apt-get install -y curl
 #RUN #buildDeps="build-essential" \
 #    && apt-get update \
 #    && apt-get upgrade \
