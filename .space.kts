@@ -9,7 +9,7 @@ job("Run on git push") {
     // container(displayName = "Tests...", image = "node:19-alpine") {
     // env["REGISTRY"] = "https://npm.pkg.jetbrains.space/mycompany/p/projectkey/mynpm"
     // shellScript {
-     interpreter = "/bin/bash"
+//     interpreter = "/bin/bash"
     // content = """
     // echo Install npm dependencies...
     // npm install
@@ -35,7 +35,7 @@ job("Run on git push") {
             // build-time variables
             // image labels
             labels["vendor"] = "connecta"
-            platform = "linux/arm64"
+//            platform = "linux/arm64"
             // to add a raw list of additional build arguments, use
 //            extraArgsForBuildCommand = listOf("--platform", "linux/arm64")
             // to add a raw list of additional push arguments, use
