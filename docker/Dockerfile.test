@@ -48,7 +48,7 @@ CMD ["chmod", "a+x","/opt/poetry/bin/poetry"]
 # and install only runtime deps using poetry
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml ./
-RUN poetry install --only main  # respects
+CMD ["poetry", "install", "--only", "main"]
 
 # 'development' stage installs all dev deps and can be used to develop code.
 # For example using docker-compose to mount local volume under /app
@@ -61,7 +61,7 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 # Copying in our entrypoint
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+CMD ["chmod", "+x", "/docker-entrypoint.sh"]
 
 # venv already has runtime deps installed we get a quicker install
 WORKDIR $PYSETUP_PATH
