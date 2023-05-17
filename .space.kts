@@ -9,7 +9,7 @@ job("Run on git push") {
     // container(displayName = "Tests...", image = "node:19-alpine") {
     // env["REGISTRY"] = "https://npm.pkg.jetbrains.space/mycompany/p/projectkey/mynpm"
     // shellScript {
-    // interpreter = "/bin/sh"
+     interpreter = "/bin/bash"
     // content = """
     // echo Install npm dependencies...
     // npm install
