@@ -127,7 +127,7 @@ async def expire_refresh_token(*, db_session, refresh_token_value) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.refresh_token == refresh_token_value)
-        .values(is_active=False)
+        .values({"is_active": False})
     )
     await db_session.execute(q)
 
@@ -136,7 +136,7 @@ async def expire_all_refresh_tokens_by_user_id(*, db_session, user_id) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id)
-        .values(DeviceSession.is_active == False)  # noqa
+        .values({"is_active": False})  # noqa
     )
     await db_session.execute(q)
 
