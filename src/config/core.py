@@ -7,7 +7,8 @@ from src.constants import Environment
 
 class Settings(BaseSettings):
     APP_VERSION: str = "0.1"
-    ENVIRONMENT: Environment = Environment.LOCAL
+    ENVIRONMENT: Environment = Environment.TESTING
+    SENTRY_DSN: str | None
     LOG_LEVEL: str = Environment.get_env_log_level
 
     BOT_TOKEN: str

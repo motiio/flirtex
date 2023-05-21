@@ -70,8 +70,7 @@ def _check_token_signature(*, token: str):
     try:
         data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
     except (JWKError, JWTError) as e:
-        # Raise the HTTPException without using 'from None' to propagate original error message
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": str(e)}])
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": str(e)}]) from None
     else:
         return token, data
 

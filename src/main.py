@@ -2,15 +2,33 @@ from contextvars import ContextVar
 from typing import Final, Optional
 from uuid import uuid1
 
+import sentry_sdk
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlalchemy.orm import scoped_session
 from starlette.requests import Request
 
 from src.auth.routers import auth_router
+from src.config.core import settings
 from src.profile.routers import profile_router
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from .database.core import async_session
+
+sentry_sdk.init(
+    dsn="https://6e912112c8604a2eb9c18f8f5b535cf0@o4505221528616960.ingest.sentry.io/4505221529731072",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production,
+    traces_sample_rate=1.0,
+)
+sentry_sdk.init(
+    dsn=settings.SENTRY_DSN,
+    environment=settings.ENVIRONMENT,
+    integrations=[
+        SqlalchemyIntegration(),
+    ],
+)
 
 api = FastAPI(
     title="API",
@@ -48,17 +66,9 @@ class Item(BaseModel):
     name: str
 
 
-# @app.post("/api/")
-# async def root(init_data: Item):
-#     try:
-#         data = safe_parse_webapp_init_data(
-#             token="5835274205:AAF6kUBKOb1iHRGZsbLEW3xRpUviI1wXdlc",
-#             init_data=init_data.name,
-#             _loads=orjson.loads,
-#         )
-#     except ValueError:
-#         return False
-#     return data
+@api.get("/sentry-debug")
+async def trigger_error():
+    pass
 
 
 @api.get("/hello/{name}")
