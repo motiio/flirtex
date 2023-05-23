@@ -58,6 +58,7 @@ async def get_or_create_user_by_init_data(
         )  # noqa
         .where(User.tg_id == user_data.tg_id)
     )
+    print(q)
     user, profile = (await db_session.execute(q)).first() or (None, None)
 
     if user is None:
@@ -101,7 +102,7 @@ async def get_refresh_token(*, db_session, refresh_token: str) -> DeviceSession 
 
 async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTokenSchema:
     now = datetime.utcnow()
-    exp = now + timedelta(seconds=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
+    exp = (now + timedelta(seconds=settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS)).timestamp()
     data = {
         "exp": exp,
         "sub": str(user_id),
@@ -112,7 +113,7 @@ async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTok
         .values(
             user=user_id,
             refresh_token=new_refresh_token_value,
-            expires_at=exp,
+            expires_at=datetime.utcfromtimestamp(exp),
             user_agent=user_agent,
         )
         .returning(DeviceSession)

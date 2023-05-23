@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str] = [""]
 
     JWT_SECRET: str
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(..., env="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
-    JWT_REFRESH_TOKEN_EXPIRE_MINUTES: int = Field(..., env="JWT_REFRESH_TOKEN_EXPIRE_MINUTES")
+    JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int = Field(..., env="JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
+    JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int = Field(..., env="JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
 
     class Config:
         env_file = ".env"

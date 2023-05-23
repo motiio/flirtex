@@ -5,23 +5,17 @@ from uuid import uuid1
 import sentry_sdk
 from fastapi import FastAPI
 from pydantic import BaseModel
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.orm import scoped_session
 from starlette.requests import Request
 
 from src.auth.routers import auth_router
+from src.common.routers import common_router
 from src.config.core import settings
 from src.profile.routers import profile_router
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from .database.core import async_session
 
-sentry_sdk.init(
-    dsn="https://6e912112c8604a2eb9c18f8f5b535cf0@o4505221528616960.ingest.sentry.io/4505221529731072",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production,
-    traces_sample_rate=1.0,
-)
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
     environment=settings.ENVIRONMENT,
@@ -37,6 +31,7 @@ api = FastAPI(
 
 api.include_router(auth_router, prefix="/auth", tags=["Auth"])
 api.include_router(profile_router, prefix="/profile", tags=["Profile"])
+api.include_router(common_router, prefix="/common", tags=["Common"])
 
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
 _request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(REQUEST_ID_CTX_KEY, default=None)

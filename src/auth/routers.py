@@ -20,7 +20,7 @@ from .services import (
 auth_router = APIRouter()
 
 
-@auth_router.post("/login", response_model=UserLoginResponse)
+@auth_router.post("", response_model=UserLoginResponse)
 async def login_user(
     login_data: UserLoginRequest,
     db_session: DbSession,
@@ -43,7 +43,8 @@ async def login_user(
                 {
                     "meta": {
                         "redirect": True,
-                        "location": "/profile/register",
+                        "location": "/profile",
+                        "method": "POST",
                         "access_token": user.access_token,
                         "refresh_token": new_refresh_token.value,
                     },
@@ -58,7 +59,7 @@ async def login_user(
     )
 
 
-@auth_router.put("/token/refresh", response_model=UserLoginResponse)
+@auth_router.put("", response_model=UserLoginResponse)
 async def refresh_tokens(
     refresh_token: str,
     db_session: DbSession,

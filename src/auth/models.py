@@ -25,7 +25,7 @@ class User(Base, TimeStampMixin):
     @property
     def access_token(self, settings: Settings = get_settings()):
         now = datetime.utcnow()
-        exp = now + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+        exp = (now + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS)).timestamp()
         data = {
             "exp": exp,
             "sub": str(self.id),
