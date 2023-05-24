@@ -217,3 +217,5 @@ src/dispatch/static/dispatch/coverage
 
 # Typescript
 components.d.ts
+
+/alembic/versions/*.py
