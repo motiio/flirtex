@@ -53,29 +53,31 @@ class Profile(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     id = Column(
         Integer,
-        Sequence("profile_seq", start=1),
+        Sequence("profile_seq", start=1, schema="core"),
         primary_key=True,
     )
     owner = Column(Integer, ForeignKey("core.user.id"))
-
     name = Column(String(32))
     birthdate = Column(Date)
     city = Column(Integer, ForeignKey("core.city.id"), comment="Profile settlement")
     gender = Column(Enum(GenderEnum, schema="core"))
     looking_gender = Column(Enum(GenderEnum, schema="core"))
-    is_active = Column(Boolean)
+    is_active = Column(Boolean, nullable=False)
     interests = relationship(
         "Interest",
         secondary="core.profile_interests",
         back_populates="profiles",
     )
 
+    def __repr__(self):
+        return f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender}]"
+
 
 class ProfilePhoto(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     id = Column(
         Integer,
-        Sequence("profile_photo_seq", start=1),
+        Sequence("profile_photo_seq", start=1, schema="core"),
         primary_key=True,
     )
     profile = Column(Integer, ForeignKey(Profile.id))

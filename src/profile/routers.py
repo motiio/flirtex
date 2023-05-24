@@ -7,10 +7,10 @@ from starlette.status import (
 )
 
 from src.auth.services import CurrentUser
-from src.common.services import get_city_by_name
+from src.common.services import get_city
 from src.database.core import DbSession
 
-from .schemas import ProfileCreateSchema, ProfileReadSchema
+from .schemas import ProfileCreateRequest, ProfileReadSchema
 from .services import create_profile, get_active_profile_by_user_id
 
 profile_router = APIRouter()
@@ -18,7 +18,7 @@ profile_router = APIRouter()
 
 @profile_router.post("", status_code=HTTP_201_CREATED, response_model=ProfileReadSchema)
 async def register_profile(
-    profile_data: ProfileCreateSchema,
+    registration_data: ProfileCreateRequest,
     user: CurrentUser,
     db_session: DbSession,
 ):
@@ -26,7 +26,7 @@ async def register_profile(
     Register a new profile for the current user.
 
     Args:
-        profile_data: The profile data to register.
+        registration_data: The profile data to register.
         user: The current user.
         db_session: The database session.
 
@@ -37,7 +37,7 @@ async def register_profile(
         HTTPException: If the user already has a profile.
         HTTPException: If the city does not exist.
     """
-    user_profile = await get_active_profile_by_user_id(db_session=db_session, user_id=user)
+    user_profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if user_profile:
         raise HTTPException(
             status_code=HTTP_302_FOUND,
@@ -45,15 +45,14 @@ async def register_profile(
                 {
                     "meta": {
                         "redirect": True,
+                        "method": "GET",
                         "location": "/profile",
                     },
                     "msg": "User profile was found",
                 }
             ],
         )
-    city = await get_city_by_name(db_session=db_session, city_name=profile_data.city)
-    print(city)
-    print(city.id)
+    city = await get_city(db_session=db_session, city_id=registration_data.city)
     if not city:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
@@ -63,8 +62,8 @@ async def register_profile(
                 }
             ],
         )
-    register_data = ProfileCreateSchema(**profile_data.dict(exclude={"city"}) | {"city": city.id})
-    return await create_profile(db_session=db_session, profile_data=register_data)
+    profile_data = registration_data.dict() | {"owner": int(user)}
+    return await create_profile(db_session=db_session, profile_data=profile_data)
 
 
 @profile_router.get("", response_model=ProfileReadSchema)
@@ -74,7 +73,6 @@ async def get_my_profile(
     db_session: DbSession,
 ):
     """Returns the current user's profile."""
-    print(user)
     profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
         raise HTTPException(
