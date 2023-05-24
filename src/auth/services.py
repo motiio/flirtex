@@ -97,7 +97,7 @@ async def get_refresh_token(*, db_session, refresh_token: str) -> DeviceSession 
     q = select(DeviceSession).where(
         DeviceSession.refresh_token == refresh_token, DeviceSession.is_active == True  # noqa
     )
-    return (await db_session.execute(q)).scalars().one_or_none()
+    return (await db_session.execute(q)).scalars().first()
 
 
 async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTokenSchema:
@@ -118,7 +118,7 @@ async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTok
         )
         .returning(DeviceSession)
     )
-    new_device_session = (await db_session.execute(q)).scalars().one()
+    new_device_session = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
     return RefreshTokenSchema.from_orm(new_device_session)
 
