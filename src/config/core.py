@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import BaseSettings, Field, PostgresDsn
+from pydantic import BaseSettings, PostgresDsn
 
 from src.constants import Environment
 
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     BOT_TOKEN: str
 
-    DATABASE_URI: PostgresDsn = Field(..., env="DATABASE_URI")
+    DATABASE_URI: PostgresDsn
     DATABASE_ENGINE_POOL_SIZE: int = 5
     DATABASE_ENGINE_MAX_OVERFLOW: int = 10
 
@@ -21,9 +21,12 @@ class Settings(BaseSettings):
     CORS_ORIGINS_REGEX: str | None
     CORS_HEADERS: list[str] = [""]
 
+    S3_ACCESS_KEY_ID: str
+    S3_SECRET_ACCESS_KEY: str
+
     JWT_SECRET: str
-    JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int = Field(..., env="JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
-    JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int = Field(..., env="JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
+    JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int
+    JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int
 
     class Config:
         env_file = ".env"

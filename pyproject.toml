@@ -19,6 +19,7 @@ contextvars = "^2.4"
 alembic = "^1.10.4"
 python-jose = "^3.3.0"
 sentry-sdk = {extras = ["fastapi"], version = "^1.23.1"}
+boto3 = "^1.26.140"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
