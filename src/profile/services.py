@@ -1,14 +1,13 @@
 import imghdr
+import io
 
-import aiofiles
 from fastapi import UploadFile
-from sqlalchemy import insert, select
+from sqlalchemy import delete, insert, select
 
 from src.config.core import settings
 from src.database.core import DbSession
 from src.profile.models import Profile
 from src.s3.core import S3Client
-import io
 
 from .exception import ImageSizeTooBig, InvalidImageType
 from .schemas import UserProfileReadSchema
@@ -42,6 +41,13 @@ async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileRea
     result = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
     return UserProfileReadSchema.from_orm(result)
+
+
+async def delete_by_user_id(*, db_session: DbSession, user_id: int) -> None:
+    """Creates a new profile."""
+    q = delete(Profile).where(Profile.owner == user_id)  # noqa
+    await db_session.execute(q)
+    await db_session.commit()
 
 
 async def create_s3_profile_images_storage(*, profile_id: int, s3_client: S3Client):

@@ -4,10 +4,10 @@ from uuid import uuid1
 
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.orm import scoped_session
 from starlette.requests import Request
-from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.routers import auth_router
 from src.common.routers import common_router
@@ -45,6 +45,7 @@ api.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 def get_request_id() -> Optional[str]:
     return _request_id_ctx_var.get()

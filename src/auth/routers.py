@@ -1,8 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Header, HTTPException, status
-from fastapi.responses import JSONResponse
-from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
+from fastapi import APIRouter, Header, HTTPException
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 from src.auth.schemas import (
     UserLoginRequest,
@@ -24,9 +23,9 @@ auth_router = APIRouter()
 
 @auth_router.post("")
 async def login_user(
-        login_data: UserLoginRequest,
-        db_session: DbSession,
-        user_agent: Annotated[str, Header()],
+    login_data: UserLoginRequest,
+    db_session: DbSession,
+    user_agent: Annotated[str, Header()],
 ):
     """
     Login user.
@@ -55,9 +54,9 @@ async def login_user(
 
 @auth_router.put("", response_model=UserLoginResponse)
 async def refresh_tokens(
-        refresh_token: str,
-        db_session: DbSession,
-        user_agent: Annotated[str, Header()],
+    refresh_token: str,
+    db_session: DbSession,
+    user_agent: Annotated[str, Header()],
 ) -> UserLoginResponse:
     valid_refresh_token, valid_token_date = await validate_refresh_token(
         db_session=db_session, refresh_token=refresh_token

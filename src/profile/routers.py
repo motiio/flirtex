@@ -1,9 +1,7 @@
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
-    HTTP_302_FOUND,
-    HTTP_303_SEE_OTHER,
     HTTP_404_NOT_FOUND,
 )
 
@@ -15,6 +13,7 @@ from .schemas import UserProfileCreateRequest, UserProfileReadSchema
 from .services import (
     create,
     create_s3_profile_images_storage,
+    delete_by_user_id,
     get_active_profile_by_user_id,
 )
 
@@ -49,7 +48,7 @@ async def register_profile(
     profile = await create(db_session=db_session, profile_data=profile_data)
     await create_s3_profile_images_storage(s3_client=s3_client, profile_id=profile.id)
 
-    return profile, HTTP_201_CREATED
+    return profile
 
 
 @profile_router.get("", response_model=UserProfileReadSchema)
@@ -79,3 +78,8 @@ async def get_my_profile(
 @profile_router.patch("", response_model=UserProfileReadSchema, status_code=HTTP_200_OK)
 def update_profile(*, user: CurrentUser, db_session: DbSession):
     ...
+
+
+@profile_router.delete("", status_code=HTTP_200_OK)
+async def delete_profile(*, user: CurrentUser, db_session: DbSession):
+    await delete_by_user_id(user_id=int(user), db_session=db_session)
