@@ -12,7 +12,7 @@ from src.auth.routers import auth_router
 from src.common.routers import common_router
 from src.config.core import settings
 from src.profile.routers import profile_router
-from src.s3.core import S3Session, s3_client
+from src.s3.core import S3Client, s3_session
 
 from .database.core import async_session
 
@@ -45,19 +45,20 @@ def get_request_id() -> Optional[str]:
 async def db_session_middleware(request: Request, call_next):
     request_id = str(uuid1())
     ctx_token = _request_id_ctx_var.set(request_id)
-    try:
-        db_session = scoped_session(async_session, scopefunc=get_request_id)
-        request.state.db = db_session()
+    async with s3_session.client(
+        service_name="s3", endpoint_url="https://storage.yandexcloud.net"
+    ) as s3_client:
+        try:
+            db_session = scoped_session(async_session, scopefunc=get_request_id)
+            request.state.db = db_session()
+            request.state.s3_client = s3_client
 
-        request.state.s3 = s3_client
-
-        response = await call_next(request)
-    except Exception as e:
-        raise e from None
-    finally:
-        await request.state.db.close()
-        request.state.s3.close()
-    _request_id_ctx_var.reset(ctx_token)
+            response = await call_next(request)
+        except Exception as e:
+            raise e from None
+        finally:
+            await request.state.db.close()
+        _request_id_ctx_var.reset(ctx_token)
     return response
 
 
@@ -67,8 +68,8 @@ async def trigger_error():
 
 
 @api.get("/s3", response_model=None)
-async def check_s3(s3_session: S3Session):
-    pass
+async def check_s3(s3_session: S3Client):
+    s3_session.put_object(Bucket="user4", Body="", Key="test-folder/")
     for key in s3_session.list_objects(Bucket="user4")["Contents"]:
         return key["Key"]
 

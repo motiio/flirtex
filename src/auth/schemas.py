@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Field
+from fastapi.responses import Response
 
 from src.config.schemas import ORJSONSchema
+
 
 
 class UserLoginRequest(ORJSONSchema):
@@ -24,7 +26,6 @@ class RefreshTokenResponse(ORJSONSchema):
 
 class UserLoginResponse(AccessTokenResponse, RefreshTokenResponse):
     ...
-
 
 class UserSchema(ORJSONSchema):
     tg_id: int = Field(alias="id")
@@ -53,4 +54,8 @@ class RefreshTokenSchema(JWTTokenSchema):
 
 
 class UserRead(ORJSONSchema):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.tg_id = None
+
     id: int

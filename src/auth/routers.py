@@ -1,6 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Header, HTTPException, status
+from fastapi.responses import JSONResponse
+from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED
 
 from src.auth.schemas import (
     UserLoginRequest,
@@ -20,12 +22,20 @@ from .services import (
 auth_router = APIRouter()
 
 
-@auth_router.post("", response_model=UserLoginResponse)
+@auth_router.post("")
 async def login_user(
-    login_data: UserLoginRequest,
-    db_session: DbSession,
-    user_agent: Annotated[str, Header()],
+        login_data: UserLoginRequest,
+        db_session: DbSession,
+        user_agent: Annotated[str, Header()],
 ):
+    """
+    Login user.
+
+    Returns:
+        The user's **access token** and **refresh token**.
+
+    - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
+    """
     user, active_profile = await get_or_create_user_by_init_data(
         db_session=db_session, init_data=login_data.init_data
     )
@@ -36,22 +46,6 @@ async def login_user(
     new_refresh_token = await create_refresh_token(
         db_session=db_session, user_id=user.id, user_agent=user_agent
     )
-    if not active_profile:
-        raise HTTPException(
-            status_code=status.HTTP_303_SEE_OTHER,
-            detail=[
-                {
-                    "meta": {
-                        "redirect": True,
-                        "location": "/profile",
-                        "method": "POST",
-                        "access_token": user.access_token,
-                        "refresh_token": new_refresh_token.value,
-                    },
-                    "msg": "User profile not found",
-                }
-            ],
-        )
 
     return UserLoginResponse(
         access_token=user.access_token,
@@ -61,13 +55,17 @@ async def login_user(
 
 @auth_router.put("", response_model=UserLoginResponse)
 async def refresh_tokens(
-    refresh_token: str,
-    db_session: DbSession,
-    user_agent: Annotated[str, Header()],
+        refresh_token: str,
+        db_session: DbSession,
+        user_agent: Annotated[str, Header()],
 ) -> UserLoginResponse:
     valid_refresh_token, valid_token_date = await validate_refresh_token(
         db_session=db_session, refresh_token=refresh_token
     )
+    if not valid_refresh_token or not valid_token_date:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": "Invalid token signature"}]
+        )
     user = User(id=int(valid_token_date.get("sub")))
     await expire_refresh_token(db_session=db_session, refresh_token_value=refresh_token)
     new_refresh_token = await create_refresh_token(

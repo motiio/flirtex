@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from starlette.status import (
+    HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_302_FOUND,
     HTTP_303_SEE_OTHER,
@@ -7,83 +8,74 @@ from starlette.status import (
 )
 
 from src.auth.services import CurrentUser
-from src.common.services import get_city
 from src.database.core import DbSession
+from src.s3.core import S3Client
 
-from .schemas import ProfileCreateRequest, ProfileReadSchema
-from .services import create_profile, get_active_profile_by_user_id
+from .schemas import UserProfileCreateRequest, UserProfileReadSchema
+from .services import (
+    create,
+    create_s3_profile_images_storage,
+    get_active_profile_by_user_id,
+)
 
 profile_router = APIRouter()
 
 
-@profile_router.post("", status_code=HTTP_201_CREATED, response_model=ProfileReadSchema)
+@profile_router.post("", status_code=HTTP_201_CREATED, response_model=UserProfileReadSchema)
 async def register_profile(
-    registration_data: ProfileCreateRequest,
+    *,
     user: CurrentUser,
     db_session: DbSession,
+    s3_client: S3Client,
+    registration_data: UserProfileCreateRequest,
 ):
     """
     Register a new profile for the current user.
 
     Args:
-        registration_data: The profile data to register.
-        user: The current user.
-        db_session: The database session.
+    - registration_data: The profile data to register.
+    - user: The current user.
+    - db_session: The database session.
+    - s3_client: The s3 session.
 
     Returns:
         The newly created profile.
-
-    Raises:
-        HTTPException: If the user already has a profile.
-        HTTPException: If the city does not exist.
     """
-    user_profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
-    if user_profile:
-        raise HTTPException(
-            status_code=HTTP_302_FOUND,
-            detail=[
-                {
-                    "meta": {
-                        "redirect": True,
-                        "method": "GET",
-                        "location": "/profile",
-                    },
-                    "msg": "User profile was found",
-                }
-            ],
-        )
-    city = await get_city(db_session=db_session, city_id=registration_data.city)
-    if not city:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail=[
-                {
-                    "msg": "City not found",
-                }
-            ],
-        )
+    profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    if profile:
+        return profile, HTTP_200_OK
+
     profile_data = registration_data.dict() | {"owner": int(user)}
-    return await create_profile(db_session=db_session, profile_data=profile_data)
+    profile = await create(db_session=db_session, profile_data=profile_data)
+    await create_s3_profile_images_storage(s3_client=s3_client, profile_id=profile.id)
+
+    return profile, HTTP_201_CREATED
 
 
-@profile_router.get("", response_model=ProfileReadSchema)
+@profile_router.get("", response_model=UserProfileReadSchema)
 async def get_my_profile(
     *,
     user: CurrentUser,
     db_session: DbSession,
 ):
-    """Returns the current user's profile."""
+    """
+    Get current user's profile.
+
+    Returns:
+        The user's profile.
+
+    Raises:
+    - HTTPExceptions: **HTTP_303_SEE_OTHER**. If user's profile wos not found
+    """
     profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
         raise HTTPException(
-            status_code=HTTP_303_SEE_OTHER,
-            detail={
-                "meta": {
-                    "redirect": True,
-                    "method": "POST",
-                    "location": "/profile",
-                },
-                "msg": "User profile not found",
-            },
+            status_code=HTTP_404_NOT_FOUND,
+            detail={"msg": "User profile not found"},
         )
     return profile
+
+
+@profile_router.patch("", response_model=UserProfileReadSchema, status_code=HTTP_200_OK)
+def update_profile(*, user: CurrentUser, db_session: DbSession):
+    ...

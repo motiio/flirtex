@@ -23,10 +23,13 @@ class Settings(BaseSettings):
 
     S3_ACCESS_KEY_ID: str
     S3_SECRET_ACCESS_KEY: str
+    S3_PROFILES_BUCKET_NAME: str
 
     JWT_SECRET: str
     JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int
+
+    MAX_PROFILE_PHOTO_SIZE_B: int
 
     class Config:
         env_file = ".env"

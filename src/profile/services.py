@@ -1,21 +1,106 @@
+import imghdr
+
+import aiofiles
+from fastapi import UploadFile
 from sqlalchemy import insert, select
 
+from src.config.core import settings
 from src.database.core import DbSession
 from src.profile.models import Profile
+from src.s3.core import S3Client
+import io
 
-from .schemas import ProfileReadSchema
+from .exception import ImageSizeTooBig, InvalidImageType
+from .schemas import UserProfileReadSchema
 
 
-async def get_active_profile_by_user_id(db_session: DbSession, user_id: int) -> ProfileReadSchema:
+async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
+    """Returns a user's profile"""
+    q = select(Profile).where(Profile.id == profile_id)  # noqa
+    return (await db_session.execute(q)).scalars().first()
+
+
+async def get_active_profile_by_user_id(
+    *, db_session: DbSession, user_id: int
+) -> UserProfileReadSchema:
     """Returns a user's profile"""
     q = select(Profile).where(Profile.owner == user_id, Profile.is_active == True)  # noqa
     return (await db_session.execute(q)).scalars().first()
 
 
-async def create_profile(db_session: DbSession, profile_data: dict) -> ProfileReadSchema:
-    print(profile_data)
+async def create(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
     """Creates a new profile."""
     q = insert(Profile).values(**profile_data, is_active=True).returning(Profile)
     result = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
-    return ProfileReadSchema.from_orm(result)
+    return UserProfileReadSchema.from_orm(result)
+
+
+async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
+    """Creates a new profile."""
+    q = insert(Profile).values(**profile_data, is_active=True).returning(Profile)
+    result = (await db_session.execute(q)).scalars().first()
+    await db_session.commit()
+    return UserProfileReadSchema.from_orm(result)
+
+
+async def create_s3_profile_images_storage(*, profile_id: int, s3_client: S3Client):
+    folders = (
+        "queue/",  # images that ready to be processed by the neural network
+        "approved/",  # approved images that don't contain any objectionable content
+        "rejected/",
+    )
+    for folder in folders:
+        await s3_client.put_object(
+            Bucket=settings.S3_PROFILES_BUCKET_NAME, Key=f"{profile_id}/profile/images/{folder}"
+        )
+
+
+async def _check_is_image(file: bytes) -> None | bytes:
+    ALLOWED_IMAGE_TYPES = ["jpeg", "png", "gif"]
+    file_type = imghdr.what(None, h=file)
+    if not file_type or file_type not in ALLOWED_IMAGE_TYPES:
+        raise InvalidImageType(
+            msg=f"Invalid image type. Type must be {ALLOWED_IMAGE_TYPES}", loc="profile_photos"
+        )
+    return file
+
+
+async def _check_image_size(*, photo: UploadFile) -> int:
+    actual_size = photo.file.seek(0, 2)
+    photo.file.seek(0)
+    if actual_size > settings.MAX_PROFILE_PHOTO_SIZE_B:
+        raise ImageSizeTooBig(
+            msg=f"Image size too big. Max size is f{settings.MAX_FILE_SIZE_B} bytes",
+            loc="profile_photos",
+        )
+
+
+async def check_profile_photos(*, profile_photos: list[UploadFile]) -> tuple[list, list]:
+    checked_images = []
+    rejected: list[dict] = []
+    for photo in profile_photos:
+        try:
+            _ = await _check_is_image(await photo.read())
+            _ = await _check_image_size(photo=photo)
+        except (InvalidImageType, ImageSizeTooBig) as e:
+            rejected.append({photo.filename: str(e)})
+        else:
+            checked_images.append(photo)
+    return checked_images, rejected
+
+
+async def save_profile_photos(
+    *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
+):
+    file_path = f"{profile_id}/profile/images/queue"
+    for idx, photo in enumerate(checked_photos):
+        try:
+            byte_stream = io.BytesIO(await photo.read())
+            await s3_client.upload_fileobj(
+                Fileobj=byte_stream,
+                Bucket=settings.S3_PROFILES_BUCKET_NAME,
+                Key=f"{file_path}/{idx}",
+            )
+        except Exception as e:
+            print(f"Произошла ошибка при загрузке файла в s3: {e}")

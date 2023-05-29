@@ -4,10 +4,10 @@ from typing import Annotated
 import orjson
 from aiogram.utils.web_app import safe_parse_webapp_init_data
 from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from jose.exceptions import JWKError
 from sqlalchemy import and_, insert, select, update
-from starlette.requests import Request
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 from src.config.core import settings
@@ -45,7 +45,7 @@ async def create_user(*, db_session, user_data: UserSchema) -> UserRead:
 
 async def get_or_create_user_by_init_data(
     *, db_session, init_data: str
-) -> tuple[User, Profile | None]:
+) -> tuple[User | None, Profile | None]:
     """Returns a user based on the given initData."""
     user_data = validate_init_data(init_data=init_data)
     if not user_data:
@@ -70,24 +70,32 @@ async def get_or_create_user_by_init_data(
 def _check_token_signature(*, token: str):
     try:
         data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-    except (JWKError, JWTError) as e:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": str(e)}]) from None
+    except (JWKError, JWTError):
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
+        )
     else:
         return token, data
 
 
-def get_current_user(request: Request):
-    auth_header: str = request.headers.get("Authorization")
+security = HTTPBearer()
 
-    # Use guard clause instead of nested if statement
-    if not auth_header:
+
+def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)) -> None | str:
+    # auth_header: str = request.headers.get("Authorization")
+    try:
+        token = auth.credentials
+        _, data = _check_token_signature(token=token)
+        user_id = data.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
+            )
+        return user_id
+    except HTTPException:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": "Authorization header not found"}]
+            status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
         )
-
-    token = auth_header.split()[1]
-    valid_token, data = _check_token_signature(token=token)
-    return data["sub"]
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
@@ -154,13 +162,10 @@ async def validate_refresh_token(
     *,
     db_session,
     refresh_token,
-) -> tuple[str, dict]:
+) -> tuple[None, None] | tuple[str, dict]:
     device_session = await get_refresh_token(db_session=db_session, refresh_token=refresh_token)
     if not device_session:
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": "Invalid token signature"}]
-        )
+        return None, None
 
     valid_token, token_date = _check_token_signature(token=device_session.refresh_token)
-
     return valid_token, token_date

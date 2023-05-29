@@ -5,7 +5,8 @@ from src.config.schemas import ORJSONSchema
 from .models import GenderEnum
 
 
-class BaseProfileSchema(ORJSONSchema):
+class BaseUserProfileSchema(ORJSONSchema):
+    owner: int
     owner: int
     name: str
     birthdate: date
@@ -14,7 +15,7 @@ class BaseProfileSchema(ORJSONSchema):
     gender: GenderEnum | int
 
 
-class ProfileCreateRequest(ORJSONSchema):
+class UserProfileCreateRequest(ORJSONSchema):
     name: str
     birthdate: date
     city: int
@@ -22,7 +23,8 @@ class ProfileCreateRequest(ORJSONSchema):
     gender: GenderEnum | int
 
 
-class ProfileReadSchema(ORJSONSchema):
+class UserProfileReadSchema(ORJSONSchema):
+    id: int
     name: str
     birthdate: date
     city: int
