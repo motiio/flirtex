@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.orm import scoped_session
 from starlette.requests import Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.routers import auth_router
 from src.common.routers import common_router
@@ -36,6 +37,14 @@ api.include_router(common_router, prefix="/common", tags=["Common"])
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
 _request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(REQUEST_ID_CTX_KEY, default=None)
 
+origins = ["*"]
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_request_id() -> Optional[str]:
     return _request_id_ctx_var.get()
@@ -54,9 +63,6 @@ async def db_session_middleware(request: Request, call_next):
             request.state.s3_client = s3_client
 
             response = await call_next(request)
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Headers"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "*"
         except Exception as e:
             raise e from None
         finally:
