@@ -54,6 +54,9 @@ async def db_session_middleware(request: Request, call_next):
             request.state.s3_client = s3_client
 
             response = await call_next(request)
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "*"
         except Exception as e:
             raise e from None
         finally:
