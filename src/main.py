@@ -3,7 +3,7 @@ from typing import Final, Optional
 from uuid import uuid1
 
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.orm import scoped_session
@@ -87,3 +87,11 @@ async def check_s3(s3_session: S3Client):
 @api.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+@api.get("/user-agent")
+async def get_user_agent(user_agent: str = Header(None)):
+    """
+    Returns:
+        The user agent string.
+    """
+    return {"User-Agent": user_agent}
