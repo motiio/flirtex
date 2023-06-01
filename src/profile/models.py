@@ -34,20 +34,6 @@ class ProfileInterests(Base, TimeStampMixin):
     interest_id = Column(Integer, ForeignKey("core.interest.id"))
 
 
-class Interest(Base, TimeStampMixin):
-    __table_args__ = {"schema": "core"}
-
-    id = Column(
-        Integer,
-        Sequence("interest_seq", start=1),
-        primary_key=True,
-    )
-    name = Column(String(32), unique=True)
-    description = Column(Text)
-    profiles = relationship(
-        "Profile", secondary="core.profile_interests", back_populates="interests"
-    )
-
 
 class Profile(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
