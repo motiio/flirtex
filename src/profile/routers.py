@@ -73,7 +73,7 @@ async def get_my_profile(
         The user's profile.
 
     Raises:
-    - HTTPExceptions: **HTTP_303_SEE_OTHER**. If user's profile wos not found
+    - HTTPExceptions: **HTTP_404_NOT_FOUND**. If user's profile wos not found
     """
     profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
@@ -91,6 +91,12 @@ async def get_my_interests(
     user: CurrentUser,
     db_session: DbSession,
 ):
+    """
+    Get current profile interests.
+
+    Returns:
+        list[InterestReadSchema]
+    """
     profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
         raise HTTPException(
