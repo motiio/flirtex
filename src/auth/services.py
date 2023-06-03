@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from calendar import timegm
+from datetime import datetime
 from typing import Annotated
 
 import orjson
@@ -70,7 +71,9 @@ async def get_or_create_user_by_init_data(
 def _check_token_signature(*, token: str):
     try:
         data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-    except (JWKError, JWTError):
+        print(token)
+    except (JWKError, JWTError) as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
         )
@@ -91,7 +94,7 @@ def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)) -> 
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
             )
-        return user_id
+        return int(user_id)
     except HTTPException:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
@@ -109,8 +112,8 @@ async def get_refresh_token(*, db_session, refresh_token: str) -> DeviceSession 
 
 
 async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTokenSchema:
-    now = datetime.utcnow()
-    exp = (now + timedelta(seconds=settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS)).timestamp()
+    now = timegm(datetime.utcnow().utctimetuple())
+    exp = now + settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS
     data = {
         "exp": exp,
         "sub": str(user_id),

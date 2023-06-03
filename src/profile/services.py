@@ -4,13 +4,25 @@ import io
 from fastapi import UploadFile
 from sqlalchemy import delete, insert, select
 
+from src.common.schemas import InterestReadSchema
 from src.config.core import settings
 from src.database.core import DbSession
-from src.profile.models import Profile
+from src.profile.models import Interest, Profile, ProfileInterests
 from src.s3.core import S3Client
 
 from .exception import ImageSizeTooBig, InvalidImageType
 from .schemas import UserProfileReadSchema
+from fastapi import APIRouter, HTTPException
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_404_NOT_FOUND,
+)
+from typing import Annotated
+
+import orjson
+from aiogram.utils.web_app import safe_parse_webapp_init_data
+from fastapi import Depends, HTTPException
 
 
 async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
@@ -20,27 +32,55 @@ async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchem
 
 
 async def get_active_profile_by_user_id(
-    *, db_session: DbSession, user_id: int
+        *, db_session: DbSession, user_id: int
 ) -> UserProfileReadSchema:
     """Returns a user's profile"""
     q = select(Profile).where(Profile.owner == user_id, Profile.is_active == True)  # noqa
-    return (await db_session.execute(q)).scalars().first()
+    result = (await db_session.execute(q)).scalars().first()
+    return result
 
 
-async def create(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
+async def create(
+        *, db_session: DbSession, profile_data: dict, owner: int
+) -> UserProfileReadSchema | None:
     """Creates a new profile."""
-    q = insert(Profile).values(**profile_data, is_active=True).returning(Profile)
+    q = insert(Profile).values(**profile_data, owner=owner, is_active=True).returning(Profile)
     result = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
-    return UserProfileReadSchema.from_orm(result)
+    return result
 
 
 async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
+    """Update a new profile."""
+    ...
+
+
+async def delete(*, db_session: DbSession, profile_id: int) -> None:
     """Creates a new profile."""
-    q = insert(Profile).values(**profile_data, is_active=True).returning(Profile)
-    result = (await db_session.execute(q)).scalars().first()
+    q = delete(Profile).where(Profile.id == profile_id)  # noqa
+    await db_session.execute(q)
     await db_session.commit()
-    return UserProfileReadSchema.from_orm(result)
+
+
+async def create_profile_interests(*, db_session: DbSession, profile_id: int, interests: list[int]):
+    q = select(Interest.id).where(Interest.id.in_(interests))
+    existing_interests = (await db_session.execute(q)).scalars().all()
+
+    await db_session.execute(
+        insert(ProfileInterests),
+        [
+            {"profile_id": profile_id, "interest_id": int(interest_id)}
+            for interest_id in existing_interests
+        ],
+    )
+    await db_session.commit()
+
+
+async def get_profile_interests(
+        *, db_session: DbSession, profile_id: int
+) -> list[InterestReadSchema]:
+    q = select(Interest).join(Profile.interests).where(Profile.id == profile_id)  # noqa
+    return (await db_session.execute(q)).scalars().all()
 
 
 async def delete_by_user_id(*, db_session: DbSession, user_id: int) -> None:
@@ -97,7 +137,7 @@ async def check_profile_photos(*, profile_photos: list[UploadFile]) -> tuple[lis
 
 
 async def save_profile_photos(
-    *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
+        *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
 ):
     file_path = f"{profile_id}/profile/images/queue"
     for idx, photo in enumerate(checked_photos):
@@ -110,3 +150,17 @@ async def save_profile_photos(
             )
         except Exception as e:
             print(f"Произошла ошибка при загрузке файла в s3: {e}")
+
+
+def get_current_profile(profile: Profile | None) -> UserProfileReadSchema:
+    # auth_header: str = request.headers.get("Authorization")
+    print(123123)
+    if not profile:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail={"msg": "User profile not found"},
+        )
+    return UserProfileReadSchema.from_orm(profile)
+
+
+CurrentProfile = Annotated[Profile, Depends(get_current_profile)]

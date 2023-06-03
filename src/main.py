@@ -88,6 +88,7 @@ async def check_s3(s3_session: S3Client):
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
+
 @api.get("/user-agent")
 async def get_user_agent(user_agent: str = Header(None)):
     """

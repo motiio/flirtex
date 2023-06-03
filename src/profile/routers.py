@@ -9,12 +9,15 @@ from src.auth.services import CurrentUser
 from src.database.core import DbSession
 from src.s3.core import S3Client
 
-from .schemas import UserProfileCreateRequest, UserProfileReadSchema
+from .schemas import InterestReadSchema, UserProfileCreateRequest, UserProfileReadSchema
 from .services import (
     create,
+    create_profile_interests,
     create_s3_profile_images_storage,
     delete_by_user_id,
     get_active_profile_by_user_id,
+    get_profile_interests,
+    CurrentProfile
 )
 
 profile_router = APIRouter()
@@ -40,12 +43,18 @@ async def register_profile(
     Returns:
         The newly created profile.
     """
-    profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    profile = await get_active_profile_by_user_id(db_session=db_session, user_id=user)
     if profile:
-        return profile, HTTP_200_OK
+        return profile
 
-    profile_data = registration_data.dict() | {"owner": int(user)}
-    profile = await create(db_session=db_session, profile_data=profile_data)
+    profile = await create(
+        db_session=db_session,
+        profile_data=registration_data.dict(exclude={"interests"}),
+        owner=user,
+    )
+    await create_profile_interests(
+        db_session=db_session, interests=registration_data.interests, profile_id=profile.id
+    )
     await create_s3_profile_images_storage(s3_client=s3_client, profile_id=profile.id)
 
     return profile
@@ -66,13 +75,29 @@ async def get_my_profile(
     Raises:
     - HTTPExceptions: **HTTP_303_SEE_OTHER**. If user's profile wos not found
     """
-    profile = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
             detail={"msg": "User profile not found"},
         )
+    await get_profile_interests(db_session=db_session, profile_id=profile.id)
     return profile
+
+
+@profile_router.get("/interests", response_model=list[InterestReadSchema])
+async def get_my_interests(
+    *,
+    user: CurrentUser,
+    db_session: DbSession,
+):
+    profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    if not profile:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail={"msg": "User profile not found"},
+        )
+    return await get_profile_interests(db_session=db_session, profile_id=profile.id)
 
 
 @profile_router.patch("", response_model=UserProfileReadSchema, status_code=HTTP_200_OK)

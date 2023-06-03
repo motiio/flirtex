@@ -2,8 +2,9 @@ from pydantic import parse_obj_as
 from sqlalchemy import select
 
 from src.database.core import DbSession
+from src.profile.models import Interest
 
-from .models import City, Interest
+from .models import City
 from .schemas import CityReadSchema, InterestReadSchema
 
 
@@ -36,7 +37,6 @@ async def get_cities_by_region(*, db_session: DbSession, region_id: int) -> list
 async def get_all_interests(*, db_session: DbSession) -> list[InterestReadSchema]:
     """Returns all regions cities"""
     q = select(Interest)
-    print(q)
     result = (await db_session.execute(q)).scalars().all()
     print(result)
     return parse_obj_as(list[InterestReadSchema], result)

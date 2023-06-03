@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from calendar import timegm
+from datetime import datetime
 
 from jose import jwt
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Sequence, String
@@ -24,8 +25,8 @@ class User(Base, TimeStampMixin):
 
     @property
     def access_token(self, settings: Settings = get_settings()):
-        now = datetime.utcnow()
-        exp = (now + timedelta(seconds=settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS)).timestamp()
+        now = timegm(datetime.utcnow().utctimetuple())
+        exp = now + settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS
         data = {
             "exp": exp,
             "sub": str(self.id),
