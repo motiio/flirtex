@@ -31,7 +31,7 @@ async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchem
     return (await db_session.execute(q)).scalars().first()
 
 
-async def get_active_profile_by_user_id(
+async def get_profile_by_user_id(
     *, db_session: DbSession, user_id: int
 ) -> UserProfileReadSchema:
     """Returns a user's profile"""
@@ -55,7 +55,7 @@ async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileRea
     ...
 
 
-async def delete(*, db_session: DbSession, profile_id: int) -> None:
+async def delete_by_id(*, db_session: DbSession, profile_id: int) -> None:
     """Creates a new profile."""
     q = delete(Profile).where(Profile.id == profile_id)  # noqa
     await db_session.execute(q)
@@ -83,7 +83,7 @@ async def get_profile_interests(
     return (await db_session.execute(q)).scalars().all()
 
 
-async def delete_by_user_id(*, db_session: DbSession, user_id: int) -> None:
+async def delete_profile_by_user_id(*, db_session: DbSession, user_id: int) -> None:
     """Creates a new profile."""
     q = delete(Profile).where(Profile.owner == user_id)  # noqa
     await db_session.execute(q)
@@ -150,17 +150,3 @@ async def save_profile_photos(
             )
         except Exception as e:
             print(f"Произошла ошибка при загрузке файла в s3: {e}")
-
-
-def get_current_profile(profile: Profile | None) -> UserProfileReadSchema:
-    # auth_header: str = request.headers.get("Authorization")
-    print(123123)
-    if not profile:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail={"msg": "User profile not found"},
-        )
-    return UserProfileReadSchema.from_orm(profile)
-
-
-CurrentProfile = Annotated[Profile, Depends(get_current_profile)]

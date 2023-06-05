@@ -30,8 +30,8 @@ class ProfileInterests(Base, TimeStampMixin):
         Sequence("profile_interests_seq", start=1, schema="core"),
         primary_key=True,
     )
-    profile_id = Column(Integer, ForeignKey("core.profile.id"))
-    interest_id = Column(Integer, ForeignKey("core.interest.id"))
+    profile_id = Column(Integer, ForeignKey("core.profile.id", ondelete="CASCADE"))
+    interest_id = Column(Integer, ForeignKey("core.interest.id", ondelete="CASCADE"))
 
 
 class Interest(Base, TimeStampMixin):

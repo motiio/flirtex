@@ -1,3 +1,4 @@
+truncate table alembic_version;
 create schema if not exists core;
 
 create sequence if not exists core.profile_seq start 1;

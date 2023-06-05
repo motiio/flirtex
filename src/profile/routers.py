@@ -14,10 +14,9 @@ from .services import (
     create,
     create_profile_interests,
     create_s3_profile_images_storage,
-    delete_by_user_id,
-    get_active_profile_by_user_id,
+    delete_profile_by_user_id,
+    get_profile_by_user_id,
     get_profile_interests,
-    CurrentProfile,
 )
 
 profile_router = APIRouter()
@@ -43,7 +42,7 @@ async def register_profile(
     Returns:
         The newly created profile.
     """
-    profile = await get_active_profile_by_user_id(db_session=db_session, user_id=user)
+    profile = await get_profile_by_user_id(db_session=db_session, user_id=user)
     if profile:
         return profile
 
@@ -75,7 +74,7 @@ async def get_my_profile(
     Raises:
     - HTTPExceptions: **HTTP_404_NOT_FOUND**. If user's profile wos not found
     """
-    profile: UserProfileReadSchema = await get_active_profile_by_user_id(
+    profile: UserProfileReadSchema = await get_profile_by_user_id(
         db_session=db_session, user_id=int(user)
     )
     if not profile:
@@ -99,7 +98,7 @@ async def get_my_interests(
     Returns:
         list[InterestReadSchema]
     """
-    profile: UserProfileReadSchema = await get_active_profile_by_user_id(
+    profile: UserProfileReadSchema = await get_profile_by_user_id(
         db_session=db_session, user_id=int(user)
     )
     if not profile:
@@ -117,4 +116,4 @@ def update_profile(*, user: CurrentUser, db_session: DbSession):
 
 @profile_router.delete("", status_code=HTTP_200_OK)
 async def delete_profile(*, user: CurrentUser, db_session: DbSession):
-    await delete_by_user_id(user_id=int(user), db_session=db_session)
+    await delete_profile_by_user_id(user_id=user, db_session=db_session)
