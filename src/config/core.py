@@ -7,7 +7,7 @@ from src.constants import Environment
 
 class Settings(BaseSettings):
     APP_VERSION: str = "0.1"
-    ENVIRONMENT: Environment = Environment.TESTING
+    ENVIRONMENT: Environment
     SENTRY_DSN: str | None
     LOG_LEVEL: str = Environment.get_env_log_level
 
@@ -42,3 +42,7 @@ def get_settings():
 
 
 settings = get_settings()
+
+config = {
+    "title": "API",
+}

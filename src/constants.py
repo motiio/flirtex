@@ -11,7 +11,7 @@ DB_NAMING_CONVENTION = {
 
 class Environment(str, Enum):
     LOCAL = "LOCAL"
-    DEV = "STAGING"
+    DEV = "DEV"
     TESTING = "TESTING"
     PRODUCTION = "PRODUCTION"
 

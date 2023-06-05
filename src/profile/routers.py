@@ -17,7 +17,7 @@ from .services import (
     delete_by_user_id,
     get_active_profile_by_user_id,
     get_profile_interests,
-    CurrentProfile
+    CurrentProfile,
 )
 
 profile_router = APIRouter()
@@ -75,7 +75,9 @@ async def get_my_profile(
     Raises:
     - HTTPExceptions: **HTTP_404_NOT_FOUND**. If user's profile wos not found
     """
-    profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    profile: UserProfileReadSchema = await get_active_profile_by_user_id(
+        db_session=db_session, user_id=int(user)
+    )
     if not profile:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
@@ -97,7 +99,9 @@ async def get_my_interests(
     Returns:
         list[InterestReadSchema]
     """
-    profile: UserProfileReadSchema = await get_active_profile_by_user_id(db_session=db_session, user_id=int(user))
+    profile: UserProfileReadSchema = await get_active_profile_by_user_id(
+        db_session=db_session, user_id=int(user)
+    )
     if not profile:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,

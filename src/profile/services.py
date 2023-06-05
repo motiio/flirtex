@@ -32,7 +32,7 @@ async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchem
 
 
 async def get_active_profile_by_user_id(
-        *, db_session: DbSession, user_id: int
+    *, db_session: DbSession, user_id: int
 ) -> UserProfileReadSchema:
     """Returns a user's profile"""
     q = select(Profile).where(Profile.owner == user_id, Profile.is_active == True)  # noqa
@@ -41,7 +41,7 @@ async def get_active_profile_by_user_id(
 
 
 async def create(
-        *, db_session: DbSession, profile_data: dict, owner: int
+    *, db_session: DbSession, profile_data: dict, owner: int
 ) -> UserProfileReadSchema | None:
     """Creates a new profile."""
     q = insert(Profile).values(**profile_data, owner=owner, is_active=True).returning(Profile)
@@ -77,7 +77,7 @@ async def create_profile_interests(*, db_session: DbSession, profile_id: int, in
 
 
 async def get_profile_interests(
-        *, db_session: DbSession, profile_id: int
+    *, db_session: DbSession, profile_id: int
 ) -> list[InterestReadSchema]:
     q = select(Interest).join(Profile.interests).where(Profile.id == profile_id)  # noqa
     return (await db_session.execute(q)).scalars().all()
@@ -137,7 +137,7 @@ async def check_profile_photos(*, profile_photos: list[UploadFile]) -> tuple[lis
 
 
 async def save_profile_photos(
-        *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
+    *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
 ):
     file_path = f"{profile_id}/profile/images/queue"
     for idx, photo in enumerate(checked_photos):

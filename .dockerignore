@@ -12,3 +12,4 @@ docker
 .env
 .gitignore
 .space.kts
+src.config.ssl/*.pem

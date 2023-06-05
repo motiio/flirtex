@@ -14,7 +14,7 @@ from src.common.routers import common_router
 from src.config.core import settings
 from src.profile.routers import profile_router
 from src.s3.core import S3Client, s3_session
-
+from src.config.core import config
 from .database.core import async_session
 
 sentry_sdk.init(
@@ -25,10 +25,7 @@ sentry_sdk.init(
     ],
 )
 
-api = FastAPI(
-    title="API",
-    description="",
-)
+api = FastAPI(**config)
 
 api.include_router(auth_router, prefix="/auth", tags=["Auth"])
 api.include_router(profile_router, prefix="/profile", tags=["Profile"])
