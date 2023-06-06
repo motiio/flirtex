@@ -32,6 +32,8 @@ class ProfileInterests(Base, TimeStampMixin):
     )
     profile_id = Column(Integer, ForeignKey("core.profile.id", ondelete="CASCADE"))
     interest_id = Column(Integer, ForeignKey("core.interest.id", ondelete="CASCADE"))
+    interest = relationship("Interest", backref="interest_profiles")
+    profile = relationship("Profile", backref="profile_interests")
 
 
 class Interest(Base, TimeStampMixin):
@@ -44,9 +46,7 @@ class Interest(Base, TimeStampMixin):
     )
     name = Column(String(32), unique=True)
     description = Column(Text)
-    profiles = relationship(
-        "Profile", secondary="core.profile_interests", back_populates="interests"
-    )
+    profiles = relationship("Profile", secondary="core.profile_interests", backref="profile")
 
 
 class Profile(Base, TimeStampMixin):
@@ -63,14 +63,12 @@ class Profile(Base, TimeStampMixin):
     gender = Column(Enum(GenderEnum, schema="core"))
     looking_gender = Column(Enum(GenderEnum, schema="core"))
     is_active = Column(Boolean, nullable=False)
-    interests = relationship(
-        "Interest",
-        secondary="core.profile_interests",
-        back_populates="profiles",
-    )
+    interests = relationship("Interest", secondary="core.profile_interests", backref="interests")
 
     def __repr__(self):
-        return f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender}]"
+        return (
+            f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
+        )
 
 
 class ProfilePhoto(Base, TimeStampMixin):

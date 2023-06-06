@@ -11,10 +11,10 @@ from starlette.requests import Request
 
 from src.auth.routers import auth_router
 from src.common.routers import common_router
-from src.config.core import settings
+from src.config.core import config, settings
 from src.profile.routers import profile_router
 from src.s3.core import S3Client, s3_session
-from src.config.core import config
+
 from .database.core import async_session
 
 sentry_sdk.init(

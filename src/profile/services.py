@@ -3,6 +3,7 @@ import io
 
 from fastapi import UploadFile
 from sqlalchemy import delete, insert, select
+from sqlalchemy.orm import selectinload
 
 from src.common.schemas import InterestReadSchema
 from src.config.core import settings
@@ -12,17 +13,6 @@ from src.s3.core import S3Client
 
 from .exception import ImageSizeTooBig, InvalidImageType
 from .schemas import UserProfileReadSchema
-from fastapi import APIRouter, HTTPException
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_404_NOT_FOUND,
-)
-from typing import Annotated
-
-import orjson
-from aiogram.utils.web_app import safe_parse_webapp_init_data
-from fastapi import Depends, HTTPException
 
 
 async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
@@ -31,11 +21,13 @@ async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchem
     return (await db_session.execute(q)).scalars().first()
 
 
-async def get_profile_by_user_id(
-    *, db_session: DbSession, user_id: int
-) -> UserProfileReadSchema:
+async def get_profile_by_user_id(*, db_session: DbSession, user_id: int) -> UserProfileReadSchema:
     """Returns a user's profile"""
-    q = select(Profile).where(Profile.owner == user_id, Profile.is_active == True)  # noqa
+    q = (
+        select(Profile)
+        .where(Profile.owner == user_id, Profile.is_active == True) # noqa
+        .options(selectinload(Profile.interests))
+    )
     result = (await db_session.execute(q)).scalars().first()
     return result
 

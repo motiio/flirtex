@@ -99,7 +99,7 @@ async def get_my_interests(
         list[InterestReadSchema]
     """
     profile: UserProfileReadSchema = await get_profile_by_user_id(
-        db_session=db_session, user_id=int(user)
+        db_session=db_session, user_id=user
     )
     if not profile:
         raise HTTPException(

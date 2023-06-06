@@ -10,7 +10,6 @@ from .models import GenderEnum
 
 class BaseUserProfileSchema(ORJSONSchema):
     owner: int
-    owner: int
     name: str
     birthdate: date
     city: int
@@ -33,6 +32,7 @@ class UserProfileReadSchema(ORJSONSchema):
     birthdate: date
     looking_gender: GenderEnum | int
     gender: GenderEnum | int
+    interests: list[InterestReadSchema]
 
     class Config:
         orm_mode = True
