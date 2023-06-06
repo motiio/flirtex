@@ -32,8 +32,12 @@ class ProfileInterests(Base, TimeStampMixin):
     )
     profile_id = Column(Integer, ForeignKey("core.profile.id", ondelete="CASCADE"))
     interest_id = Column(Integer, ForeignKey("core.interest.id", ondelete="CASCADE"))
-    interest = relationship("Interest", backref="interest_profiles")
-    profile = relationship("Profile", backref="profile_interests")
+    interest = relationship(
+        "Interest", back_populates="interest_profiles", overlaps="interest_profiles_interest"
+    )
+    profile = relationship(
+        "Profile", back_populates="profile_interests", overlaps="profile_interests_profile"
+    )
 
 
 class Interest(Base, TimeStampMixin):
@@ -46,7 +50,17 @@ class Interest(Base, TimeStampMixin):
     )
     name = Column(String(32), unique=True)
     description = Column(Text)
-    profiles = relationship("Profile", secondary="core.profile_interests", backref="profile")
+    profiles = relationship(
+        "Profile",
+        secondary="core.profile_interests",
+        back_populates="interests",
+        overlaps="interests,interest_profiles",
+    )
+    interest_profiles = relationship(
+        "ProfileInterests",
+        back_populates="interest",
+        overlaps="interest_profiles_interest",
+    )
 
 
 class Profile(Base, TimeStampMixin):
@@ -59,11 +73,20 @@ class Profile(Base, TimeStampMixin):
     owner = Column(Integer, ForeignKey("core.user.id"))
     name = Column(String(32))
     birthdate = Column(Date)
-    # city = Column(Integer, ForeignKey("core.city.id"), comment="Profile settlement")
     gender = Column(Enum(GenderEnum, schema="core"))
     looking_gender = Column(Enum(GenderEnum, schema="core"))
     is_active = Column(Boolean, nullable=False)
-    interests = relationship("Interest", secondary="core.profile_interests", backref="interests")
+    interests = relationship(
+        "Interest",
+        secondary="core.profile_interests",
+        back_populates="profiles",
+        overlaps="interests,interest_profiles",
+    )
+    profile_interests = relationship(
+        "ProfileInterests",
+        back_populates="profile",
+        overlaps="profile,profile_interests",
+    )
 
     def __repr__(self):
         return (

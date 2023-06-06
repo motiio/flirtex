@@ -59,7 +59,6 @@ async def get_or_create_user_by_init_data(
         )  # noqa
         .where(User.tg_id == user_data.tg_id)
     )
-    print(q)
     user, profile = (await db_session.execute(q)).first() or (None, None)
 
     if user is None:
@@ -71,9 +70,7 @@ async def get_or_create_user_by_init_data(
 def _check_token_signature(*, token: str):
     try:
         data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-        print(token)
     except (JWKError, JWTError) as e:
-        print(e)
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
         )

@@ -38,5 +38,4 @@ async def get_all_interests(*, db_session: DbSession) -> list[InterestReadSchema
     """Returns all regions cities"""
     q = select(Interest)
     result = (await db_session.execute(q)).scalars().all()
-    print(result)
     return parse_obj_as(list[InterestReadSchema], result)

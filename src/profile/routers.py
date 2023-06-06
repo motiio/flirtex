@@ -16,7 +16,6 @@ from .services import (
     create_s3_profile_images_storage,
     delete_profile_by_user_id,
     get_profile_by_user_id,
-    get_profile_interests,
 )
 
 profile_router = APIRouter()
