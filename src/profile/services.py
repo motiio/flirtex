@@ -68,13 +68,6 @@ async def create_profile_interests(*, db_session: DbSession, profile_id: int, in
     await db_session.commit()
 
 
-async def get_profile_interests(
-    *, db_session: DbSession, profile_id: int
-) -> list[InterestReadSchema]:
-    q = select(Interest).join(Profile.interests).where(Profile.id == profile_id)  # noqa
-    return (await db_session.execute(q)).scalars().all()
-
-
 async def delete_profile_by_user_id(*, db_session: DbSession, user_id: int) -> None:
     """Creates a new profile."""
     q = delete(Profile).where(Profile.owner == user_id)  # noqa

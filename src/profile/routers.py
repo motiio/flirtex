@@ -82,7 +82,6 @@ async def get_my_profile(
             status_code=HTTP_404_NOT_FOUND,
             detail={"msg": "User profile not found"},
         )
-    await get_profile_interests(db_session=db_session, profile_id=profile.id)
     return profile
 
 
