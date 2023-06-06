@@ -25,7 +25,7 @@ async def get_profile_by_user_id(*, db_session: DbSession, user_id: int) -> User
     """Returns a user's profile"""
     q = (
         select(Profile)
-        .where(Profile.owner == user_id, Profile.is_active == True) # noqa
+        .where(Profile.owner == user_id, Profile.is_active == True)  # noqa
         .options(selectinload(Profile.interests))
     )
     result = (await db_session.execute(q)).scalars().first()

@@ -86,29 +86,6 @@ async def get_my_profile(
     return profile
 
 
-@profile_router.get("/interests", response_model=list[InterestReadSchema])
-async def get_my_interests(
-    *,
-    user: CurrentUser,
-    db_session: DbSession,
-):
-    """
-    Get current profile interests.
-
-    Returns:
-        list[InterestReadSchema]
-    """
-    profile: UserProfileReadSchema = await get_profile_by_user_id(
-        db_session=db_session, user_id=user
-    )
-    if not profile:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail={"msg": "User profile not found"},
-        )
-    return await get_profile_interests(db_session=db_session, profile_id=profile.id)
-
-
 @profile_router.patch("", response_model=UserProfileReadSchema, status_code=HTTP_200_OK)
 def update_profile(*, user: CurrentUser, db_session: DbSession):
     ...
