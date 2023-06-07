@@ -3,10 +3,9 @@ from datetime import datetime
 
 from jose import jwt
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Sequence, String
-
+from sqlalchemy.orm import Mapped,relationship
 from src.config.core import Settings, get_settings
 from src.config.models import Base, TimeStampMixin
-
 
 class User(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
@@ -22,6 +21,8 @@ class User(Base, TimeStampMixin):
     tg_last_name = Column(String)
     tg_is_premium = Column(Boolean)
     tg_language_code = Column(String)
+
+    profile: Mapped["Profile"] = relationship(back_populates="owner")
 
     @property
     def access_token(self, settings: Settings = get_settings()):

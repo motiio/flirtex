@@ -11,10 +11,10 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from src.config.models import Base, TimeStampMixin
-
+from src.auth.models import User
 
 class GenderEnum(enum.Enum):
     __table_args__ = {"schema": "core"}
@@ -53,7 +53,9 @@ class Profile(Base, TimeStampMixin):
         Sequence("profile_seq", start=1, schema="core"),
         primary_key=True,
     )
-    owner = Column(Integer, ForeignKey("core.user.id"))
+    # owner = Column(Integer, ForeignKey("core.user.id"))
+    owner_id: Mapped[int] = mapped_column(ForeignKey("core.user.id"))
+    owner: Mapped["User"] = relationship(back_populates="profile")
     name = Column(String(32))
     birthdate = Column(Date)
     gender = Column(Enum(GenderEnum, schema="core"))
