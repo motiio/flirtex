@@ -14,8 +14,8 @@ from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 from src.config.core import settings
 from src.profile.models import Profile
 
-from .models import DeviceSession, User
-from .schemas import RefreshTokenSchema, UserRead, UserSchema
+from src.auth.models import DeviceSession, User
+from src.auth.schemas import RefreshTokenSchema, UserRead, UserSchema
 
 InvalidInitData = HTTPException(
     status_code=HTTP_400_BAD_REQUEST, detail=[{"msg": "Invalid init data"}]
@@ -55,8 +55,9 @@ async def get_or_create_user_by_init_data(
     q = (
         select(User, Profile)
         .join(
-            Profile, and_(User.id == Profile.owner, Profile.is_active == True), isouter=True  # noqa
-        )  # noqa
+            Profile, and_(User.id == Profile.owner, Profile.is_active == True), # noqa
+            isouter=True
+        )
         .where(User.tg_id == user_data.tg_id)
     )
     user, profile = (await db_session.execute(q)).first() or (None, None)
@@ -81,8 +82,7 @@ def _check_token_signature(*, token: str):
 security = HTTPBearer()
 
 
-def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)) -> None | str:
-    # auth_header: str = request.headers.get("Authorization")
+def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)) -> int:
     try:
         token = auth.credentials
         _, data = _check_token_signature(token=token)

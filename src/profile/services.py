@@ -12,7 +12,7 @@ from src.profile.models import Interest, Profile, ProfileInterests
 from src.s3.core import S3Client
 
 from .exception import ImageSizeTooBig, InvalidImageType
-from .schemas import UserProfileReadSchema
+from .schemas import UserProfileReadSchema, UserProfileCreateRequest
 
 
 async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
@@ -28,18 +28,22 @@ async def get_profile_by_user_id(*, db_session: DbSession, user_id: int) -> User
         .where(Profile.owner == user_id, Profile.is_active == True)  # noqa
         .options(selectinload(Profile.interests))
     )
+    print(q)
     result = (await db_session.execute(q)).scalars().first()
     return result
 
 
 async def create(
-    *, db_session: DbSession, profile_data: dict, owner: int
-) -> UserProfileReadSchema | None:
+    *, db_session: DbSession, profile_data: UserProfileCreateRequest, owner: int
+) -> Profile:
     """Creates a new profile."""
-    q = insert(Profile).values(**profile_data, owner=owner, is_active=True).returning(Profile)
-    result = (await db_session.execute(q)).scalars().first()
+    profile = Profile(**profile_data.dict(exclude={"interests"}))
+    interest_query = select(Interest).where(Interest.id.in_(profile_data.interests))
+    interests = [interest for interest in await db_session.scalars(interest_query)]
+    profile.interests = interests
+    db_session.add(profile)
     await db_session.commit()
-    return result
+    return profile
 
 
 async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
@@ -54,23 +58,9 @@ async def delete_by_id(*, db_session: DbSession, profile_id: int) -> None:
     await db_session.commit()
 
 
-async def create_profile_interests(*, db_session: DbSession, profile_id: int, interests: list[int]):
-    q = select(Interest.id).where(Interest.id.in_(interests))
-    existing_interests = (await db_session.execute(q)).scalars().all()
-
-    await db_session.execute(
-        insert(ProfileInterests),
-        [
-            {"profile_id": profile_id, "interest_id": int(interest_id)}
-            for interest_id in existing_interests
-        ],
-    )
-    await db_session.commit()
-
-
 async def delete_profile_by_user_id(*, db_session: DbSession, user_id: int) -> None:
     """Creates a new profile."""
-    q = delete(Profile).where(Profile.owner == user_id)  # noqa
+    q = delete(Profile).where(Profile.owner == user_id)
     await db_session.execute(q)
     await db_session.commit()
 

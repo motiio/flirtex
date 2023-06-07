@@ -32,7 +32,7 @@ class UserProfileReadSchema(ORJSONSchema):
     birthdate: date
     looking_gender: GenderEnum | int
     gender: GenderEnum | int
-    interests: list[InterestReadSchema]
+    interests: list[InterestReadSchema] = None
 
     class Config:
         orm_mode = True

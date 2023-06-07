@@ -12,7 +12,6 @@ from src.s3.core import S3Client
 from .schemas import InterestReadSchema, UserProfileCreateRequest, UserProfileReadSchema
 from .services import (
     create,
-    create_profile_interests,
     create_s3_profile_images_storage,
     delete_profile_by_user_id,
     get_profile_by_user_id,
@@ -47,12 +46,12 @@ async def register_profile(
 
     profile = await create(
         db_session=db_session,
-        profile_data=registration_data.dict(exclude={"interests"}),
+        profile_data=registration_data,
         owner=user,
     )
-    await create_profile_interests(
-        db_session=db_session, interests=registration_data.interests, profile_id=profile.id
-    )
+    # await create_profile_interests(
+    #     db_session=db_session, interests=registration_data.interests, profile_id=profile.id
+    # )
     await create_s3_profile_images_storage(s3_client=s3_client, profile_id=profile.id)
 
     return profile
