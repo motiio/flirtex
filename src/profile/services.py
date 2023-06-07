@@ -25,7 +25,7 @@ async def get_profile_by_user_id(*, db_session: DbSession, user_id: int) -> User
     """Returns a user's profile"""
     q = (
         select(Profile)
-        .where(Profile.owner == user_id, Profile.is_active == True)  # noqa
+        .where(Profile.owner == user_id)  # noqa
         .options(selectinload(Profile.interests))
     )
     print(q)
@@ -37,7 +37,8 @@ async def create(
     *, db_session: DbSession, profile_data: UserProfileCreateRequest, owner: int
 ) -> Profile:
     """Creates a new profile."""
-    profile = Profile(**profile_data.dict(exclude={"interests"}))
+    profile = Profile(**profile_data.dict(exclude={"interests"}), owner=owner)
+    print(profile)
     interest_query = select(Interest).where(Interest.id.in_(profile_data.interests))
     interests = [interest for interest in await db_session.scalars(interest_query)]
     profile.interests = interests
