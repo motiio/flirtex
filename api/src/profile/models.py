@@ -16,6 +16,7 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from src.config.models import Base, TimeStampMixin
 from src.auth.models import User
 
+
 class GenderEnum(enum.Enum):
     __table_args__ = {"schema": "core"}
     male = 1

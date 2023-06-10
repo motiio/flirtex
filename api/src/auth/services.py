@@ -54,10 +54,7 @@ async def get_or_create_user_by_init_data(
 
     q = (
         select(User, Profile)
-        .join(
-            Profile, and_(User.id == Profile.owner_id), # noqa
-            isouter=True
-        )
+        .join(Profile, and_(User.id == Profile.owner_id), isouter=True)  # noqa
         .where(User.tg_id == user_data.tg_id)
     )
     user, profile = (await db_session.execute(q)).first() or (None, None)
