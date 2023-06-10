@@ -30,7 +30,7 @@ job("Run on git push") {
                     docker login connecta.registry.jetbrains.space \
                            --username ${'$'}HUB_USER \
                            --password "${'$'}HUB_TOKEN" \
-                     && cd api && git pull origin test \
+                     && cd api/api && git pull origin test \
                      && sh deploy_api.sh"
             """
         }
