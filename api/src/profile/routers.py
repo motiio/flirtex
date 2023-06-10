@@ -5,11 +5,11 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 
-from api.src.auth.services import CurrentUser
-from api.src.database.core import DbSession
-from api.src.s3.core import S3Client
+from src.auth.services import CurrentUser
+from src.database.core import DbSession
+from src.s3.core import S3Client
 
-from .schemas import InterestReadSchema, UserProfileCreateRequest, UserProfileReadSchema
+from .schemas import UserProfileCreateRequest, UserProfileReadSchema
 from .services import (
     create,
     create_s3_profile_images_storage,

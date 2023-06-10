@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.requests import Request
 
-from api.src.config.core import settings
+from src.config.core import settings
 
 async_engine = create_async_engine(
     settings.DATABASE_URI,

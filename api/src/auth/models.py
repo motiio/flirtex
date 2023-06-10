@@ -4,8 +4,9 @@ from datetime import datetime
 from jose import jwt
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Sequence, String
 from sqlalchemy.orm import Mapped, relationship
-from api.src.config.core import Settings, get_settings
-from api.src.config.models import Base, TimeStampMixin
+
+from src.config.core import Settings, get_settings
+from src.config.models import Base, TimeStampMixin
 
 
 class User(Base, TimeStampMixin):

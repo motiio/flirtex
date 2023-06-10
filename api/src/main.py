@@ -7,20 +7,19 @@ from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.orm import scoped_session
-
-from api.src.auth.routers import auth_router
-from api.src.common.routers import common_router
-from api.src.config.core import config, settings
-from api.src.profile.routers import profile_router
-from api.src.s3.core import S3Client, s3_session
-
-from .database.core import async_session
 from starlette import status
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
 
+from src.auth.routers import auth_router
+from src.common.routers import common_router
+from src.config.core import config, settings
+from src.profile.routers import profile_router
+from src.s3.core import S3Client, s3_session
+
+from .database.core import async_session
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,

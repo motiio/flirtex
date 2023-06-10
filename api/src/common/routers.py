@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from api.src.auth.services import CurrentUser
-from api.src.database.core import DbSession
+from src.auth.services import CurrentUser
+from src.database.core import DbSession
 
 from .schemas import InterestReadSchema
 from .services import get_all_interests

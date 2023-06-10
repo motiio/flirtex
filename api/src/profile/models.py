@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import enum
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -11,10 +13,10 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from api.src.config.models import Base, TimeStampMixin
-from api.src.auth.models import User
+from src.auth.models import User
+from src.config.models import Base, TimeStampMixin
 
 
 class GenderEnum(enum.Enum):

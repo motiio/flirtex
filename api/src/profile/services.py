@@ -5,13 +5,13 @@ from fastapi import UploadFile
 from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
-from api.src.config.core import settings
-from api.src.database.core import DbSession
-from api.src.profile.models import Interest, Profile
-from api.src.s3.core import S3Client
+from src.config.core import settings
+from src.database.core import DbSession
+from src.profile.models import Interest, Profile
+from src.s3.core import S3Client
 
 from .exception import ImageSizeTooBig, InvalidImageType
-from .schemas import UserProfileReadSchema, UserProfileCreateRequest
+from .schemas import UserProfileCreateRequest, UserProfileReadSchema
 
 
 async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
@@ -38,7 +38,7 @@ async def create(
     """Creates a new profile."""
     profile: Profile = Profile(**profile_data.dict(exclude={"interests"}), owner_id=owner)
     interest_query = select(Interest).where(Interest.id.in_(profile_data.interests))
-    interests = [interest for interest in await db_session.scalars(interest_query)]
+    interests = list(await db_session.scalars(interest_query))
     profile.interests = interests
     db_session.add(profile)
     await db_session.commit()

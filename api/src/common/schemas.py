@@ -1,4 +1,4 @@
-from api.src.config.schemas import ORJSONSchema
+from src.config.schemas import ORJSONSchema
 
 
 class CityReadSchema(ORJSONSchema):

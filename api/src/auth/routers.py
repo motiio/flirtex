@@ -3,11 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Header, HTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from api.src.auth.schemas import (
+from src.auth.schemas import (
     UserLoginRequest,
     UserLoginResponse,
 )
-from api.src.database.core import DbSession
+from src.database.core import DbSession
 
 from .models import User
 from .services import (

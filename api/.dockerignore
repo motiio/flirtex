@@ -9,7 +9,7 @@ LICENSE
 .mypy_cache
 .ruff_cache
 docker
-.env
+src/.env
 .gitignore
 .space.kts
 src.config.ssl/*.pem

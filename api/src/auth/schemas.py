@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import Field
 
-from api.src.config.schemas import ORJSONSchema
+from src.config.schemas import ORJSONSchema
 
 
 class UserLoginRequest(ORJSONSchema):
