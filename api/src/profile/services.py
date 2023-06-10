@@ -2,14 +2,13 @@ import imghdr
 import io
 
 from fastapi import UploadFile
-from sqlalchemy import delete, insert, select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
-from src.common.schemas import InterestReadSchema
-from src.config.core import settings
-from src.database.core import DbSession
-from src.profile.models import Interest, Profile, ProfileInterests
-from src.s3.core import S3Client
+from api.src.config.core import settings
+from api.src.database.core import DbSession
+from api.src.profile.models import Interest, Profile
+from api.src.s3.core import S3Client
 
 from .exception import ImageSizeTooBig, InvalidImageType
 from .schemas import UserProfileReadSchema, UserProfileCreateRequest
@@ -37,8 +36,7 @@ async def create(
     *, db_session: DbSession, profile_data: UserProfileCreateRequest, owner: int
 ) -> Profile:
     """Creates a new profile."""
-    profile = Profile(**profile_data.dict(exclude={"interests"}), owner_id=owner)
-    print(profile)
+    profile: Profile = Profile(**profile_data.dict(exclude={"interests"}), owner_id=owner)
     interest_query = select(Interest).where(Interest.id.in_(profile_data.interests))
     interests = [interest for interest in await db_session.scalars(interest_query)]
     profile.interests = interests

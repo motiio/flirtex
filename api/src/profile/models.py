@@ -13,8 +13,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from src.config.models import Base, TimeStampMixin
-from src.auth.models import User
+from api.src.config.models import Base, TimeStampMixin
+from api.src.auth.models import User
 
 
 class GenderEnum(enum.Enum):

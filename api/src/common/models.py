@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, Sequence, String
 
-from src.config.models import Base, TimeStampMixin
+from api.src.config.models import Base, TimeStampMixin
 
 
 class Region(Base, TimeStampMixin):

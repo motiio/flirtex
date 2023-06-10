@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from pydantic import BaseSettings, PostgresDsn
 
-from src.constants import Environment
+from api.src.constants import Environment
 
 
 class Settings(BaseSettings):
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     MAX_PROFILE_PHOTO_SIZE_B: int
 
     class Config:
-        env_file = ".env"
+        env_file = "api/.env"
         env_file_encoding = "utf-8"
 
 

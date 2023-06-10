@@ -1,8 +1,8 @@
 from pydantic import parse_obj_as
 from sqlalchemy import select
 
-from src.database.core import DbSession
-from src.profile.models import Interest
+from api.src.database.core import DbSession
+from api.src.profile.models import Interest
 
 from .models import City
 from .schemas import CityReadSchema, InterestReadSchema

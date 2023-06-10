@@ -11,11 +11,11 @@ from jose.exceptions import JWKError
 from sqlalchemy import and_, insert, select, update
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
-from src.config.core import settings
-from src.profile.models import Profile
+from api.src.config.core import settings
+from api.src.profile.models import Profile
 
-from src.auth.models import DeviceSession, User
-from src.auth.schemas import RefreshTokenSchema, UserRead, UserSchema
+from api.src.auth.models import DeviceSession, User
+from api.src.auth.schemas import RefreshTokenSchema, UserRead, UserSchema
 
 InvalidInitData = HTTPException(
     status_code=HTTP_400_BAD_REQUEST, detail=[{"msg": "Invalid init data"}]

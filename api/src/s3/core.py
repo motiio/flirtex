@@ -5,7 +5,7 @@ import aiohttp
 from fastapi import Depends
 from starlette.requests import Request
 
-from src.config.core import settings
+from api.src.config.core import settings
 
 s3_session = aioboto3.Session(
     aws_access_key_id=settings.S3_ACCESS_KEY_ID,

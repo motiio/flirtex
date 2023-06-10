@@ -2,8 +2,8 @@ from datetime import date
 
 from pydantic import Field
 
-from src.common.schemas import InterestReadSchema
-from src.config.schemas import ORJSONSchema
+from api.src.common.schemas import InterestReadSchema
+from api.src.config.schemas import ORJSONSchema
 
 from .models import GenderEnum
 
