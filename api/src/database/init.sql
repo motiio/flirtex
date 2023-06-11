@@ -7,6 +7,7 @@ create sequence if not exists core.user_seq start 1;
 create sequence if not exists core.device_session_seq start 1;
 create sequence if not exists core.profile_interests_seq start 1;
 create sequence if not exists core.interest_seq start 1;
+create sequence if not exists core.profile_photo_seq start 1;
 
 
 INSERT INTO core.interest (name)

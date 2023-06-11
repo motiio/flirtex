@@ -67,9 +67,7 @@ class Profile(Base, TimeStampMixin):
     interests: Mapped[list[Interest]] = relationship(secondary="core.profile_interests")
 
     def __repr__(self):
-        return (
-            f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
-        )
+        return f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
 
 
 class ProfilePhoto(Base, TimeStampMixin):
@@ -79,7 +77,6 @@ class ProfilePhoto(Base, TimeStampMixin):
         Sequence("profile_photo_seq", start=1, schema="core"),
         primary_key=True,
     )
-    profile = Column(Integer, ForeignKey(Profile.id))
-    s3_path = Column(String(128))
-    display_order = Column(Integer)
-    is_valid = Column(Boolean)
+    profile = Column(Integer, ForeignKey(Profile.id, ondelete="CASCADE"))
+    displaying_order = Column(Integer)
+    is_valid = Column(Boolean, default=False)

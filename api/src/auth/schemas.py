@@ -54,7 +54,8 @@ class RefreshTokenSchema(JWTTokenSchema):
 
 class UserRead(ORJSONSchema):
     def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
+        super().__init__(*args, **kwargs)
         self.tg_id = None
 
     id: int
+    access_token: str

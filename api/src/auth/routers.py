@@ -1,3 +1,4 @@
+from calendar import week
 from typing import Annotated
 
 from fastapi import APIRouter, Header, HTTPException
@@ -8,6 +9,7 @@ from src.auth.schemas import (
     UserLoginResponse,
 )
 from src.database.core import DbSession
+from src.profile.models import Profile
 
 from .models import User
 from .services import (
@@ -35,11 +37,13 @@ async def login_user(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    user, active_profile = await get_or_create_user_by_init_data(
+    user: User = await get_or_create_user_by_init_data(
         db_session=db_session, init_data=login_data.init_data
     )
     await expire_all_refresh_tokens_by_user_agent(
-        db_session=db_session, user_id=user.id, user_agent=user_agent
+        db_session=db_session,
+        user_id=user.id,
+        user_agent=user_agent,
     )
 
     new_refresh_token = await create_refresh_token(
@@ -63,7 +67,8 @@ async def refresh_tokens(
     )
     if not valid_refresh_token or not valid_token_date:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail=[{"msg": "Invalid token signature"}]
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail=[{"msg": "Invalid token signature"}],
         )
     user = User(id=int(valid_token_date.get("sub")))
     await expire_refresh_token(db_session=db_session, refresh_token_value=refresh_token)

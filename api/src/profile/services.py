@@ -1,42 +1,52 @@
-import imghdr
-import io
-
-from fastapi import UploadFile
-from sqlalchemy import delete, select
+from io import BytesIO
+from sqlalchemy import delete, select, insert
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql import func
 
-from src.config.core import settings
 from src.database.core import DbSession
-from src.profile.models import Interest, Profile
-from src.s3.core import S3Client
+from src.profile.models import Interest, Profile, ProfilePhoto
+from PIL import Image, UnidentifiedImageError
 
-from .exception import ImageSizeTooBig, InvalidImageType
 from .schemas import UserProfileCreateRequest, UserProfileReadSchema
+from src.s3.core import s3_session
+from src.config.core import settings
 
 
-async def get(*, db_session: DbSession, profile_id: int) -> UserProfileReadSchema:
+async def get(
+    *,
+    db_session: DbSession,
+    profile_id: int,
+) -> UserProfileReadSchema:
     """Returns a user's profile"""
     q = select(Profile).where(Profile.id == profile_id)  # noqa
     return (await db_session.execute(q)).scalars().first()
 
 
-async def get_profile_by_user_id(*, db_session: DbSession, user_id: int) -> UserProfileReadSchema:
+async def get_profile_by_user_id(
+    *,
+    db_session: DbSession,
+    user_id: int,
+) -> Profile:
     """Returns a user's profile"""
     q = (
         select(Profile)
         .where(Profile.owner_id == user_id)  # noqa
         .options(selectinload(Profile.interests))
     )
-    print(q)
     result = (await db_session.execute(q)).scalars().first()
     return result
 
 
 async def create(
-    *, db_session: DbSession, profile_data: UserProfileCreateRequest, owner: int
+    *,
+    db_session: DbSession,
+    profile_data: UserProfileCreateRequest,
+    owner: int,
 ) -> Profile:
     """Creates a new profile."""
-    profile: Profile = Profile(**profile_data.dict(exclude={"interests"}), owner_id=owner)
+    profile: Profile = Profile(
+        **profile_data.dict(exclude={"interests"}), owner_id=owner
+    )
     interest_query = select(Interest).where(Interest.id.in_(profile_data.interests))
     interests = list(await db_session.scalars(interest_query))
     profile.interests = interests
@@ -45,82 +55,129 @@ async def create(
     return profile
 
 
-async def update(*, db_session: DbSession, profile_data: dict) -> UserProfileReadSchema:
-    """Update a new profile."""
-    ...
-
-
-async def delete_by_id(*, db_session: DbSession, profile_id: int) -> None:
+async def delete_by_id(
+    *,
+    db_session: DbSession,
+    profile_id: int,
+) -> Profile:
     """Creates a new profile."""
-    q = delete(Profile).where(Profile.id == profile_id)  # noqa
-    await db_session.execute(q)
+    q = delete(Profile).where(Profile.id == profile_id).returning(Profile)  # noqa
+    deleted_profile = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
+    return deleted_profile
 
 
-async def delete_profile_by_user_id(*, db_session: DbSession, user_id: int) -> None:
+async def delete_profile_by_user_id(
+    *,
+    db_session: DbSession,
+    user_id: int,
+) -> Profile:
     """Creates a new profile."""
-    q = delete(Profile).where(Profile.owner_id == user_id)
-    await db_session.execute(q)
+    q = delete(Profile).where(Profile.owner_id == user_id).returning(Profile)
+    deleted_profile = (await db_session.execute(q)).scalars().first()
     await db_session.commit()
+    return deleted_profile
 
 
-async def create_s3_profile_images_storage(*, profile_id: int, s3_client: S3Client):
-    folders = (
-        "queue/",  # images that ready to be processed by the neural network
-        "approved/",  # approved images that don't contain any objectionable content
-        "rejected/",
+async def get_profil_photos_count(
+    *,
+    db_session: DbSession,
+    user_id: int,
+) -> int:
+    q = (
+        select(func.count())
+        .select_from(ProfilePhoto)
+        .join(Profile)
+        .where(Profile.owner_id == user_id)
     )
-    for folder in folders:
-        await s3_client.put_object(
-            Bucket=settings.S3_PROFILES_BUCKET_NAME, Key=f"{profile_id}/profile/images/{folder}"
+    return (await db_session.execute(q)).scalars().first() or 0
+
+
+async def add_profile_photo(
+    *, db_session: DbSession, profile_id: int, file_idx: int
+) -> ProfilePhoto:
+    q = (
+        insert(ProfilePhoto)
+        .values({"profile": profile_id, "displaying_order": file_idx})
+        .returning(ProfilePhoto)
+    )
+    result = (await db_session.execute(q)).scalars().first()
+    await db_session.commit()
+    return result
+
+
+async def upload_photo_to_s3(
+    *,
+    user_id: int,
+    db_session: DbSession,
+    file_content: bytes,
+    file_idx: int,
+) -> ProfilePhoto:
+    profile: Profile = await get_profile_by_user_id(
+        db_session=db_session,
+        user_id=user_id,
+    )
+    profile_photo = await add_profile_photo(
+        db_session=db_session,
+        profile_id=profile.id,
+        file_idx=file_idx,
+    )
+
+    async with s3_session.resource(
+        "s3", endpoint_url="https://storage.yandexcloud.net"
+    ) as s3:
+        bucket = await s3.Bucket(settings.S3_PROFILES_BUCKET_NAME)
+        await bucket.upload_fileobj(
+            Fileobj=BytesIO(file_content),
+            Key=f"{profile.id}/photos/queue/{profile_photo.id}",
         )
+    return profile_photo
 
 
-async def _check_is_image(file: bytes) -> None | bytes:
-    ALLOWED_IMAGE_TYPES = ["jpeg", "png", "gif"]
-    file_type = imghdr.what(None, h=file)
-    if not file_type or file_type not in ALLOWED_IMAGE_TYPES:
-        raise InvalidImageType(
-            msg=f"Invalid image type. Type must be {ALLOWED_IMAGE_TYPES}", loc="profile_photos"
-        )
-    return file
+async def is_image(
+    *,
+    file_content: bytes,
+) -> bool:
+    try:
+        # check file is image
+        image = Image.open(BytesIO(file_content))
+        image.verify()
+
+        if image.format and image.format.lower() not in ["jpeg", "png", "gif"]:
+            return False
+
+        return True
+
+    except (UnidentifiedImageError, FileNotFoundError):
+        return False
 
 
-async def _check_image_size(*, photo: UploadFile) -> int:
-    actual_size = photo.file.seek(0, 2)
-    photo.file.seek(0)
-    if actual_size > settings.MAX_PROFILE_PHOTO_SIZE_B:
-        raise ImageSizeTooBig(
-            msg=f"Image size too big. Max size is f{settings.MAX_FILE_SIZE_B} bytes",
-            loc="profile_photos",
-        )
+CREATION_FOLDERS: tuple = (
+    "queue/",  # images that ready to be processed by the neural network
+    "approved/",  # approved images that don't contain any objectionable content
+    "rejected/",
+)
 
 
-async def check_profile_photos(*, profile_photos: list[UploadFile]) -> tuple[list, list]:
-    checked_images = []
-    rejected: list[dict] = []
-    for photo in profile_photos:
-        try:
-            _ = await _check_is_image(await photo.read())
-            _ = await _check_image_size(photo=photo)
-        except (InvalidImageType, ImageSizeTooBig) as e:
-            rejected.append({photo.filename: str(e)})
-        else:
-            checked_images.append(photo)
-    return checked_images, rejected
-
-
-async def save_profile_photos(
-    *, profile_id: int, s3_client: S3Client, checked_photos: list[UploadFile]
+async def create_s3_profile_images_storage(
+    *,
+    profile_id: int,
 ):
-    file_path = f"{profile_id}/profile/images/queue"
-    for idx, photo in enumerate(checked_photos):
-        try:
-            byte_stream = io.BytesIO(await photo.read())
-            await s3_client.upload_fileobj(
-                Fileobj=byte_stream,
-                Bucket=settings.S3_PROFILES_BUCKET_NAME,
-                Key=f"{file_path}/{idx}",
-            )
-        except Exception as e:
-            print(f"Произошла ошибка при загрузке файла в s3: {e}")
+    async with s3_session.resource(
+        "s3", endpoint_url="https://storage.yandexcloud.net"
+    ) as s3:
+        bucket = await s3.Bucket(settings.S3_PROFILES_BUCKET_NAME)
+        for folder in CREATION_FOLDERS:
+            await bucket.put_object(Key=f"{profile_id}/photos/{folder}/")
+
+
+async def delete_s3_profile_images_storage(
+    *,
+    profile_id: int,
+):
+    async with s3_session.resource(
+        "s3",
+        endpoint_url="https://storage.yandexcloud.net",
+    ) as s3:
+        bucket = await s3.Bucket(settings.S3_PROFILES_BUCKET_NAME)
+        await bucket.objects.filter(Prefix=str(profile_id)).delete()

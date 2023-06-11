@@ -36,6 +36,9 @@ class User(Base, TimeStampMixin):
         }
         return jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
 
+    def __repr__(self) -> str:
+        return f"User[{self.id=}, {self.tg_id=}, {self.tg_username=}]"
+
 
 class DeviceSession(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}

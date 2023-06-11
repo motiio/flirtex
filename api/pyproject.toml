@@ -5,6 +5,18 @@ description = ""
 authors = ["Matvey <motiio.none@gmail.com>"]
 readme = "README.md"
 
+[tool.pyright]
+venvPath = "$HOME/Library/Caches/pypoetry/virtualenvs/"
+venv = "backend-sZlJnUO7-py3.11"
+
+[tool.mypy]
+ignore_missing_imports = true
+show_column_numbers = true
+show_error_codes = true
+pretty = true
+show_error_context=true
+
+
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.95.1"
@@ -22,6 +34,7 @@ sentry-sdk = {extras = ["fastapi"], version = "^1.23.1"}
 aioboto3 = "^11.2.0"
 python-multipart = "^0.0.6"
 aiofiles = "^23.1.0"
+pillow = "^9.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

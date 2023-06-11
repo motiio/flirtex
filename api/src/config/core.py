@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int
 
     MAX_PROFILE_PHOTO_SIZE_B: int
+    MAX_PROFILE_PHOTOS_COUNT: int = 7
 
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
@@ -39,13 +40,11 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings():
-
-    print()
     return Settings()
 
 
 settings = get_settings()
 
-config = {
+config: dict = {
     "title": "API",
 }

@@ -20,7 +20,6 @@ class BaseUserProfileSchema(ORJSONSchema):
 class UserProfileCreateRequest(ORJSONSchema):
     name: str
     birthdate: date
-    # city: int
     looking_gender: GenderEnum | int
     gender: GenderEnum | int
     interests: list[int] = Field(..., min_items=7)
@@ -32,7 +31,7 @@ class UserProfileReadSchema(ORJSONSchema):
     birthdate: date
     looking_gender: GenderEnum | int
     gender: GenderEnum | int
-    interests: list[InterestReadSchema] = None
+    interests: list[InterestReadSchema] = Field(default=None)
 
     class Config:
         orm_mode = True

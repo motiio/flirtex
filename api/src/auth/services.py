@@ -8,20 +8,23 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from jose.exceptions import JWKError
-from sqlalchemy import and_, insert, select, update
+from sqlalchemy import insert, select, update
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 from src.auth.models import DeviceSession, User
-from src.auth.schemas import RefreshTokenSchema, UserRead, UserSchema
+from src.auth.schemas import RefreshTokenSchema, UserSchema
 from src.config.core import settings
-from src.profile.models import Profile
+from src.database.core import DbSession
 
 InvalidInitData = HTTPException(
     status_code=HTTP_400_BAD_REQUEST, detail=[{"msg": "Invalid init data"}]
 )
 
 
-def validate_init_data(*, init_data: str) -> UserRead | None:
+def validate_init_data(
+    *,
+    init_data: str,
+) -> UserSchema | None:
     try:
         data = safe_parse_webapp_init_data(
             token=settings.BOT_TOKEN,
@@ -32,11 +35,15 @@ def validate_init_data(*, init_data: str) -> UserRead | None:
             raise ValueError
     except ValueError:
         return None
-    else:
-        return UserSchema(**data.get("user"))
+
+    return UserSchema(**data.get("user"))
 
 
-async def create_user(*, db_session, user_data: UserSchema) -> UserRead:
+async def create_user(
+    *,
+    db_session: DbSession,
+    user_data: UserSchema,
+) -> User:
     user = User(**user_data.dict())
     db_session.add(user)
     await db_session.commit()
@@ -44,33 +51,35 @@ async def create_user(*, db_session, user_data: UserSchema) -> UserRead:
 
 
 async def get_or_create_user_by_init_data(
-    *, db_session, init_data: str
-) -> tuple[User | None, Profile | None]:
+    *,
+    db_session,
+    init_data: str,
+) -> User:
     """Returns a user based on the given initData."""
     user_data = validate_init_data(init_data=init_data)
     if not user_data:
         raise InvalidInitData
 
-    q = (
-        select(User, Profile)
-        .join(Profile, and_(User.id == Profile.owner_id), isouter=True)  # noqa
-        .where(User.tg_id == user_data.tg_id)
-    )
-    user, profile = (await db_session.execute(q)).first() or (None, None)
+    q = select(User).where(User.tg_id == user_data.tg_id)
+    db_user: User = (await db_session.execute(q)).scalars().first()
 
-    if user is None:
-        user = await create_user(db_session=db_session, user_data=user_data)
+    if db_user is None:
+        return await create_user(db_session=db_session, user_data=user_data)
 
-    return user, profile
+    return db_user
 
 
-def _check_token_signature(*, token: str):
+def _check_token_signature(
+    *,
+    token: str,
+):
     try:
         data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
     except (JWKError, JWTError):
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
-        )
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+        ) from None
     else:
         return token, data
 
@@ -78,40 +87,57 @@ def _check_token_signature(*, token: str):
 security = HTTPBearer()
 
 
-def get_current_user(auth: HTTPAuthorizationCredentials = Depends(security)) -> int:
+def get_current_user(
+    *,
+    auth: HTTPAuthorizationCredentials = Depends(security),
+) -> int:
     try:
         token = auth.credentials
         _, data = _check_token_signature(token=token)
         user_id = data.get("sub")
         if user_id is None:
             raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
+                status_code=HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
             )
         return int(user_id)
     except HTTPException:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
-        )
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+        ) from None
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-async def get_refresh_token(*, db_session, refresh_token: str) -> DeviceSession | None:
+async def get_refresh_token(
+    *,
+    db_session,
+    refresh_token: str,
+) -> DeviceSession | None:
     q = select(DeviceSession).where(
-        DeviceSession.refresh_token == refresh_token, DeviceSession.is_active == True  # noqa
+        DeviceSession.refresh_token == refresh_token,
+        DeviceSession.is_active == True,  # noqa
     )
     return (await db_session.execute(q)).scalars().first()
 
 
-async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTokenSchema:
+async def create_refresh_token(
+    *,
+    db_session,
+    user_id,
+    user_agent,
+) -> RefreshTokenSchema:
     now = timegm(datetime.utcnow().utctimetuple())
     exp = now + settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS
     data = {
         "exp": exp,
         "sub": str(user_id),
     }
-    new_refresh_token_value: str = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
+    new_refresh_token_value: str = jwt.encode(
+        data, settings.JWT_SECRET, algorithm="HS256"
+    )
     q = (
         insert(DeviceSession)
         .values(
@@ -127,7 +153,11 @@ async def create_refresh_token(*, db_session, user_id, user_agent) -> RefreshTok
     return RefreshTokenSchema.from_orm(new_device_session)
 
 
-async def expire_refresh_token(*, db_session, refresh_token_value) -> None:
+async def expire_refresh_token(
+    *,
+    db_session,
+    refresh_token_value,
+) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.refresh_token == refresh_token_value)
@@ -136,7 +166,11 @@ async def expire_refresh_token(*, db_session, refresh_token_value) -> None:
     await db_session.execute(q)
 
 
-async def expire_all_refresh_tokens_by_user_id(*, db_session, user_id) -> None:
+async def expire_all_refresh_tokens_by_user_id(
+    *,
+    db_session,
+    user_id,
+) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id)
@@ -145,7 +179,12 @@ async def expire_all_refresh_tokens_by_user_id(*, db_session, user_id) -> None:
     await db_session.execute(q)
 
 
-async def expire_all_refresh_tokens_by_user_agent(*, db_session, user_id, user_agent) -> None:
+async def expire_all_refresh_tokens_by_user_agent(
+    *,
+    db_session: DbSession,
+    user_id: int,
+    user_agent: str,
+) -> None:
     q = (
         update(DeviceSession)
         .where(DeviceSession.user == user_id, DeviceSession.user_agent == user_agent)
@@ -159,7 +198,9 @@ async def validate_refresh_token(
     db_session,
     refresh_token,
 ) -> tuple[None, None] | tuple[str, dict]:
-    device_session = await get_refresh_token(db_session=db_session, refresh_token=refresh_token)
+    device_session = await get_refresh_token(
+        db_session=db_session, refresh_token=refresh_token
+    )
     if not device_session:
         return None, None
 
