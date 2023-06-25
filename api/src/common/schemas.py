@@ -9,7 +9,7 @@ class CityReadSchema(ORJSONSchema):
         orm_mode = True
 
 
-class InterestReadSchema(ORJSONSchema):
+class InterestOutResponse(ORJSONSchema):
     id: int
     name: str
 

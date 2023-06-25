@@ -35,6 +35,8 @@ aioboto3 = "^11.2.0"
 python-multipart = "^0.0.6"
 aiofiles = "^23.1.0"
 pillow = "^9.5.0"
+httpx = "^0.24.1"
+tenacity = "^8.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

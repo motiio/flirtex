@@ -17,6 +17,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.auth.models import User
 from src.config.models import Base, TimeStampMixin
+from src.s3.core import s3_session
+from src.config.core import settings
 
 
 class GenderEnum(enum.Enum):
@@ -65,6 +67,7 @@ class Profile(Base, TimeStampMixin):
     looking_gender = Column(Enum(GenderEnum, schema="core"))
     is_active = Column(Boolean, nullable=False, default=False)
     interests: Mapped[list[Interest]] = relationship(secondary="core.profile_interests")
+    photos: Mapped[set["ProfilePhoto"]] = relationship(back_populates="profile")
 
     def __repr__(self):
         return f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
@@ -77,6 +80,23 @@ class ProfilePhoto(Base, TimeStampMixin):
         Sequence("profile_photo_seq", start=1, schema="core"),
         primary_key=True,
     )
-    profile = Column(Integer, ForeignKey(Profile.id, ondelete="CASCADE"))
+    profile_id: Mapped[int] = mapped_column(ForeignKey(Profile.id, ondelete="CASCADE"))
     displaying_order = Column(Integer)
     is_valid = Column(Boolean, default=False)
+    profile: Mapped["Profile"] = relationship(back_populates="photos")
+
+    @property
+    async def photo_url(self) -> str:
+        async with s3_session.resource(
+            "s3",
+            endpoint_url="https://storage.yandexcloud.net",
+        ) as s3:
+            presigned_url = await s3.generate_presigned_url(
+                "get_object",
+                Params={
+                    "Bucket": settings.S3_PROFILES_BUCKET_NAME,
+                    "Key": f"{self.profile_id}/photos/approved/{self.id}",
+                },
+                ExpiresIn=100,
+            )
+        return presigned_url

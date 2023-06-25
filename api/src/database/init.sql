@@ -10,12 +10,13 @@ create sequence if not exists core.interest_seq start 1;
 create sequence if not exists core.profile_photo_seq start 1;
 
 
-INSERT INTO core.interest (name)
-VALUES ('Путешествия'), ('Кино'), ('Фитнес'), ('Готовка'), ('Музыка'),
-       ('Фотография'), ('Искусство'), ('Чтение'), ('Автомобили'), ('Технологии'),
-       ('Культура'), ('Спорт'), ('Рестораны'), ('Домашние животные'), ('Бег');
-commit
+-- INSERT INTO core.interest (name)
+-- VALUES ('Путешествия'), ('Кино'), ('Фитнес'), ('Готовка'), ('Музыка'),
+       -- ('Фотография'), ('Искусство'), ('Чтение'), ('Автомобили'), ('Технологии'),
+       -- ('Культура'), ('Спорт'), ('Рестораны'), ('Домашние животные'), ('Бег');
+-- commit
 
 
 
+truncate table alembic_version;
 
