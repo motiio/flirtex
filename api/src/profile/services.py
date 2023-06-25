@@ -220,7 +220,7 @@ async def request_short_url(
     client: httpx.AsyncClient,
     s3_url: str,
 ):
-    response = await client.post(settings.SHORT_URL_RESOURCE + f"?url={s3_url}")
+    response = await client.get(settings.SHORT_URL_RESOURCE, params={"url": s3_url})
     response.raise_for_status()
     return response.text
 
@@ -235,7 +235,10 @@ async def get_profile_photos(
     async with s3_session.client(
         "s3",
         endpoint_url=settings.S3_CLOUD_ENDPOINT,
+        region_name="ru-central-a",
         config=Config(signature_version="s3v4"),
+        aws_access_key_id=settings.S3_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.S3_SECRET_ACCESS_KEY,
     ) as s3_client:
         tasks = [
             get_s3_photo_url(client=s3_client, photo=photo) for photo in profile.photos
