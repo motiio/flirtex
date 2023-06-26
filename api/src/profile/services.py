@@ -245,8 +245,4 @@ async def get_profile_photos(
         ]
         s3_urls = await asyncio.gather(*tasks)
 
-    async with httpx.AsyncClient() as client:
-        tasks = [request_short_url(client=client, s3_url=url) for url in s3_urls]
-        photo_urls = await asyncio.gather(*tasks)
-
-    return photo_urls
+    return s3_urls
