@@ -62,7 +62,10 @@ class LimitUploadSize(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-api.add_middleware(LimitUploadSize, max_upload_size=10_000_000)  # ~10MB
+api.add_middleware(
+    LimitUploadSize,
+    max_upload_size=settings.MAX_PROFILE_PHOTO_SIZE_B,
+)  # ~10MB
 
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
 _request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(
