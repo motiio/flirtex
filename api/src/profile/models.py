@@ -16,9 +16,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.auth.models import User
+from src.config.core import settings
 from src.config.models import Base, TimeStampMixin
 from src.s3.core import s3_session
-from src.config.core import settings
 
 
 class GenderEnum(enum.Enum):
@@ -70,7 +70,9 @@ class Profile(Base, TimeStampMixin):
     photos: Mapped[set["ProfilePhoto"]] = relationship(back_populates="profile")
 
     def __repr__(self):
-        return f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
+        return (
+            f"Profile[{self.id=}, {self.owner=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
+        )
 
 
 class ProfilePhoto(Base, TimeStampMixin):

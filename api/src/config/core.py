@@ -1,25 +1,22 @@
 import os
 from functools import lru_cache
 
-from pydantic import BaseSettings, PostgresDsn
-
-from src.constants import Environment
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     APP_VERSION: str = "0.1"
-    ENVIRONMENT: Environment
+    ENVIRONMENT: str = "DEV"
     SENTRY_DSN: str | None
-    LOG_LEVEL: str = Environment.get_env_log_level
+    # LOG_LEVEL: str = Environment.get_env_log_level
 
     BOT_TOKEN: str
 
-    DATABASE_URI: PostgresDsn
+    DATABASE_URI: str
     DATABASE_ENGINE_POOL_SIZE: int = 5
     DATABASE_ENGINE_MAX_OVERFLOW: int = 10
 
     CORS_ORIGINS: list[str] = ["ALL"]
-    CORS_ORIGINS_REGEX: str | None
     CORS_HEADERS: list[str] = [""]
 
     S3_ACCESS_KEY_ID: str
@@ -43,7 +40,9 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings():
-    return Settings()
+    settings = Settings()
+    print(settings)
+    return settings
 
 
 settings = get_settings()

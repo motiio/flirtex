@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from src.auth.services import CurrentUser
-from src.database.core import DbSession
-
 from src.common.schemas import InterestOutResponse
+from src.database.core import DbSession
+from src.v1.auth.dependencies.current_user import CurrentUser
+
 from .services import get_all_interests
 
 common_router = APIRouter()

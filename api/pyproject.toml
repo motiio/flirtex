@@ -19,12 +19,10 @@ show_error_context=true
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.95.1"
 uvicorn = "^0.22.0"
 aiogram = "^2.25.1"
 asyncpg = "^0.27.0"
 orjson = "^3.8.11"
-pydantic = {extras = ["dotenv"], version = "^1.10.7"}
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.12"}
 greenlet = "^2.0.2"
 contextvars = "^2.4"
@@ -37,6 +35,9 @@ aiofiles = "^23.1.0"
 pillow = "^9.5.0"
 httpx = "^0.24.1"
 tenacity = "^8.2.2"
+fastapi = "0.100.0-beta2"
+pydantic = "^2.0"
+pydantic-settings = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

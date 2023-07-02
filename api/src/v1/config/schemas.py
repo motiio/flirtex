@@ -3,7 +3,7 @@ from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
 import orjson
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 
 
 def orjson_dumps(v: Any, *, default: Callable[[Any], Any] | None) -> str:
@@ -17,17 +17,9 @@ def convert_datetime_to_gmt(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
-class ORJSONSchema(BaseModel):
+class BaseSchema(BaseModel):
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
         json_encoders = {datetime: convert_datetime_to_gmt}
         allow_population_by_field_name = True
-
-    @model_validator(mode="before")
-    def set_null_microseconds(cls, data: dict[str, Any]) -> dict[str, Any]:
-        datetime_fields = {
-            k: v.replace(microsecond=0) for k, v in data.items() if isinstance(k, datetime)
-        }
-
-        return {**data, **datetime_fields}

@@ -1,22 +1,17 @@
-from sqlalchemy.sql import func
-from sqlalchemy.orm import selectinload
-from sqlalchemy import delete, select, insert
-from tenacity.stop import stop_after_attempt
-from urllib3.util import retry
+import asyncio
+from io import BytesIO
 
+from botocore.client import Config
+from PIL import Image, UnidentifiedImageError
+from sqlalchemy import delete, insert, select
+from sqlalchemy.orm import selectinload
+from sqlalchemy.sql import func
+
+from src.config.core import settings
 from src.database.core import DbSession
 from src.profile.models import Interest, Profile, ProfilePhoto
-from PIL import Image, UnidentifiedImageError
-
-from src.s3.core import s3_session
-from src.config.core import settings
-
 from src.profile.schemas import ProfileInRegistration
-from io import BytesIO
-import asyncio
-import httpx
-from botocore.client import Config
-from tenacity import retry, retry_if_exception_type
+from src.s3.core import s3_session
 
 
 async def get(
@@ -142,9 +137,7 @@ async def upload_photo_to_s3(
         file_idx=file_idx,
     )
 
-    async with s3_session.resource(
-        "s3", endpoint_url="https://storage.yandexcloud.net"
-    ) as s3:
+    async with s3_session.resource("s3", endpoint_url="https://storage.yandexcloud.net") as s3:
         bucket = await s3.Bucket(settings.S3_PROFILES_BUCKET_NAME)
         await bucket.upload_fileobj(
             Fileobj=BytesIO(file_content),
@@ -182,9 +175,7 @@ async def create_s3_profile_images_storage(
     *,
     profile_id: int,
 ):
-    async with s3_session.resource(
-        "s3", endpoint_url="https://storage.yandexcloud.net"
-    ) as s3:
+    async with s3_session.resource("s3", endpoint_url="https://storage.yandexcloud.net") as s3:
         bucket = await s3.Bucket(settings.S3_PROFILES_BUCKET_NAME)
         for folder in CREATION_FOLDERS:
             await bucket.put_object(Key=f"{profile_id}/photos/{folder}/")
@@ -214,17 +205,6 @@ async def get_s3_photo_url(*, client, photo) -> str:
     return response
 
 
-@retry(retry=retry_if_exception_type(httpx.HTTPStatusError), stop=stop_after_attempt(5))
-async def request_short_url(
-    *,
-    client: httpx.AsyncClient,
-    s3_url: str,
-):
-    response = await client.get(settings.SHORT_URL_RESOURCE, params={"url": s3_url})
-    response.raise_for_status()
-    return response.text
-
-
 async def get_profile_photos(
     *,
     profile_id: int,
@@ -240,9 +220,7 @@ async def get_profile_photos(
         aws_access_key_id=settings.S3_ACCESS_KEY_ID,
         aws_secret_access_key=settings.S3_SECRET_ACCESS_KEY,
     ) as s3_client:
-        tasks = [
-            get_s3_photo_url(client=s3_client, photo=photo) for photo in profile.photos
-        ]
+        tasks = [get_s3_photo_url(client=s3_client, photo=photo) for photo in profile.photos]
         s3_urls = await asyncio.gather(*tasks)
 
     return s3_urls

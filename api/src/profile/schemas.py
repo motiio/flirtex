@@ -1,7 +1,6 @@
 from datetime import date
 
 from pydantic import Field
-from sqlalchemy import True_
 
 from src.common.schemas import InterestOutResponse
 from src.config.schemas import ORJSONSchema

@@ -1,5 +1,5 @@
 import asyncio
-from os import walk
+
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import ORJSONResponse
 from starlette.status import (
@@ -11,24 +11,21 @@ from starlette.status import (
 )
 
 from src.auth.services import CurrentUser
+from src.config.core import settings
 from src.database.core import DbSession
-
+from src.profile.models import Profile, ProfilePhoto
 from src.profile.schemas import ProfileInRegistration, ProfileOutResponse
 from src.profile.services import (
     create,
+    create_s3_profile_images_storage,
     delete_profile_by_user_id,
-    get,
+    delete_s3_profile_images_storage,
+    get_profil_photos_count,
     get_profile_by_user_id,
     get_profile_photos,
     is_image,
     upload_photo_to_s3,
-    create_s3_profile_images_storage,
-    get_profil_photos_count,
-    delete_s3_profile_images_storage,
 )
-from src.config.core import settings
-from src.profile.models import Profile, ProfilePhoto
-
 
 profile_router = APIRouter()
 
@@ -76,9 +73,7 @@ async def upload_profilt_photo(
     db_session: DbSession,
     files: list[UploadFile] = File(...),
 ) -> ORJSONResponse:
-    profile_photos_count = await get_profil_photos_count(
-        user_id=user, db_session=db_session
-    )
+    profile_photos_count = await get_profil_photos_count(user_id=user, db_session=db_session)
     if len(files) + profile_photos_count > settings.MAX_PROFILE_PHOTOS_COUNT:
         return ORJSONResponse(
             status_code=HTTP_400_BAD_REQUEST,
@@ -132,9 +127,7 @@ async def get_my_profile(
     Raises:
     - HTTPExceptions: **HTTP_404_NOT_FOUND**. If user's profile wos not found
     """
-    profile: Profile = await get_profile_by_user_id(
-        db_session=db_session, user_id=int(user)
-    )
+    profile: Profile = await get_profile_by_user_id(db_session=db_session, user_id=int(user))
     if not profile:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
