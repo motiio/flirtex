@@ -132,9 +132,9 @@ async def delete_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    await DeleteUserProfile(
-        repository=ProfileRepository(db_session=db_session)
-    ).execute(profile_owner=current_user_id)
+    await DeleteUserProfile(repository=ProfileRepository(db_session=db_session)).execute(
+        profile_owner=current_user_id
+    )
 
 
 @profile_router.put("/interests", response_model=InterestsReadResponse)
@@ -151,9 +151,7 @@ async def add_profile_interests(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    interests: list[Interest] = await InterestReadOnlyRepository(
-        db_session=db_session
-    ).fetch(
+    interests: list[Interest] = await InterestReadOnlyRepository(db_session=db_session).fetch(
         entry_ids=added_profile_interests.interests,
     )
 

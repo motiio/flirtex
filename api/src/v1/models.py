@@ -4,8 +4,7 @@ from uuid import uuid4
 
 from sqlalchemy import DateTime, event
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy.orm import Mapped, declarative_base, mapped_column
+from sqlalchemy.orm import Mapped, declarative_base, declared_attr, mapped_column
 
 
 def resolve_table_name(name) -> str:
@@ -27,9 +26,9 @@ class CustomBase:
 
     def dict(self):
         """Returns a dict representation of a model."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}  # type: ignore
 
-    @declared_attr
+    @declared_attr  # type: ignore
     def __tablename__(self) -> str:
         return resolve_table_name(self.__name__)
 
@@ -65,8 +64,12 @@ Base = declarative_base(cls=CustomBase)
 class TimeStampMixin:
     """Timestamping mixin"""
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9998)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9999)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9998
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9999
+    )
 
     @staticmethod
     def _updated_at(mapper, connection, target):
