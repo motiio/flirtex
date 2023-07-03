@@ -13,12 +13,11 @@ from src.v1.profile.models import GenderEnum, LookingGenderEnum
 ###############################################################
 
 
-class ProfileRequestCreate(BaseSchema):
+class ProfileCreateRequest(BaseSchema):
     name: str = Field(max_length=32)
     birthdate: date
     looking_gender: LookingGenderEnum
     gender: GenderEnum
-    interests: list[UUID] = Field(max_length=7)
     bio: Optional[str] = Field("", max_length=600)
 
     @field_validator("birthdate")
@@ -31,9 +30,12 @@ class ProfileRequestCreate(BaseSchema):
         return v
 
 
-class ProfileRequestUpdate(BaseSchema):
-    bio: Optional[str] = Field(None, max_length=600)
-    interests: Optional[list[UUID]] = Field(None, max_length=7)
+class ProfileUpdateRequest(BaseSchema):
+    bio: str = Field("", max_length=600)
+
+
+class ProfileInterestsCreateRequest(BaseSchema):
+    interests: list[UUID] = Field(max_length=7)
 
 
 ################################################################
@@ -41,16 +43,28 @@ class ProfileRequestUpdate(BaseSchema):
 ################################################################
 
 
-class InterestResponse(BaseSchema):
+class InterestReadResponse(BaseSchema):
     id: UUID
     name: str
     icon: str
 
 
-class ProfileResponse(BaseSchema):
+class InterestsPutResponse(BaseSchema):
+    interests: list[InterestReadResponse]
+
+
+class ProfileCreateResponse(BaseSchema):
     name: str
-    bio: Optional[str]
+    bio: str
     birthdate: date
     looking_gender: LookingGenderEnum
     gender: GenderEnum
-    interests: list[InterestResponse]
+
+
+class ProfileReadResponse(BaseSchema):
+    name: str
+    bio: str
+    birthdate: date
+    looking_gender: LookingGenderEnum
+    gender: GenderEnum
+    interests: list[InterestReadResponse]

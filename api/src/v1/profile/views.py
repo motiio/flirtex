@@ -1,26 +1,31 @@
-from typing import Optional
 from fastapi import APIRouter
 
 from src.v1.auth.dependencies.current_user import CurrentUser
 from src.v1.config.database import DbSession
 from src.v1.profile.dtos import (
-    ProfileRequestCreate,
-    ProfileRequestUpdate,
-    ProfileResponse,
+    InterestsPutResponse,
+    ProfileCreateRequest,
+    ProfileUpdateRequest,
+    ProfileCreateResponse,
+    ProfileReadResponse,
+    ProfileInterestsCreateRequest,
 )
 from src.v1.profile.models import Interest
 from src.v1.profile.repositories.interest import InterestReadOnlyRepository
 from src.v1.profile.repositories.profile import ProfileRepository
+from src.v1.profile.schemas.interest import InterestOutSchema, InterestsOutSchema
 from src.v1.profile.schemas.profile import (
     ProfileInCreateSchema,
+    ProfileOutCreateSchema,
     ProfileInUpdateSchema,
-    ProfileOutSchema,
+    ProfileOutReadSchema,
 )
 from src.v1.profile.usecases.profile import (
-    GetOrCreateProfile,
+    CreateProfile,
     GetUserProfile,
     DeleteUserProfile,
     UpdateUserProfile,
+    CreateProfileInterests,
 )
 
 profile_router = APIRouter(prefix="/profile")
@@ -28,7 +33,7 @@ profile_router = APIRouter(prefix="/profile")
 
 @profile_router.get(
     "",
-    response_model=ProfileResponse,
+    response_model=ProfileReadResponse,
 )
 async def get_curret_user_profile(
     current_user_id: CurrentUser,
@@ -42,19 +47,19 @@ async def get_curret_user_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's access is invalid
     """
-    profile: ProfileOutSchema = await GetUserProfile(
+    profile: ProfileOutReadSchema = await GetUserProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
 
-    return ProfileResponse(**profile.model_dump())
+    return ProfileReadResponse(**profile.model_dump())
 
 
 @profile_router.post(
     "",
-    response_model=ProfileResponse,
+    response_model=ProfileCreateResponse,
 )
 async def create_profile(
-    registration_data: ProfileRequestCreate,
+    registration_data: ProfileCreateRequest,
     current_user_id: CurrentUser,
     db_session: DbSession,
 ):
@@ -66,30 +71,25 @@ async def create_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's access is invalid
     """
-    interests: Optional[list[Interest]] = await InterestReadOnlyRepository(
-        db_session=db_session
-    ).list(entry_ids=registration_data.interests)
-
     profile_data: ProfileInCreateSchema = ProfileInCreateSchema(
         **registration_data.model_dump(),
         owner_id=current_user_id,
     )
 
-    profile: ProfileOutSchema = await GetOrCreateProfile(
+    profile: ProfileOutCreateSchema = await CreateProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(
         profile_data=profile_data,
-        interests=interests,
     )
-    return ProfileResponse(**profile.model_dump())
+    return ProfileCreateResponse(**profile.model_dump())
 
 
 @profile_router.patch(
     "",
-    response_model=ProfileResponse,
+    response_model=ProfileReadResponse,
 )
 async def update_profile(
-    profile_data_to_update: ProfileRequestUpdate,
+    profile_data_to_update: ProfileUpdateRequest,
     current_user_id: CurrentUser,
     db_session: DbSession,
 ):
@@ -101,23 +101,18 @@ async def update_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's access is invalid
     """
-
-    interests: Optional[list[Interest]] = await InterestReadOnlyRepository(
-        db_session=db_session
-    ).list(entry_ids=profile_data_to_update.interests)
 
     profile_data: ProfileInUpdateSchema = ProfileInUpdateSchema(
         **profile_data_to_update.model_dump(),
         owner_id=current_user_id,
     )
 
-    profile: ProfileOutSchema = await UpdateUserProfile(
+    profile: ProfileOutReadSchema = await UpdateUserProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(
         profile_data=profile_data,
-        interests=interests,
     )
-    return ProfileResponse(**profile.model_dump())
+    return ProfileReadResponse(**profile.model_dump())
 
 
 @profile_router.delete(
@@ -138,3 +133,21 @@ async def delete_profile(
     await DeleteUserProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(profile_owner=current_user_id)
+
+
+@profile_router.put("/interests", response_model=InterestsPutResponse)
+async def add_profile_interests(
+    added_profile_interests: ProfileInterestsCreateRequest,
+    current_user_id: CurrentUser,
+    db_session: DbSession,
+):
+    interests: list[Interest] = await InterestReadOnlyRepository(
+        db_session=db_session
+    ).fetch(
+        entry_ids=added_profile_interests.interests,
+    )
+
+    profile_interests: InterestsOutSchema = await CreateProfileInterests(
+        repository=ProfileRepository(db_session=db_session)
+    ).execute(interests=interests, owner_id=current_user_id)
+    return InterestsPutResponse(**profile_interests.model_dump())

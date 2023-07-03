@@ -10,19 +10,15 @@ from src.v1.profile.schemas.profile import ProfileInCreateSchema, ProfileInUpdat
 
 
 class ProfileRepository(
-    BaseRepository[ProfileInCreateSchema, ProfileInUpdateSchema, Profile]
+    BaseRepository[
+        ProfileInCreateSchema,
+        ProfileInUpdateSchema,
+        Profile,
+    ]
 ):
     @property
     def _table(self) -> Type[Profile]:
         return Profile
-
-    async def create(
-        self, *, in_schema: ProfileInCreateSchema, interests: list[Interest]
-    ) -> Profile:
-        profile = Profile(**in_schema.model_dump(exclude={"interests"}))
-        profile.interests = interests
-        self._db_session.add(profile)
-        return profile
 
     async def get_by_owner(self, *, owner_id: UUID) -> Profile:
         q = (
@@ -37,16 +33,15 @@ class ProfileRepository(
         q = delete(self._table).where(self._table.owner_id == owner_id)
         await self._db_session.execute(q)
 
-    async def update(
-        self,
-        *,
-        in_schema: ProfileInUpdateSchema,
-        interests: list[Interest],
+    async def update_by_owner(
+        self, *, in_schema: ProfileInUpdateSchema, owner_id: UUID
     ) -> Profile:
-        profile = await self.get_by_owner(owner_id=in_schema.owner_id)
-
-        profile.bio = in_schema.bio
-        if interests is not None:
-            profile.interests = interests
-
-        return profile
+        q = (
+            update(self._table)
+            .where(self._table.owner_id == owner_id)  # type: ignore
+            .options(selectinload(self._table.interests))
+            .values(**in_schema.model_dump())
+            .returning(self._table)
+        )
+        entry = (await self._db_session.execute(q)).scalars().first()
+        return entry

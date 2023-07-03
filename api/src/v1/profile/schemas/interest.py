@@ -23,3 +23,7 @@ class InterestOutSchema(BaseSchema):
 
     class Config:
         from_attributes = True
+
+
+class InterestsOutSchema(BaseSchema):
+    interests: list[InterestOutSchema]

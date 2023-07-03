@@ -19,5 +19,5 @@ class ListInterests(
 ):
     async def execute(self, *, interests_uuids: list[UUID]):
         async with self.repository as repo:
-            interests = await repo.list(entry_ids=interests_uuids)
+            interests = await repo.fetch(entry_ids=interests_uuids)
         return TypeAdapter(list[InterestOutSchema]).validate_python(interests)

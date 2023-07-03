@@ -1,41 +1,44 @@
-from typing import Optional
 from uuid import UUID
 
-from src.v1.profile.exceptions import ProfileNotFound
+from pydantic import TypeAdapter
+from src.v1.profile.exceptions import ProfileNotFound, ProfileAlreadyExists
+from src.v1.profile.schemas.interest import InterestOutSchema, InterestsOutSchema
 from src.v1.usecases import BaseUseCase
 from src.v1.profile.models import Interest
 from src.v1.profile.repositories.profile import ProfileRepository
-from src.v1.profile.schemas.profile import ProfileInCreateSchema, ProfileOutSchema
+from src.v1.profile.schemas.profile import (
+    ProfileInCreateSchema,
+    ProfileOutCreateSchema,
+    ProfileInUpdateSchema,
+    ProfileOutReadSchema,
+)
 
 
-class GetOrCreateProfile(
+class CreateProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
-        ProfileOutSchema,
+        ProfileOutReadSchema,
     ]
 ):
     async def execute(
         self,
         *,
         profile_data: ProfileInCreateSchema,
-        interests: Optional[list[Interest]],
     ):
         async with self.repository as repo:
             profile = await repo.get_by_owner(owner_id=profile_data.owner_id)
-            if not profile:
-                profile = await repo.create(
-                    in_schema=profile_data,
-                    interests=interests or [],
-                )
-        return ProfileOutSchema.model_validate(profile)
+            if profile:
+                raise ProfileAlreadyExists
+            profile = await repo.create(in_schema=profile_data)
+        return ProfileOutCreateSchema.model_validate(profile)
 
 
 class GetUserProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
-        ProfileOutSchema,
+        ProfileOutReadSchema,
     ]
 ):
     async def execute(self, *, user_id: UUID):
@@ -43,32 +46,30 @@ class GetUserProfile(
             profile = await repo.get_by_owner(owner_id=user_id)
             if not profile:
                 raise ProfileNotFound
-            return ProfileOutSchema.model_validate(profile)
+            return ProfileOutReadSchema.model_validate(profile)
 
 
 class UpdateUserProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
-        ProfileOutSchema,
+        ProfileOutReadSchema,
     ]
 ):
-    async def execute(
-        self,
-        *,
-        profile_data,
-        interests,
-    ):
+    async def execute(self, *, profile_data: ProfileInUpdateSchema):
         async with self.repository as repo:
-            new_profile = await repo.update(in_schema=profile_data, interests=interests)
-            return ProfileOutSchema.model_validate(new_profile)
+            new_profile = await repo.update_by_owner(
+                in_schema=profile_data,
+                owner_id=profile_data.owner_id,
+            )
+            return ProfileOutReadSchema.model_validate(new_profile)
 
 
 class DeleteUserProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
-        ProfileOutSchema,
+        ProfileOutReadSchema,
     ]
 ):
     async def execute(
@@ -80,16 +81,21 @@ class DeleteUserProfile(
             await repo.delete_by_owner(owner_id=profile_owner)
 
 
-# class ListProfileInterestsToUpdate(
-#     BaseUseCase[
-#         ProfileRepository,
-#         ProfileInCreateSchema,
-#         ProfileOutSchema,
-#     ]
-# ):
-# async execute(self, *, profile_data,) -> list[InterestOutSchema]:
-#     async self.repository as repo:
-#         if profile_data.interests is None:
-#             interests = repo.get_by_owner()
-#
-#
+class CreateProfileInterests(
+    BaseUseCase[
+        ProfileRepository,
+        ProfileInCreateSchema,
+        ProfileOutReadSchema,
+    ]
+):
+    async def execute(
+        self, *, owner_id: UUID, interests: list[Interest]
+    ) -> InterestsOutSchema:
+        async with self.repository as repo:
+            profile = await repo.get_by_owner(owner_id=owner_id)
+            profile.interests = interests
+            return InterestsOutSchema(
+                interests=TypeAdapter(list[InterestOutSchema]).validate_python(
+                    profile.interests
+                )
+            )

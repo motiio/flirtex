@@ -17,13 +17,11 @@ class ProfileInCreateSchema(BaseSchema):
     birthdate: date
     looking_gender: LookingGenderEnum
     gender: GenderEnum
-    interests: list[UUID]
     owner_id: UUID
     bio: str
 
 
 class ProfileInUpdateSchema(BaseSchema):
-    interests: Optional[list[UUID]]
     owner_id: UUID
     bio: Optional[str]
 
@@ -33,13 +31,25 @@ class ProfileInUpdateSchema(BaseSchema):
 ###############################################################
 
 
-class ProfileOutSchema(BaseSchema):
+class ProfileOutCreateSchema(BaseSchema):
     name: str
     bio: Optional[str]
     birthdate: date
     looking_gender: LookingGenderEnum
     gender: GenderEnum
-    interests: list[InterestOutSchema]
+    owner_id: UUID
+
+    class Config:
+        from_attributes = True
+
+
+class ProfileOutReadSchema(BaseSchema):
+    name: str
+    bio: Optional[str]
+    birthdate: date
+    looking_gender: LookingGenderEnum
+    gender: GenderEnum
+    interests: Optional[list[InterestOutSchema]] = None
     owner_id: UUID
 
     class Config:

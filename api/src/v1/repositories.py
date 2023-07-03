@@ -20,7 +20,11 @@ class IReadOnlyRepository(Generic[IN_READ_SCHEMA, TABLE], metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def list(self, *, entry_ids: List[UUID]) -> List[TABLE]:
+    def list(self) -> List[TABLE]:
+        ...
+
+    @abstractmethod
+    def fetch(self, *, entry_ids: List[UUID]) -> List[TABLE]:
         ...
 
     @property
@@ -79,15 +83,18 @@ class BaseReadOnlyRepository(
         entry = await self._db_session.get(entity=self._table, ident=entry_id)
         return entry
 
-    async def list(self, *, entry_ids: Optional[List[UUID]]) -> Optional[List[TABLE]]:  # type: ignore
-        if entry_ids is None:
-            return None
+    async def fetch(self, *, entry_ids: List[UUID]) -> List[TABLE]:  # type: ignore
         q = select(self._table).where(self._table.id.in_(entry_ids))
         entries = await self._db_session.execute(q)
         return [cast(TABLE, entry) for entry in entries.scalars().all()]
 
     async def commit(self):
         await self._db_session.commit()
+
+    async def list(self) -> Optional[List[TABLE]]:  # type: ignore
+        q = select(self._table)
+        entries = await self._db_session.execute(q)
+        return [cast(TABLE, entry) for entry in entries.scalars().all()]
 
 
 class BaseWriteOnlyRepository(

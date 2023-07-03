@@ -19,11 +19,11 @@ from src.v1.auth.usecases.refresh_token import CreateRefreshToken, UpdateRefresh
 from src.v1.auth.usecases.user import GetOrCreateUser, ReadUser
 from src.v1.config.database import DbSession
 
-auth_router = APIRouter()
+auth_router = APIRouter(prefix="/auth")
 
 
 @auth_router.post(
-    "/auth",
+    "",
     response_model=TokenPairResponse,
 )
 async def login(
@@ -55,7 +55,7 @@ async def login(
     )
 
 
-@auth_router.put("/auth", response_model=TokenPairResponse)
+@auth_router.put("", response_model=TokenPairResponse)
 async def update_token_pair(
     old_refresh_token: RefreshTokenRequestUpdateTokenPair,
     db_session: DbSession,
