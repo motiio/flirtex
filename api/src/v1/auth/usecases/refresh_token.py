@@ -38,15 +38,10 @@ class UpdateRefreshToken(
     ]
 ):
     async def execute(
-        self,
-        *,
-        refresh_token_data: RefreshTokenInCreateSchema,
-        old_refresh_token_value: str
+        self, *, refresh_token_data: RefreshTokenInCreateSchema, old_refresh_token_value: str
     ):
         async with self.repository as repo:
-            existent_refresh_token = await repo.get_by_value(
-                value=old_refresh_token_value
-            )
+            existent_refresh_token = await repo.get_by_value(value=old_refresh_token_value)
             if not existent_refresh_token:
                 raise InvalidToken
             await repo.delete(entry_id=existent_refresh_token.id)

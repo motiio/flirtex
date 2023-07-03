@@ -5,8 +5,8 @@ from uuid import UUID
 from dateutil.relativedelta import relativedelta
 from pydantic import Field, field_validator
 
-from src.v1.schemas import BaseSchema
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
+from src.v1.schemas import BaseSchema
 
 ###############################################################
 #                Request data transfer objects                #
@@ -49,7 +49,7 @@ class InterestReadResponse(BaseSchema):
     icon: str
 
 
-class InterestsPutResponse(BaseSchema):
+class InterestsReadResponse(BaseSchema):
     interests: list[InterestReadResponse]
 
 

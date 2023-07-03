@@ -1,12 +1,12 @@
 from typing import Type
 from uuid import UUID
 
-from sqlalchemy import select, update, delete
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import selectinload
 
-from src.v1.repositories import BaseRepository
-from src.v1.profile.models import Interest, Profile
+from src.v1.profile.models import Profile
 from src.v1.profile.schemas.profile import ProfileInCreateSchema, ProfileInUpdateSchema
+from src.v1.repositories import BaseRepository
 
 
 class ProfileRepository(
@@ -33,9 +33,7 @@ class ProfileRepository(
         q = delete(self._table).where(self._table.owner_id == owner_id)
         await self._db_session.execute(q)
 
-    async def update_by_owner(
-        self, *, in_schema: ProfileInUpdateSchema, owner_id: UUID
-    ) -> Profile:
+    async def update_by_owner(self, *, in_schema: ProfileInUpdateSchema, owner_id: UUID) -> Profile:
         q = (
             update(self._table)
             .where(self._table.owner_id == owner_id)  # type: ignore

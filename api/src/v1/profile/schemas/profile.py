@@ -1,11 +1,10 @@
 from datetime import date
 from typing import Optional
 from uuid import UUID
-from pydantic import Field
 
-from src.v1.schemas import BaseSchema
-from src.v1.profile.models import LookingGenderEnum, GenderEnum
+from src.v1.profile.models import GenderEnum, LookingGenderEnum
 from src.v1.profile.schemas.interest import InterestOutSchema
+from src.v1.schemas import BaseSchema
 
 ###############################################################
 #                         In Schemas                          #

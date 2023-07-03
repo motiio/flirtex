@@ -13,10 +13,12 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
 
-from src.v1.auth.views import auth_router
 from src.v1.config.database import async_session_factory
 from src.v1.config.settings import settings
+
+from src.v1.auth.views import auth_router
 from src.v1.profile.views import profile_router
+from src.v1.common.views import common_router
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
@@ -31,7 +33,7 @@ api = FastAPI()
 
 api.include_router(auth_router, prefix=settings.API_V1_PREFIX, tags=["Auth"])
 api.include_router(profile_router, prefix=settings.API_V1_PREFIX, tags=["Profile"])
-# api.include_router(common_router, prefix="/common", tags=["Common"])
+api.include_router(common_router, prefix=settings.API_V1_PREFIX, tags=["Common"])
 
 
 origins = ["*"]
@@ -49,7 +51,9 @@ class LimitUploadSize(BaseHTTPMiddleware):
         super().__init__(app)
         self.max_upload_size = max_upload_size
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         if request.method == "POST":
             if "content-length" not in request.headers:
                 return Response(status_code=status.HTTP_411_LENGTH_REQUIRED)
@@ -65,7 +69,9 @@ api.add_middleware(
 )  # ~10MB
 
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
-_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(REQUEST_ID_CTX_KEY, default=None)
+_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(
+    REQUEST_ID_CTX_KEY, default=None
+)
 
 
 def get_request_id() -> Optional[str]:
@@ -77,7 +83,9 @@ async def db_session_middleware(request: Request, call_next):
     request_id = str(uuid1())
     ctx_token = _request_id_ctx_var.set(request_id)
     try:
-        db_session = async_scoped_session(async_session_factory, scopefunc=get_request_id)
+        db_session = async_scoped_session(
+            async_session_factory, scopefunc=get_request_id
+        )
         request.state.db = db_session()
         response = await call_next(request)
     except Exception as e:

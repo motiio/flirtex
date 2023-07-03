@@ -3,29 +3,29 @@ from fastapi import APIRouter
 from src.v1.auth.dependencies.current_user import CurrentUser
 from src.v1.config.database import DbSession
 from src.v1.profile.dtos import (
-    InterestsPutResponse,
+    InterestsReadResponse,
     ProfileCreateRequest,
-    ProfileUpdateRequest,
     ProfileCreateResponse,
-    ProfileReadResponse,
     ProfileInterestsCreateRequest,
+    ProfileReadResponse,
+    ProfileUpdateRequest,
 )
 from src.v1.profile.models import Interest
 from src.v1.profile.repositories.interest import InterestReadOnlyRepository
 from src.v1.profile.repositories.profile import ProfileRepository
-from src.v1.profile.schemas.interest import InterestOutSchema, InterestsOutSchema
+from src.v1.profile.schemas.interest import InterestsOutSchema
 from src.v1.profile.schemas.profile import (
     ProfileInCreateSchema,
-    ProfileOutCreateSchema,
     ProfileInUpdateSchema,
+    ProfileOutCreateSchema,
     ProfileOutReadSchema,
 )
 from src.v1.profile.usecases.profile import (
     CreateProfile,
-    GetUserProfile,
-    DeleteUserProfile,
-    UpdateUserProfile,
     CreateProfileInterests,
+    DeleteUserProfile,
+    GetUserProfile,
+    UpdateUserProfile,
 )
 
 profile_router = APIRouter(prefix="/profile")
@@ -81,6 +81,7 @@ async def create_profile(
     ).execute(
         profile_data=profile_data,
     )
+
     return ProfileCreateResponse(**profile.model_dump())
 
 
@@ -112,6 +113,7 @@ async def update_profile(
     ).execute(
         profile_data=profile_data,
     )
+
     return ProfileReadResponse(**profile.model_dump())
 
 
@@ -135,12 +137,20 @@ async def delete_profile(
     ).execute(profile_owner=current_user_id)
 
 
-@profile_router.put("/interests", response_model=InterestsPutResponse)
+@profile_router.put("/interests", response_model=InterestsReadResponse)
 async def add_profile_interests(
     added_profile_interests: ProfileInterestsCreateRequest,
     current_user_id: CurrentUser,
     db_session: DbSession,
 ):
+    """
+    Put profile interests.
+
+    Returns:
+        The new profile **interests**.
+
+    - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
+    """
     interests: list[Interest] = await InterestReadOnlyRepository(
         db_session=db_session
     ).fetch(
@@ -150,4 +160,5 @@ async def add_profile_interests(
     profile_interests: InterestsOutSchema = await CreateProfileInterests(
         repository=ProfileRepository(db_session=db_session)
     ).execute(interests=interests, owner_id=current_user_id)
-    return InterestsPutResponse(**profile_interests.model_dump())
+
+    return InterestsReadResponse(**profile_interests.model_dump())

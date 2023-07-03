@@ -1,17 +1,18 @@
 from uuid import UUID
 
 from pydantic import TypeAdapter
-from src.v1.profile.exceptions import ProfileNotFound, ProfileAlreadyExists
-from src.v1.profile.schemas.interest import InterestOutSchema, InterestsOutSchema
-from src.v1.usecases import BaseUseCase
+
+from src.v1.profile.exceptions import ProfileAlreadyExists, ProfileNotFound
 from src.v1.profile.models import Interest
 from src.v1.profile.repositories.profile import ProfileRepository
+from src.v1.profile.schemas.interest import InterestOutSchema, InterestsOutSchema
 from src.v1.profile.schemas.profile import (
     ProfileInCreateSchema,
-    ProfileOutCreateSchema,
     ProfileInUpdateSchema,
+    ProfileOutCreateSchema,
     ProfileOutReadSchema,
 )
+from src.v1.usecases import BaseUseCase
 
 
 class CreateProfile(
@@ -88,14 +89,10 @@ class CreateProfileInterests(
         ProfileOutReadSchema,
     ]
 ):
-    async def execute(
-        self, *, owner_id: UUID, interests: list[Interest]
-    ) -> InterestsOutSchema:
+    async def execute(self, *, owner_id: UUID, interests: list[Interest]) -> InterestsOutSchema:
         async with self.repository as repo:
             profile = await repo.get_by_owner(owner_id=owner_id)
             profile.interests = interests
             return InterestsOutSchema(
-                interests=TypeAdapter(list[InterestOutSchema]).validate_python(
-                    profile.interests
-                )
+                interests=TypeAdapter(list[InterestOutSchema]).validate_python(profile.interests)
             )

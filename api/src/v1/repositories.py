@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Generic, Type, TypeVar, cast, List, Optional
+from typing import Generic, List, Optional, Type, TypeVar, cast
 from uuid import UUID, uuid4
 
 from sqlalchemy import delete, select, update
@@ -33,9 +33,7 @@ class IReadOnlyRepository(Generic[IN_READ_SCHEMA, TABLE], metaclass=ABCMeta):
         ...
 
 
-class IWriteOnlyRepository(
-    Generic[IN_CREATE_SCHEMA, IN_UPDATE_SCHEMA, TABLE], metaclass=ABCMeta
-):
+class IWriteOnlyRepository(Generic[IN_CREATE_SCHEMA, IN_UPDATE_SCHEMA, TABLE], metaclass=ABCMeta):
     @abstractmethod
     def create(self, *, in_schema: IN_CREATE_SCHEMA) -> Optional[TABLE]:
         ...
