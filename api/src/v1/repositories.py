@@ -4,9 +4,9 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import delete, select, update
 
-from src.database.core import DbSession
 from src.v1.models import Base
 from src.v1.schemas import BaseSchema
+from src.v1.config.database import DbSession
 
 IN_CREATE_SCHEMA = TypeVar("IN_CREATE_SCHEMA", bound=BaseSchema)
 IN_READ_SCHEMA = TypeVar("IN_READ_SCHEMA", bound=BaseSchema)
@@ -33,7 +33,9 @@ class IReadOnlyRepository(Generic[IN_READ_SCHEMA, TABLE], metaclass=ABCMeta):
         ...
 
 
-class IWriteOnlyRepository(Generic[IN_CREATE_SCHEMA, IN_UPDATE_SCHEMA, TABLE], metaclass=ABCMeta):
+class IWriteOnlyRepository(
+    Generic[IN_CREATE_SCHEMA, IN_UPDATE_SCHEMA, TABLE], metaclass=ABCMeta
+):
     @abstractmethod
     def create(self, *, in_schema: IN_CREATE_SCHEMA) -> Optional[TABLE]:
         ...
