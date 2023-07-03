@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Header
+from src.v1.auth.dependencies.current_user import CurrentUser
 
 from src.v1.auth.dtos import (
     InitDataRequestLogin,
@@ -80,9 +81,9 @@ async def update_token_pair(
         old_refresh_token_value=old_refresh_token.valid_token_data["value"],
     )
 
-    user: UserOutSchema = await ReadUser(repository=UserRepository(db_session=db_session)).execute(
-        user_id=new_refresh_token_data.user
-    )
+    user: UserOutSchema = await ReadUser(
+        repository=UserRepository(db_session=db_session)
+    ).execute(user_id=new_refresh_token_data.user)
 
     return TokenPairResponse(
         access_token=user.access_token,

@@ -1,12 +1,7 @@
 from fastapi import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_404_NOT_FOUND
 
-InvalidInitData = HTTPException(
-    status_code=HTTP_400_BAD_REQUEST,
-    detail=[{"msg": "Invalid init datat"}],
-)
-
-InvalidToken = HTTPException(
-    status_code=HTTP_401_UNAUTHORIZED,
-    detail="Invalid authentication credentials",
+ProfileNotFound = HTTPException(
+    status_code=HTTP_404_NOT_FOUND,
+    detail={"msg": "User profile not found"},
 )

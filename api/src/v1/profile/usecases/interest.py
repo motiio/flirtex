@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import TypeAdapter
 
-from src.v1.config.usecases import BaseUseCase
+from src.v1.usecases import BaseUseCase
 from src.v1.profile.repositories.interest import InterestReadOnlyRepository
 from src.v1.profile.schemas.interest import (
     InterestInReadSchema,

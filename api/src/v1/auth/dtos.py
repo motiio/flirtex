@@ -6,7 +6,7 @@ from pydantic import Field, computed_field
 
 from src.v1.auth.exceptions import InvalidInitData
 from src.v1.auth.utils import jwt
-from src.v1.config.schemas import BaseSchema
+from src.v1.schemas import BaseSchema
 from src.v1.config.settings import settings
 
 ###############################################################

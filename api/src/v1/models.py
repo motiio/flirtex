@@ -25,6 +25,10 @@ class CustomBase:
         sort_order=-10,
     )
 
+    def dict(self):
+        """Returns a dict representation of a model."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
     @declared_attr
     def __tablename__(self) -> str:
         return resolve_table_name(self.__name__)
@@ -61,8 +65,12 @@ Base = declarative_base(cls=CustomBase)
 class TimeStampMixin:
     """Timestamping mixin"""
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9998)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9999)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9998
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9999
+    )
 
     @staticmethod
     def _updated_at(mapper, connection, target):

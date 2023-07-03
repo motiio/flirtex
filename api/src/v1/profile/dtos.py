@@ -1,10 +1,11 @@
 from datetime import date, datetime
+from typing import Optional
 from uuid import UUID
 
 from dateutil.relativedelta import relativedelta
 from pydantic import Field, field_validator
 
-from src.v1.config.schemas import BaseSchema
+from src.v1.schemas import BaseSchema
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
 
 ###############################################################
@@ -18,6 +19,7 @@ class ProfileRequestCreate(BaseSchema):
     looking_gender: LookingGenderEnum
     gender: GenderEnum
     interests: list[UUID] = Field(max_length=7)
+    bio: Optional[str] = Field("", max_length=600)
 
     @field_validator("birthdate")
     def check_legal_age(cls, v):
@@ -27,6 +29,11 @@ class ProfileRequestCreate(BaseSchema):
         elif difference_in_years > 120:
             raise ValueError("You're too old, sorry")
         return v
+
+
+class ProfileRequestUpdate(BaseSchema):
+    bio: Optional[str] = Field(None, max_length=600)
+    interests: Optional[list[UUID]] = Field(None, max_length=7)
 
 
 ################################################################
@@ -42,6 +49,7 @@ class InterestResponse(BaseSchema):
 
 class ProfileResponse(BaseSchema):
     name: str
+    bio: Optional[str]
     birthdate: date
     looking_gender: LookingGenderEnum
     gender: GenderEnum

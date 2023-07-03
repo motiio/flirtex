@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.v1.config.schemas import BaseSchema
+from src.v1.schemas import BaseSchema
 
 ###############################################################
 #                         In Schemas                          #

@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import Field, computed_field
 
 from src.v1.auth.utils import jwt
-from src.v1.config.schemas import BaseSchema
+from src.v1.schemas import BaseSchema
 from src.v1.config.settings import settings
 
 ###############################################################
@@ -19,6 +19,10 @@ class UserInCreateSchema(BaseSchema):
     tg_last_name: Optional[str] = Field(None, alias="last_name")
     tg_is_premium: Optional[bool] = Field(None, alias="is_premium")
     tg_language_code: Optional[str] = Field(None, alias="language_code")
+
+
+class UserInUpdateSchema(UserInCreateSchema):
+    ...
 
 
 ###############################################################

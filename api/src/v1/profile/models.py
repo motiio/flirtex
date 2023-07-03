@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.v1.auth.models import User
-from src.v1.config.models import Base, TimeStampMixin
+from src.v1.models import Base, TimeStampMixin
 
 
 class GenderEnum(enum.Enum):
@@ -61,6 +61,7 @@ class Profile(Base, TimeStampMixin):
     owner_id: Mapped[UUID] = mapped_column(ForeignKey("core.user.id"))
     owner: Mapped["User"] = relationship(back_populates="profile")
     name: Mapped[str] = mapped_column(String(32))
+    bio: Mapped[str] = mapped_column(String(600), nullable=True)
     birthdate: Mapped[date] = mapped_column(Date)
     gender: Mapped[GenderEnum] = mapped_column(Enum(GenderEnum, schema="core"))
     looking_gender: Mapped[LookingGenderEnum] = mapped_column(

@@ -6,11 +6,14 @@ from sqlalchemy import delete, select
 from src.v1.auth.models import RefreshToken
 from src.v1.auth.schemas.refresh_token import (
     RefreshTokenInCreateSchema,
+    RefreshTokenInUpdateSchema,
 )
-from src.v1.config.repositories import BaseRepository
+from src.v1.repositories import BaseRepository
 
 
-class RefreshTokenRepository(BaseRepository[RefreshTokenInCreateSchema, RefreshToken]):
+class RefreshTokenRepository(
+    BaseRepository[RefreshTokenInCreateSchema, RefreshTokenInUpdateSchema, RefreshToken]
+):
     @property
     def _table(self) -> Type[RefreshToken]:
         return RefreshToken

@@ -9,7 +9,7 @@ from src.v1.config.settings import settings as app_settings
 
 # from src.config.models import Base
 
-from src.v1.config.models import Base
+from src.v1.models import Base
 
 CORE_SCHEMA_NAME = "core"
 
