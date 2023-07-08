@@ -2,7 +2,7 @@ from uuid import UUID
 
 from src.v1.auth.repositories.user import UserRepository
 from src.v1.auth.schemas.user import UserInCreateSchema, UserOutSchema
-from src.v1.usecases import BaseUseCase
+from src.v1.base.usecases import BaseUseCase
 
 
 class GetOrCreateUser(BaseUseCase[UserRepository, UserInCreateSchema, UserOutSchema]):

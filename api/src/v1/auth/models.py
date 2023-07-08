@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import UUID, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.v1.models import Base, TimeStampMixin
+from src.v1.base.models import Base, TimeStampMixin
 
 
 class User(Base, TimeStampMixin):

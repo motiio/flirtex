@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Header
+from starlette.status import HTTP_201_CREATED
 
 from src.v1.auth.dtos import (
     InitDataRequestLogin,
@@ -11,6 +12,7 @@ from src.v1.auth.repositories.refresh_token import RefreshTokenRepository
 from src.v1.auth.repositories.user import UserRepository
 from src.v1.auth.schemas.refresh_token import (
     RefreshTokenInCreateSchema,
+    RefreshTokenInUpdateSchema,
     RefreshTokenOutSchema,
 )
 from src.v1.auth.schemas.user import UserInCreateSchema, UserOutSchema
@@ -24,6 +26,7 @@ auth_router = APIRouter(prefix="/auth")
 @auth_router.post(
     "",
     response_model=TokenPairResponse,
+    status_code=HTTP_201_CREATED,
 )
 async def login(
     init_data: InitDataRequestLogin,
@@ -43,7 +46,10 @@ async def login(
         repository=UserRepository(db_session=db_session)
     ).execute(user_data=user_data)
 
-    refresh_token_data = RefreshTokenInCreateSchema(user=user.id, user_agent=user_agent)
+    refresh_token_data = RefreshTokenInCreateSchema(
+        user=user.id,
+        user_agent=user_agent,
+    )
     refresh_token: RefreshTokenOutSchema = await CreateRefreshToken(
         repository=RefreshTokenRepository(db_session=db_session)
     ).execute(refresh_token_data=refresh_token_data)
@@ -54,9 +60,13 @@ async def login(
     )
 
 
-@auth_router.put("", response_model=TokenPairResponse)
+@auth_router.put(
+    "",
+    response_model=TokenPairResponse,
+    status_code=HTTP_201_CREATED,
+)
 async def update_token_pair(
-    old_refresh_token: RefreshTokenRequestUpdateTokenPair,
+    expired_token: RefreshTokenRequestUpdateTokenPair,
     db_session: DbSession,
     user_agent: Annotated[str, Header()],
 ):
@@ -69,20 +79,19 @@ async def update_token_pair(
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
 
-    new_refresh_token_data = RefreshTokenInCreateSchema(
-        user=old_refresh_token.valid_token_data["user"],
+    expired_refresh_token_data = RefreshTokenInUpdateSchema(
+        user=expired_token.valid_token_data["user"],
         user_agent=user_agent,
-    )
-    new_refresh_token: RefreshTokenOutSchema = await UpdateRefreshToken(
-        repository=RefreshTokenRepository(db_session=db_session)
-    ).execute(
-        refresh_token_data=new_refresh_token_data,
-        old_refresh_token_value=old_refresh_token.valid_token_data["value"],
+        expired_token=expired_token.value,
     )
 
-    user: UserOutSchema = await ReadUser(repository=UserRepository(db_session=db_session)).execute(
-        user_id=new_refresh_token_data.user
-    )
+    new_refresh_token: RefreshTokenOutSchema = await UpdateRefreshToken(
+        repository=RefreshTokenRepository(db_session=db_session)
+    ).execute(refresh_token_data=expired_refresh_token_data)
+
+    user: UserOutSchema = await ReadUser(
+        repository=UserRepository(db_session=db_session),
+    ).execute(user_id=new_refresh_token.user)
 
     return TokenPairResponse(
         access_token=user.access_token,

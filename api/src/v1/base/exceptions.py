@@ -1,0 +1,6 @@
+class DoesNotExists(Exception):
+    ...
+
+
+class AlreadyExists(Exception):
+    ...

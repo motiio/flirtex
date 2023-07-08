@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
+from fastapi import UploadFile
 
 import orjson
 from pydantic import BaseModel
@@ -17,9 +18,14 @@ def convert_datetime_to_gmt(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
+def kek():
+    pass
+
+
 class BaseSchema(BaseModel):
     class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        json_encoders = {datetime: convert_datetime_to_gmt}
-        allow_population_by_field_name = True
+        populate_by_field_name = True
+
+
+class BaseS3Schema(BaseModel):
+    key: str

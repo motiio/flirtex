@@ -1,17 +1,17 @@
 from fastapi import APIRouter
 
-from src.v1.auth.dependencies.current_user import CurrentUser
-from src.v1.common.dtos import InterestsResponse
+from src.v1.auth.dependencies.user import CurrentUser
+from src.v1.interest.dtos import InterestsResponse
 from src.v1.config.database import DbSession
 from src.v1.profile.dtos import InterestsReadResponse
-from src.v1.profile.repositories.interest import InterestReadOnlyRepository
-from src.v1.profile.schemas.interest import InterestsOutSchema
-from src.v1.profile.usecases.interest import ListInterests
+from src.v1.interest.repositories.db import InterestReadOnlyRepository
+from src.v1.interest.schemas import InterestsOutSchema
+from src.v1.interest.usecases import ListInterests
 
-common_router = APIRouter(prefix="/common")
+interest_router = APIRouter(prefix="/common")
 
 
-@common_router.get(
+@interest_router.get(
     "/interests",
     response_model=InterestsReadResponse,
 )

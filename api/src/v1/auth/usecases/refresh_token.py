@@ -4,9 +4,10 @@ from src.v1.auth.exceptions import InvalidToken
 from src.v1.auth.repositories.refresh_token import RefreshTokenRepository
 from src.v1.auth.schemas.refresh_token import (
     RefreshTokenInCreateSchema,
+    RefreshTokenInUpdateSchema,
     RefreshTokenOutSchema,
 )
-from src.v1.usecases import BaseUseCase
+from src.v1.base.usecases import BaseUseCase
 
 
 class CreateRefreshToken(
@@ -33,17 +34,25 @@ class CreateRefreshToken(
 class UpdateRefreshToken(
     BaseUseCase[
         RefreshTokenRepository,
-        RefreshTokenInCreateSchema,
+        RefreshTokenInUpdateSchema,
         RefreshTokenOutSchema,
     ]
 ):
     async def execute(
-        self, *, refresh_token_data: RefreshTokenInCreateSchema, old_refresh_token_value: str
+        self,
+        *,
+        refresh_token_data: RefreshTokenInUpdateSchema,
     ):
         async with self.repository as repo:
-            existent_refresh_token = await repo.get_by_value(value=old_refresh_token_value)
+            existent_refresh_token = await repo.get_by_value(
+                value=refresh_token_data.expired_token
+            )
             if not existent_refresh_token:
                 raise InvalidToken
             await repo.delete(entry_id=existent_refresh_token.id)
+
+            # remove expired_token from input schema to create new token
+            del refresh_token_data.expired_token
+
             new_refresh_token = await repo.create(in_schema=refresh_token_data)
-            return new_refresh_token
+            return RefreshTokenOutSchema.model_validate(new_refresh_token)

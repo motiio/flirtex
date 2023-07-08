@@ -7,17 +7,15 @@ from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from sqlalchemy.ext.asyncio import async_scoped_session
-from starlette import status
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
-from starlette.responses import Response
-from starlette.types import ASGIApp
 
 from src.v1.auth.views import auth_router
-from src.v1.common.views import common_router
+from src.v1.photo.views import photo_router
+from src.v1.interest.views import interest_router
 from src.v1.config.database import async_session_factory
 from src.v1.config.settings import settings
 from src.v1.profile.views import profile_router
+from src.v1.config.s3 import S3Session, create_s3_session
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
@@ -31,8 +29,9 @@ api = FastAPI()
 
 
 api.include_router(auth_router, prefix=settings.API_V1_PREFIX, tags=["Auth"])
+api.include_router(photo_router, prefix=settings.API_V1_PREFIX, tags=["Photos"])
 api.include_router(profile_router, prefix=settings.API_V1_PREFIX, tags=["Profile"])
-api.include_router(common_router, prefix=settings.API_V1_PREFIX, tags=["Common"])
+api.include_router(interest_router, prefix=settings.API_V1_PREFIX, tags=["Interests"])
 
 
 origins = ["*"]
@@ -45,28 +44,10 @@ api.add_middleware(
 )
 
 
-class LimitUploadSize(BaseHTTPMiddleware):
-    def __init__(self, app: ASGIApp, max_upload_size: int) -> None:
-        super().__init__(app)
-        self.max_upload_size = max_upload_size
-
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        if request.method == "POST":
-            if "content-length" not in request.headers:
-                return Response(status_code=status.HTTP_411_LENGTH_REQUIRED)
-            content_length = int(request.headers["content-length"])
-            if content_length > self.max_upload_size:
-                return Response(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
-        return await call_next(request)
-
-
-api.add_middleware(
-    LimitUploadSize,
-    max_upload_size=settings.MAX_PROFILE_PHOTO_SIZE_B,
-)  # ~10MB
-
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
-_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(REQUEST_ID_CTX_KEY, default=None)
+_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(
+    REQUEST_ID_CTX_KEY, default=None
+)
 
 
 def get_request_id() -> Optional[str]:
@@ -78,7 +59,9 @@ async def db_session_middleware(request: Request, call_next):
     request_id = str(uuid1())
     ctx_token = _request_id_ctx_var.set(request_id)
     try:
-        db_session = async_scoped_session(async_session_factory, scopefunc=get_request_id)
+        db_session = async_scoped_session(
+            async_session_factory, scopefunc=get_request_id
+        )
         request.state.db = db_session()
         response = await call_next(request)
     except Exception as e:
@@ -89,9 +72,24 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 
-@api.get("/sentry-debug")
-async def trigger_error():
-    pass
+@api.middleware("http")
+async def s3_resource_middleware(request: Request, call_next):
+    request.state.s3 = create_s3_session()
+    response = await call_next(request)
+    return response
+
+
+@api.get("/s3")
+async def trigger_error(s3_session: S3Session):
+    return id(s3_session)
+
+
+# bucket = await s3_resource.Bucket(settings.S3_PROFILES_BUCKET_NAME)
+
+# print(type(bucket))
+# async for file in bucket.objects.all():
+# print(file.key)
+# print(type(s3_resource))
 
 
 @api.get("/hello/{name}")
@@ -103,6 +101,6 @@ async def say_hello(name: str):
 async def get_user_agent(user_agent: str = Header(None)):
     """
     Returns:
-        The user agent string.
+        Thej`` user agent string.
     """
     return {"User-Agent": user_agent}

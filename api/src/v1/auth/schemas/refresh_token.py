@@ -4,7 +4,7 @@ from pydantic import computed_field
 
 from src.v1.auth.utils import jwt
 from src.v1.config.settings import settings
-from src.v1.schemas import BaseSchema
+from src.v1.base.schemas import BaseSchema
 
 ###############################################################
 #                         In Schemas                          #
@@ -26,7 +26,7 @@ class RefreshTokenInCreateSchema(BaseSchema):
 
 
 class RefreshTokenInUpdateSchema(RefreshTokenInCreateSchema):
-    ...
+    expired_token: str
 
 
 ###############################################################

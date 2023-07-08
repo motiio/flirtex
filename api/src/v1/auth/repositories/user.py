@@ -4,10 +4,20 @@ from sqlalchemy import select
 
 from src.v1.auth.models import User
 from src.v1.auth.schemas.user import UserInCreateSchema, UserInUpdateSchema
-from src.v1.repositories import BaseRepository
+from src.v1.base.repositories.db import (
+    BaseReadOnlyRepository,
+    BaseWriteOnlyRepository,
+)
 
 
-class UserRepository(BaseRepository[UserInCreateSchema, UserInUpdateSchema, User]):
+class UserRepository(
+    BaseReadOnlyRepository[User],
+    BaseWriteOnlyRepository[
+        UserInCreateSchema,
+        UserInUpdateSchema,
+        User,
+    ],
+):
     @property
     def _table(self) -> Type[User]:
         return User

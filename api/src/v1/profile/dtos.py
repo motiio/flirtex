@@ -3,10 +3,12 @@ from typing import Optional
 from uuid import UUID
 
 from dateutil.relativedelta import relativedelta
+from fastapi import File, UploadFile
 from pydantic import Field, field_validator
+from src.v1.photo.dtos import PhotoReadResponse
 
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
-from src.v1.schemas import BaseSchema
+from src.v1.base.schemas import BaseSchema
 
 ###############################################################
 #                Request data transfer objects                #
@@ -25,7 +27,7 @@ class ProfileCreateRequest(BaseSchema):
         difference_in_years = relativedelta(datetime.now(), v).years
         if difference_in_years < 18:
             raise ValueError("Your age must be 18+")
-        elif difference_in_years > 120:
+        elif difference_in_years > 100:
             raise ValueError("You're too old, sorry")
         return v
 
@@ -34,8 +36,13 @@ class ProfileUpdateRequest(BaseSchema):
     bio: str = Field("", max_length=600)
 
 
-class ProfileInterestsCreateRequest(BaseSchema):
+class InterestsCreateRequest(BaseSchema):
     interests: list[UUID] = Field(max_length=7)
+
+
+class PhotoCreateRequest(BaseSchema):
+    displaying_order: int
+    file: UploadFile = File(...)
 
 
 ################################################################
@@ -68,3 +75,4 @@ class ProfileReadResponse(BaseSchema):
     looking_gender: LookingGenderEnum
     gender: GenderEnum
     interests: list[InterestReadResponse]
+    photos: list[PhotoReadResponse]

@@ -9,15 +9,14 @@ from sqlalchemy import (
     Date,
     Enum,
     ForeignKey,
-    Integer,
     String,
-    Text,
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.v1.auth.models import User
-from src.v1.models import Base, TimeStampMixin
+from src.v1.base.models import Base, TimeStampMixin
+from src.v1.interest.models import Interest
 
 
 class GenderEnum(enum.Enum):
@@ -45,16 +44,6 @@ class ProfileInterests(Base, TimeStampMixin):
     )
 
 
-class Interest(Base, TimeStampMixin):
-    __table_args__ = {"schema": "core"}
-
-    name: Mapped[str] = mapped_column(String(32), unique=True)
-    icon: Mapped[str] = mapped_column(Text)
-
-    def __repr__(self):
-        return f"Interest[{self.id=}, {self.name=}, {self.icon=}]"
-
-
 class Profile(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
 
@@ -69,20 +58,11 @@ class Profile(Base, TimeStampMixin):
     )
     is_online: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     interests: Mapped[list[Interest]] = relationship(
-        secondary="core.profile_interests",
+        secondary="core.profile_interests", lazy="selectin"
     )
-    photos: Mapped[list["ProfilePhoto"]] = relationship(back_populates="profile")
+    photos: Mapped[list["Photo"]] = relationship(
+        back_populates="profile", lazy="selectin"
+    )
 
     def __repr__(self):
         return f"Profile[{self.id=}, {self.owner_id=}, {self.name=}, {self.birthdate=}, {self.gender=},]"
-
-
-class ProfilePhoto(Base, TimeStampMixin):
-    __table_args__ = {"schema": "core"}
-
-    profile_id: Mapped[int] = mapped_column(ForeignKey(Profile.id, ondelete="CASCADE"))
-    displaying_order: Mapped[int] = mapped_column(Integer)
-    is_processed: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
-    profile: Mapped["Profile"] = relationship(back_populates="photos")
-    photo_url: Mapped[str] = mapped_column(String(100))

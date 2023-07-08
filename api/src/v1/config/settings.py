@@ -12,6 +12,7 @@ class EnvironmentEnum(str, Enum):
 
 
 class GlobalConfig(BaseSettings):
+    DOMAIN_NAME: str = "lovolab.ru"
     TITLE: str = "API"
     APP_VERSION: str = "0.1"
     ENVIRONMENT: EnvironmentEnum
@@ -37,6 +38,10 @@ class GlobalConfig(BaseSettings):
 
     MAX_PROFILE_PHOTO_SIZE_B: int
     MAX_PROFILE_PHOTOS_COUNT: int = 7
+    ACCEPTED_PHOTO_TYPES_B: tuple = (
+        b"\xFF\xD8\xFF\xE0",  # jpeg signatyre
+        b"\xFF\xD8\xFF\xE1",  # jpg_signatyre
+    )
 
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")

@@ -8,11 +8,19 @@ from src.v1.auth.schemas.refresh_token import (
     RefreshTokenInCreateSchema,
     RefreshTokenInUpdateSchema,
 )
-from src.v1.repositories import BaseRepository
+from src.v1.base.repositories.db import (
+    BaseReadOnlyRepository,
+    BaseWriteOnlyRepository,
+)
 
 
 class RefreshTokenRepository(
-    BaseRepository[RefreshTokenInCreateSchema, RefreshTokenInUpdateSchema, RefreshToken]
+    BaseReadOnlyRepository[RefreshToken],
+    BaseWriteOnlyRepository[
+        RefreshTokenInCreateSchema,
+        RefreshTokenInUpdateSchema,
+        RefreshToken,
+    ],
 ):
     @property
     def _table(self) -> Type[RefreshToken]:
