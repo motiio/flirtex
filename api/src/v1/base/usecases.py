@@ -6,10 +6,9 @@ from src.v1.base.repositories.db import (
     BaseWriteOnlyRepository,
 )
 from src.v1.base.repositories.s3 import (
-    BaseReadOnlyS3Repository,
     BaseWriteOnlyS3Repository,
 )
-from src.v1.base.schemas import BaseSchema, BaseS3Schema
+from src.v1.base.schemas import BaseS3Schema, BaseSchema
 
 REPOSITORY = TypeVar(
     "REPOSITORY",
@@ -18,7 +17,6 @@ REPOSITORY = TypeVar(
             BaseReadOnlyRepository,
             BaseWriteOnlyRepository,
             BaseWriteOnlyS3Repository,
-            BaseReadOnlyS3Repository,
         ]
     ],
 )

@@ -4,8 +4,8 @@ from uuid import UUID
 from pydantic import Field, computed_field
 
 from src.v1.auth.utils import jwt
-from src.v1.config.settings import settings
 from src.v1.base.schemas import BaseSchema
+from src.v1.config.settings import settings
 
 ###############################################################
 #                         In Schemas                          #

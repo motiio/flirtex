@@ -44,9 +44,7 @@ class UpdateRefreshToken(
         refresh_token_data: RefreshTokenInUpdateSchema,
     ):
         async with self.repository as repo:
-            existent_refresh_token = await repo.get_by_value(
-                value=refresh_token_data.expired_token
-            )
+            existent_refresh_token = await repo.get_by_value(value=refresh_token_data.expired_token)
             if not existent_refresh_token:
                 raise InvalidToken
             await repo.delete(entry_id=existent_refresh_token.id)

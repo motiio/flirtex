@@ -1,13 +1,15 @@
-from typing import Generic, List, Optional, TypeVar, cast, Type
+from typing import Generic, List, Optional, TypeVar, cast
 from uuid import UUID, uuid4
 
+from sqlalchemy import delete, select, update
 
-from src.v1.config.database import DbSession
-from src.v1.base.schemas import BaseSchema
-from src.v1.base.models import Base
 from src.v1.base.aio import AsyncContextManagerRepository
 from src.v1.base.interfaces import IReadOnlyDbRepository, IWriteOnlyDbRepository
-from sqlalchemy import select, update, delete
+from src.v1.base.models import Base
+from src.v1.base.schemas import BaseSchema
+from src.v1.config.database import DbSession
+
+from typing import Type
 
 IN_CREATE_SCHEMA = TypeVar("IN_CREATE_SCHEMA", bound=BaseSchema)
 IN_UPDATE_SCHEMA = TypeVar("IN_UPDATE_SCHEMA", bound=BaseSchema)

@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 
 from src.v1.auth.dependencies.user import CurrentUser
-from src.v1.interest.dtos import InterestsResponse
 from src.v1.config.database import DbSession
-from src.v1.profile.dtos import InterestsReadResponse
+from src.v1.interest.dtos import InterestsResponse
 from src.v1.interest.repositories.db import InterestReadOnlyRepository
 from src.v1.interest.schemas import InterestsOutSchema
 from src.v1.interest.usecases import ListInterests
+from src.v1.profile.dtos import InterestsReadResponse
 
 interest_router = APIRouter(prefix="/interests")
 

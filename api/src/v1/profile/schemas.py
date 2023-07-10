@@ -1,12 +1,11 @@
 from datetime import date
 from typing import Optional
 from uuid import UUID
-from src.v1.photo.schemas import PhotoOutReadSchema
 
-
-from src.v1.profile.models import GenderEnum, LookingGenderEnum, ProfileInterests
-from src.v1.interest.schemas import InterestOutSchema, InterestsOutSchema
 from src.v1.base.schemas import BaseSchema
+from src.v1.interest.schemas import InterestOutSchema
+from src.v1.photo.schemas import PhotoOutReadSchema
+from src.v1.profile.models import GenderEnum, LookingGenderEnum
 
 ###############################################################
 #                         In Schemas                          #

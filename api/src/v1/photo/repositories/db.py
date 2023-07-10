@@ -1,16 +1,18 @@
 from collections.abc import Sequence
-from sqlalchemy import func, select, delete, update
-from src.v1.photo.models import Photo
+from typing import Optional, Type
+from uuid import UUID
+
+from sqlalchemy import delete, func, select, update
+
 from src.v1.base.repositories.db import (
     BaseReadOnlyRepository,
     BaseWriteOnlyRepository,
 )
+from src.v1.photo.models import Photo
 from src.v1.photo.schemas import (
     PhotoInCreateSchema,
     PhotoInUpdateSchema,
 )
-from typing import Optional, Type
-from uuid import UUID
 
 
 class PhotoRepository(

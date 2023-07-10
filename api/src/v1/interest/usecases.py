@@ -2,13 +2,13 @@ from uuid import UUID
 
 from pydantic import TypeAdapter
 
+from src.v1.base.usecases import BaseUseCase
 from src.v1.interest.repositories.db import InterestReadOnlyRepository
 from src.v1.interest.schemas import (
     InterestInReadSchema,
     InterestOutSchema,
     InterestsOutSchema,
 )
-from src.v1.base.usecases import BaseUseCase
 
 
 class FetchInterests(

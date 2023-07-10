@@ -10,12 +10,12 @@ from sqlalchemy.ext.asyncio import async_scoped_session
 from starlette.requests import Request
 
 from src.v1.auth.views import auth_router
-from src.v1.photo.views import photo_router
-from src.v1.interest.views import interest_router
 from src.v1.config.database import async_session_factory
-from src.v1.config.settings import settings
-from src.v1.profile.views import profile_router
 from src.v1.config.s3 import S3Session, create_s3_session
+from src.v1.config.settings import settings
+from src.v1.interest.views import interest_router
+from src.v1.photo.views import photo_router
+from src.v1.profile.views import profile_router
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
@@ -77,30 +77,3 @@ async def s3_resource_middleware(request: Request, call_next):
     request.state.s3 = create_s3_session()
     response = await call_next(request)
     return response
-
-
-@api.get("/s3")
-async def trigger_error(s3_session: S3Session):
-    return id(s3_session)
-
-
-# bucket = await s3_resource.Bucket(settings.S3_PROFILES_BUCKET_NAME)
-
-# print(type(bucket))
-# async for file in bucket.objects.all():
-# print(file.key)
-# print(type(s3_resource))
-
-
-@api.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
-
-
-@api.get("/user-agent")
-async def get_user_agent(user_agent: str = Header(None)):
-    """
-    Returns:
-        Thej`` user agent string.
-    """
-    return {"User-Agent": user_agent}

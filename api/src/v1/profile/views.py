@@ -1,34 +1,44 @@
-from uuid import UUID
 from hashlib import md5
-from fastapi import APIRouter, Depends, Form, UploadFile, BackgroundTasks
-from starlette.background import BackgroundTask
+from uuid import UUID
+
+from fastapi import APIRouter, BackgroundTasks
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_202_ACCEPTED,
-    HTTP_204_NO_CONTENT,
 )
 
-from src.v1.config.s3 import S3Session
-from src.v1.config.database import DbSession
 from src.v1.auth.dependencies.user import CurrentUser
-
+from src.v1.config.database import DbSession
+from src.v1.config.s3 import S3Session
 from src.v1.config.settings import settings
+from src.v1.interest.repositories.db import InterestReadOnlyRepository
+from src.v1.interest.schemas import InterestsOutSchema
+from src.v1.photo.bg_tasks import save_photo_to_s3_and_genereat_short_url
 from src.v1.photo.dependencies.validate_photo import (
     ValidImageFile,
 )
+from src.v1.photo.repositories.db import PhotoRepository
+from src.v1.photo.repositories.s3 import PhotoS3Repository
 from src.v1.photo.schemas import (
     PhotoInCreateSchema,
-    PhotoInS3CreateSchema,
     PhotoInDeleteSchema,
+    PhotoInS3CreateSchema,
     PhotoInUpdateSchema,
     PhotoOutCreateSchema,
     PhotoOutDeleteSchema,
     PhotosOutUpdateDisplayOrderSchema,
 )
+from src.v1.photo.usecases import (
+    ChangeDisplayingOrder,
+    CreatePhoto,
+    DeletePhoto,
+    DeletePhotoFromS3,
+    DropS3PhotoStorage,
+)
 from src.v1.profile.dtos import (
-    InterestsReadResponse,
     InterestsCreateRequest,
+    InterestsReadResponse,
     PhotoOrderChangeRequest,
     PhotosOrderChangeResponse,
     ProfileCreateRequest,
@@ -37,20 +47,7 @@ from src.v1.profile.dtos import (
     ProfileUpdateRequest,
 )
 from src.v1.profile.models import Interest
-
-from src.v1.interest.repositories.db import InterestReadOnlyRepository
-from src.v1.photo.usecases import (
-    ChangeDisplayingOrder,
-    CreatePhoto,
-    DeletePhoto,
-    DeletePhotoFromS3,
-    DropS3PhotoStorage,
-)
-from src.v1.photo.repositories.db import PhotoRepository
-from src.v1.photo.repositories.s3 import PhotoS3Repository
 from src.v1.profile.repositories.db import ProfileRepository
-
-from src.v1.interest.schemas import InterestsOutSchema
 from src.v1.profile.schemas import (
     ProfileInCreateSchema,
     ProfileInUpdateSchema,
@@ -64,8 +61,6 @@ from src.v1.profile.usecases import (
     GetUserProfile,
     UpdateProfile,
 )
-
-from src.v1.photo.bg_tasks import save_photo_to_s3_and_genereat_short_url
 
 profile_router = APIRouter(prefix="/profile")
 
@@ -174,9 +169,9 @@ async def delete_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    profile = await GetUserProfile(
-        repository=ProfileRepository(db_session=db_session)
-    ).execute(user_id=current_user_id)
+    profile = await GetUserProfile(repository=ProfileRepository(db_session=db_session)).execute(
+        user_id=current_user_id
+    )
 
     await DeleteProfile(
         repository=ProfileRepository(db_session=db_session),
@@ -211,9 +206,9 @@ async def add_profile_interests(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    interests: list[Interest] = await InterestReadOnlyRepository(
-        db_session=db_session
-    ).fetch(entry_ids=added_profile_interests.interests)
+    interests: list[Interest] = await InterestReadOnlyRepository(db_session=db_session).fetch(
+        entry_ids=added_profile_interests.interests
+    )
 
     profile_interests: InterestsOutSchema = await CreateProfileInterests(
         repository=ProfileRepository(db_session=db_session)

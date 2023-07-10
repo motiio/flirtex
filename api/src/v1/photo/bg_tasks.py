@@ -1,12 +1,10 @@
-from src.v1.photo.repositories.db import PhotoRepository
-from src.v1.photo.repositories.s3 import PhotoS3Repository
-
 from src.v1.config.database import DbSession
 from src.v1.config.s3 import S3Session
-
-from src.v1.photo.schemas import PhotoInS3CreateSchema, PhotoOutS3CreateSchema
-from src.v1.photo.usecases import SavePhotoToS3, GeneratePresignedUrl, GenerateShortUrl
 from src.v1.config.settings import settings
+from src.v1.photo.repositories.db import PhotoRepository
+from src.v1.photo.repositories.s3 import PhotoS3Repository
+from src.v1.photo.schemas import PhotoInS3CreateSchema, PhotoOutS3CreateSchema
+from src.v1.photo.usecases import GeneratePresignedUrl, GenerateShortUrl, SavePhotoToS3
 
 
 async def save_photo_to_s3_and_genereat_short_url(

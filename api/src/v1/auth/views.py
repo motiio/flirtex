@@ -13,9 +13,8 @@ from src.v1.auth.repositories.user import UserRepository
 from src.v1.auth.schemas.refresh_token import (
     RefreshTokenInCreateSchema,
     RefreshTokenInUpdateSchema,
-    RefreshTokenOutSchema,
 )
-from src.v1.auth.schemas.user import UserInCreateSchema, UserOutSchema
+from src.v1.auth.schemas.user import UserInCreateSchema
 from src.v1.auth.usecases.refresh_token import CreateRefreshToken, UpdateRefreshToken
 from src.v1.auth.usecases.user import GetOrCreateUser, ReadUser
 from src.v1.config.database import DbSession
@@ -42,15 +41,15 @@ async def login(
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
     user_data = UserInCreateSchema(**init_data.valid_init_data.get("user", {}))
-    user: UserOutSchema = await GetOrCreateUser(
-        repository=UserRepository(db_session=db_session)
-    ).execute(user_data=user_data)
+    user = await GetOrCreateUser(UserRepository(db_session=db_session)).execute(
+        user_data=user_data
+    )
 
     refresh_token_data = RefreshTokenInCreateSchema(
         user=user.id,
         user_agent=user_agent,
     )
-    refresh_token: RefreshTokenOutSchema = await CreateRefreshToken(
+    refresh_token = await CreateRefreshToken(
         repository=RefreshTokenRepository(db_session=db_session)
     ).execute(refresh_token_data=refresh_token_data)
 
@@ -78,20 +77,19 @@ async def update_token_pair(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-
     expired_refresh_token_data = RefreshTokenInUpdateSchema(
         user=expired_token.valid_token_data["user"],
         user_agent=user_agent,
         expired_token=expired_token.value,
     )
 
-    new_refresh_token: RefreshTokenOutSchema = await UpdateRefreshToken(
+    new_refresh_token = await UpdateRefreshToken(
         repository=RefreshTokenRepository(db_session=db_session)
     ).execute(refresh_token_data=expired_refresh_token_data)
 
-    user: UserOutSchema = await ReadUser(
-        repository=UserRepository(db_session=db_session),
-    ).execute(user_id=new_refresh_token.user)
+    user = await ReadUser(UserRepository(db_session=db_session)).execute(
+        user_id=new_refresh_token.user
+    )
 
     return TokenPairResponse(
         access_token=user.access_token,

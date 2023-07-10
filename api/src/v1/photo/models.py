@@ -1,9 +1,10 @@
-from pydantic_core.core_schema import nullable_schema
-from src.v1.base.models import Base, TimeStampMixin
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, String, Enum
-from uuid import UUID
 import enum
+from uuid import UUID
+
+from sqlalchemy import Enum, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.v1.base.models import Base, TimeStampMixin
 
 
 class ProcessStatusEnum(enum.Enum):
@@ -16,9 +17,7 @@ class ProcessStatusEnum(enum.Enum):
 class Photo(Base, TimeStampMixin):
     __table_args__ = {"schema": "core"}
 
-    profile_id: Mapped[UUID] = mapped_column(
-        ForeignKey("core.profile.id", ondelete="CASCADE")
-    )
+    profile_id: Mapped[UUID] = mapped_column(ForeignKey("core.profile.id", ondelete="CASCADE"))
     displaying_order: Mapped[int] = mapped_column(Integer)
     status: Mapped[ProcessStatusEnum] = mapped_column(
         Enum(ProcessStatusEnum, schema="core"),

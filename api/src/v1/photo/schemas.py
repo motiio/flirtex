@@ -1,13 +1,7 @@
-from hashlib import md5
 from typing import Optional
 from uuid import UUID
 
-from fastapi import UploadFile
-
 from src.v1.base.schemas import BaseS3Schema, BaseSchema
-from pydantic import PrivateAttr, computed_field
-from src.v1.config.settings import settings
-
 from src.v1.photo.models import ProcessStatusEnum
 
 ###############################################################

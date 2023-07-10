@@ -5,11 +5,11 @@ from uuid import UUID
 from dateutil.relativedelta import relativedelta
 from fastapi import File, UploadFile
 from pydantic import Field, field_validator
+
+from src.v1.base.schemas import BaseSchema
 from src.v1.config.settings import settings
 from src.v1.photo.dtos import PhotoReadResponse
-
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
-from src.v1.base.schemas import BaseSchema
 
 ###############################################################
 #                Request data transfer objects                #
@@ -53,9 +53,7 @@ class PhotoOrderChangeRequest(BaseSchema):
     def check_displaying_order_value(cls, v):
         if 1 <= v <= settings.MAX_PROFILE_PHOTOS_COUNT:
             return v
-        raise ValueError(
-            f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}"
-        )
+        raise ValueError(f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}")
 
 
 ################################################################

@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from os import walk
 from typing import Generic, List, Optional, Type, TypeVar
 from uuid import UUID
-from src.v1.base.schemas import BaseSchema
+
 from src.v1.base.models import Base
+from src.v1.base.schemas import BaseSchema
 
 IN_CREATE_SCHEMA = TypeVar("IN_CREATE_SCHEMA", bound=BaseSchema)
 IN_UPDATE_SCHEMA = TypeVar("IN_UPDATE_SCHEMA", bound=BaseSchema)

@@ -1,6 +1,6 @@
-import aioboto3
 from typing import Annotated
 
+import aioboto3
 from fastapi import Depends
 from starlette.requests import Request
 

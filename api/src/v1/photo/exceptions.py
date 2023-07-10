@@ -5,6 +5,7 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
     HTTP_415_UNSUPPORTED_MEDIA_TYPE,
 )
+
 from src.v1.config.settings import settings
 
 MaxPhotoLimit = HTTPException(
@@ -21,9 +22,7 @@ InvalidPhotoType = HTTPException(
 )
 InvalidPhotoSize = HTTPException(
     status_code=HTTP_400_BAD_REQUEST,
-    detail={
-        "msg": f"Photo size too big. Available size {settings.MAX_PROFILE_PHOTO_SIZE_B}"
-    },
+    detail={"msg": f"Photo size too big. Available size {settings.MAX_PROFILE_PHOTO_SIZE_B}"},
 )
 PhotoNotFound = HTTPException(
     status_code=HTTP_404_NOT_FOUND,

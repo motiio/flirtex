@@ -1,8 +1,9 @@
-from fastapi import Depends, FastAPI, HTTPException, UploadFile, File
-from src.v1.config.settings import settings
-from PIL import Image
-from src.v1.photo.exceptions import InvalidPhotoSize, InvalidPhotoType
 from typing import Annotated
+
+from fastapi import Depends, UploadFile
+
+from src.v1.config.settings import settings
+from src.v1.photo.exceptions import InvalidPhotoSize, InvalidPhotoType
 
 
 def _check_is_image(photo: UploadFile):

@@ -1,19 +1,18 @@
 from typing import Type
 from uuid import UUID
-from pydantic_core.core_schema import int_schema
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import selectinload
-from src.v1.photo.models import Photo
 
+from src.v1.base.repositories.db import (
+    BaseReadOnlyRepository,
+    BaseWriteOnlyRepository,
+)
+from src.v1.photo.models import Photo
 from src.v1.profile.models import Profile
 from src.v1.profile.schemas import (
     ProfileInCreateSchema,
     ProfileInUpdateSchema,
-)
-from src.v1.base.repositories.db import (
-    BaseReadOnlyRepository,
-    BaseWriteOnlyRepository,
 )
 
 

@@ -1,19 +1,18 @@
 from uuid import UUID
 
 from pydantic import TypeAdapter
-from sqlalchemy import delete
 
+from src.v1.base.usecases import BaseUseCase
+from src.v1.interest.schemas import InterestOutSchema, InterestsOutSchema
 from src.v1.profile.exceptions import ProfileAlreadyExists, ProfileNotFound
 from src.v1.profile.models import Interest
 from src.v1.profile.repositories.db import ProfileRepository
-from src.v1.interest.schemas import InterestOutSchema, InterestsOutSchema
 from src.v1.profile.schemas import (
     ProfileInCreateSchema,
     ProfileInUpdateSchema,
     ProfileOutCreateSchema,
     ProfileOutReadSchema,
 )
-from src.v1.base.usecases import BaseUseCase
 
 
 class CreateProfile(
@@ -112,7 +111,5 @@ class CreateProfileInterests(
                 raise ProfileNotFound
             profile.interests = interests
             return InterestsOutSchema(
-                interests=TypeAdapter(list[InterestOutSchema]).validate_python(
-                    profile.interests
-                )
+                interests=TypeAdapter(list[InterestOutSchema]).validate_python(profile.interests)
             )
