@@ -8,11 +8,11 @@ from src.v1.interest.repositories.db import InterestReadOnlyRepository
 from src.v1.interest.schemas import InterestsOutSchema
 from src.v1.interest.usecases import ListInterests
 
-interest_router = APIRouter(prefix="/common")
+interest_router = APIRouter(prefix="/interests")
 
 
 @interest_router.get(
-    "/interests",
+    "",
     response_model=InterestsReadResponse,
 )
 async def get_all_interests(
