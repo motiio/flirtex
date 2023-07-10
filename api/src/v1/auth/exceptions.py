@@ -1,8 +1,11 @@
 from fastapi import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from starlette.status import (
+    HTTP_401_UNAUTHORIZED,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 InvalidInitData = HTTPException(
-    status_code=HTTP_400_BAD_REQUEST,
+    status_code=HTTP_422_UNPROCESSABLE_ENTITY,
     detail=[{"msg": "Invalid init datat"}],
 )
 
