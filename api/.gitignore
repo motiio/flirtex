@@ -129,7 +129,7 @@ ipython_config.py
 *.sage.py
 
 # Environments
-src/config/.env
+src/v1/config/.env
 !data/.env
 .venv
 env/
