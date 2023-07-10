@@ -12,7 +12,6 @@ class EnvironmentEnum(str, Enum):
 
 
 class GlobalConfig(BaseSettings):
-    DOMAIN_NAME: str = "lovolab.ru"
     TITLE: str = "API"
     APP_VERSION: str = "0.1"
     ENVIRONMENT: EnvironmentEnum

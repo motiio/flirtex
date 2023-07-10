@@ -69,6 +69,7 @@ EXPOSE 8080
 #RUN ["poetry", "env", "list"]
 #CMD poetry shell
 ENTRYPOINT /docker-entrypoint.sh $0 $@
+ENV ENVIRONMENT=production
 CMD ["alembic", "revision", "--autogenerate", "-m", "init"]
 CMD ["alembic", "upgrade", "heads"]
 CMD ["uvicorn", "--reload", "--host=0.0.0.0", "--port=8080", "src.main:api", "--root-path", "/api"]
