@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from sqlalchemy import func, select, delete, update
 from src.v1.photo.models import Photo
 from src.v1.base.repositories.db import (
@@ -31,6 +32,11 @@ class PhotoRepository(
             .where(self._table.profile_id == profile_id)
         )
         result: int = await self._db_session.scalar(q) or 0
+        return result
+
+    async def get_profile_photos(self, *, profile_id: UUID) -> Sequence[Photo]:
+        q = select(self._table).where(self._table.profile_id == profile_id)
+        result = (await self._db_session.execute(q)).scalars().all()
         return result
 
     async def get_profile_photo_by_hash(self, *, profile_id: UUID, hash: str):

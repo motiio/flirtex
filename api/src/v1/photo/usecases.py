@@ -1,4 +1,6 @@
 from uuid import UUID
+from src.v1.base.exceptions import DoesNotExists
+from src.v1.base.schemas import kek
 from src.v1.config.settings import settings
 from src.v1.photo.exceptions import InvalidPhotoType, MaxPhotoLimit, PhotoAlreadyExists
 from src.v1.photo.repositories.db import PhotoRepository
@@ -6,17 +8,21 @@ from src.v1.base.usecases import BaseUseCase
 from src.v1.photo.repositories.s3 import PhotoS3Repository
 from src.v1.photo.schemas import (
     PhotoInCreateSchema,
+    PhotoInUpdateSchema,
     PhotoOutCreateSchema,
+    PhotoOutReadSchema,
     PhotoOutS3CreateSchema,
     PhotoInS3CreateSchema,
     PhotoInPreprocessSchema,
     PhotoOutPreprocessSchema,
     PhotoInDeleteSchema,
     PhotoOutDeleteSchema,
+    PhotosOutUpdateDisplayOrderSchema,
 )
 from PIL import Image
 from io import BytesIO
 import secrets
+from pydantic import TypeAdapter
 
 
 class CreatePhoto(
@@ -55,7 +61,7 @@ class SavePhotoToS3(
         )
         in_schema.content = webp_image_bytes
         await self.repository.create(in_schema=in_schema)
-        return PhotoOutS3CreateSchema(s3_key=in_schema.key, id=in_schema.id)
+        return PhotoOutS3CreateSchema(key=in_schema.key, id=in_schema.id)
 
 
 class PreprocessImage(
@@ -119,7 +125,10 @@ class DeletePhotoFromS3(
     ]
 ):
     async def execute(self, *, key: str):
-        await self.repository.delete(key=key)
+        try:
+            await self.repository.delete(key=key)
+        except DoesNotExists:
+            pass
 
 
 class GeneratePresignedUrl(
@@ -151,3 +160,39 @@ class GenerateShortUrl(
     def _generate_unique_string(self, length):
         unique_string = secrets.token_urlsafe(length)[:length]
         return unique_string
+
+
+class DropS3PhotoStorage(
+    BaseUseCase[
+        PhotoS3Repository,
+        None,
+        None,
+    ]
+):
+    async def execute(self, *, profile_id: UUID):
+        try:
+            await self.repository.delete(key=str(profile_id))
+        except DoesNotExists:
+            pass
+
+
+class ChangeDisplayingOrder(
+    BaseUseCase[
+        PhotoRepository,
+        PhotoInUpdateSchema,
+        PhotosOutUpdateDisplayOrderSchema,
+    ]
+):
+    async def execute(self, *, in_schema: PhotoInUpdateSchema, profile_id: UUID):
+        async with self.repository as repo:
+            await repo.update(in_schema=in_schema)
+
+        new_photo_orders = await self.repository.get_profile_photos(
+            profile_id=profile_id
+        )
+
+        return PhotosOutUpdateDisplayOrderSchema(
+            photos=TypeAdapter(list[PhotoOutReadSchema]).validate_python(
+                new_photo_orders
+            )
+        )

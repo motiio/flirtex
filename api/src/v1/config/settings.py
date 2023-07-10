@@ -29,7 +29,7 @@ class GlobalConfig(BaseSettings):
 
     S3_ACCESS_KEY_ID: str
     S3_SECRET_ACCESS_KEY: str
-    S3_PROFILES_BUCKET_NAME: str
+    S3_PHOTO_BUCKET_NAME: str
     S3_CLOUD_ENDPOINT: str = "https://storage.yandexcloud.net"
 
     JWT_SECRET: str

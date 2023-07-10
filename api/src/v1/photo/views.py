@@ -3,14 +3,9 @@ from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 
 from src.v1.auth.dependencies.user import CurrentUser
-from src.v1.interest.dtos import InterestsResponse
 from src.v1.config.database import DbSession
 from src.v1.photo.exceptions import PhotoNotFound
 from src.v1.photo.repositories.db import PhotoRepository
-from src.v1.profile.dtos import InterestsReadResponse
-from src.v1.interest.repositories.db import InterestReadOnlyRepository
-from src.v1.interest.schemas import InterestsOutSchema
-from src.v1.interest.usecases import ListInterests
 
 photo_router = APIRouter(prefix="/photo")
 
@@ -18,7 +13,7 @@ photo_router = APIRouter(prefix="/photo")
 @photo_router.get(
     "/{short_url}",
 )
-async def get_all_interests(
+async def request_photo_by_short_url(
     short_url: str,
     current_user_id: CurrentUser,
     db_session: DbSession,

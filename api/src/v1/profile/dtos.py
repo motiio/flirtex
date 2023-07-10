@@ -5,6 +5,7 @@ from uuid import UUID
 from dateutil.relativedelta import relativedelta
 from fastapi import File, UploadFile
 from pydantic import Field, field_validator
+from src.v1.config.settings import settings
 from src.v1.photo.dtos import PhotoReadResponse
 
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
@@ -41,8 +42,20 @@ class InterestsCreateRequest(BaseSchema):
 
 
 class PhotoCreateRequest(BaseSchema):
-    displaying_order: int
     file: UploadFile = File(...)
+
+
+class PhotoOrderChangeRequest(BaseSchema):
+    id: UUID
+    displaying_order: int
+
+    @field_validator("displaying_order")
+    def check_displaying_order_value(cls, v):
+        if 1 <= v <= settings.MAX_PROFILE_PHOTOS_COUNT:
+            return v
+        raise ValueError(
+            f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}"
+        )
 
 
 ################################################################
@@ -76,3 +89,12 @@ class ProfileReadResponse(BaseSchema):
     gender: GenderEnum
     interests: list[InterestReadResponse]
     photos: list[PhotoReadResponse]
+
+
+class PhotoOrderChangeResponse(BaseSchema):
+    id: UUID
+    displaying_order: int
+
+
+class PhotosOrderChangeResponse(BaseSchema):
+    photos: list[PhotoOrderChangeResponse]

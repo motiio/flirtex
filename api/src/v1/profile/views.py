@@ -1,6 +1,7 @@
 from uuid import UUID
 from hashlib import md5
-from fastapi import APIRouter, Form, UploadFile, BackgroundTasks
+from fastapi import APIRouter, Depends, Form, UploadFile, BackgroundTasks
+from starlette.background import BackgroundTask
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
@@ -13,16 +14,23 @@ from src.v1.config.database import DbSession
 from src.v1.auth.dependencies.user import CurrentUser
 
 from src.v1.config.settings import settings
+from src.v1.photo.dependencies.validate_photo import (
+    ValidImageFile,
+)
 from src.v1.photo.schemas import (
     PhotoInCreateSchema,
     PhotoInS3CreateSchema,
     PhotoInDeleteSchema,
+    PhotoInUpdateSchema,
     PhotoOutCreateSchema,
     PhotoOutDeleteSchema,
+    PhotosOutUpdateDisplayOrderSchema,
 )
 from src.v1.profile.dtos import (
     InterestsReadResponse,
     InterestsCreateRequest,
+    PhotoOrderChangeRequest,
+    PhotosOrderChangeResponse,
     ProfileCreateRequest,
     ProfileCreateResponse,
     ProfileReadResponse,
@@ -32,9 +40,11 @@ from src.v1.profile.models import Interest
 
 from src.v1.interest.repositories.db import InterestReadOnlyRepository
 from src.v1.photo.usecases import (
+    ChangeDisplayingOrder,
     CreatePhoto,
     DeletePhoto,
     DeletePhotoFromS3,
+    DropS3PhotoStorage,
 )
 from src.v1.photo.repositories.db import PhotoRepository
 from src.v1.photo.repositories.s3 import PhotoS3Repository
@@ -50,9 +60,9 @@ from src.v1.profile.schemas import (
 from src.v1.profile.usecases import (
     CreateProfile,
     CreateProfileInterests,
-    DeleteUserProfile,
+    DeleteProfile,
     GetUserProfile,
-    UpdateUserProfile,
+    UpdateProfile,
 )
 
 from src.v1.photo.bg_tasks import save_photo_to_s3_and_genereat_short_url
@@ -139,7 +149,7 @@ async def update_profile(
         owner_id=current_user_id,
     )
 
-    profile: ProfileOutReadSchema = await UpdateUserProfile(
+    profile: ProfileOutReadSchema = await UpdateProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(profile_data=profile_data)
 
@@ -148,11 +158,13 @@ async def update_profile(
 
 @profile_router.delete(
     "",
-    status_code=HTTP_204_NO_CONTENT,
+    status_code=HTTP_202_ACCEPTED,
 )
 async def delete_profile(
     current_user_id: CurrentUser,
     db_session: DbSession,
+    s3_session: S3Session,
+    background_tasks: BackgroundTasks,
 ):
     """
     Update token pair.
@@ -162,9 +174,23 @@ async def delete_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    await DeleteUserProfile(
+    profile = await GetUserProfile(
         repository=ProfileRepository(db_session=db_session)
-    ).execute(profile_owner=current_user_id)
+    ).execute(user_id=current_user_id)
+
+    await DeleteProfile(
+        repository=ProfileRepository(db_session=db_session),
+    ).execute(profile_id=profile.id)
+
+    background_tasks.add_task(
+        DropS3PhotoStorage(
+            repository=PhotoS3Repository(
+                s3_session=s3_session,
+                bucket_name=settings.S3_PHOTO_BUCKET_NAME,
+            )
+        ).execute,
+        profile_id=profile.id,
+    )
 
 
 @profile_router.put(
@@ -204,21 +230,20 @@ async def add_profile_interests(
     status_code=HTTP_202_ACCEPTED,
 )
 async def add_profile_photo(
-    photo: UploadFile,
+    photo: ValidImageFile,
     db_session: DbSession,
     s3_session: S3Session,
     current_user_id: CurrentUser,
     background_tasks: BackgroundTasks,
-    displaying_order: int = Form(...),
 ):
     profile: ProfileOutReadSchema = await GetUserProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
 
     file_content = await photo.read()
+
     creating_photo_metadata: PhotoInCreateSchema = PhotoInCreateSchema(
         profile_id=profile.id,
-        displaying_order=displaying_order,
         hash=md5(file_content).hexdigest(),
     )
 
@@ -266,9 +291,31 @@ async def delete_photo(
     background_tasks.add_task(
         DeletePhotoFromS3(
             repository=PhotoS3Repository(
-                bucket_name=settings.S3_PROFILES_BUCKET_NAME,
+                bucket_name=settings.S3_PHOTO_BUCKET_NAME,
                 s3_session=s3_session,
             )
         ).execute,
-        key=deleted_photo_data.s3_key,
+        key=f"{deleted_photo_data.profile_id}/{deleted_photo_data.id}.webp",
     )
+
+
+@profile_router.patch("/photo")
+async def update_photo_order(
+    photo_order_change_object: PhotoOrderChangeRequest,
+    current_user_id: CurrentUser,
+    db_session: DbSession,
+):
+    current_profile: ProfileOutReadSchema = await GetUserProfile(
+        repository=ProfileRepository(db_session=db_session)
+    ).execute(user_id=current_user_id)
+
+    changing_display_order_data = PhotoInUpdateSchema(
+        id=photo_order_change_object.id,
+        displaying_order=photo_order_change_object.displaying_order,
+    )
+
+    new_ordered_photos: PhotosOutUpdateDisplayOrderSchema = await ChangeDisplayingOrder(
+        repository=PhotoRepository(db_session=db_session)
+    ).execute(profile_id=current_profile.id, in_schema=changing_display_order_data)
+
+    return PhotosOrderChangeResponse(**new_ordered_photos.model_dump())

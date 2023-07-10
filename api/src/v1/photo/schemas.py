@@ -23,12 +23,12 @@ class PhotoInReadSchema(BaseSchema):
 
 class PhotoInCreateSchema(BaseSchema):
     profile_id: UUID
-    displaying_order: int
     status: ProcessStatusEnum = ProcessStatusEnum.processing
     hash: str
 
 
 class PhotoInUpdateSchema(BaseSchema):
+    id: UUID
     displaying_order: int
 
 
@@ -57,10 +57,8 @@ class PhotoInDeleteSchema(BaseSchema):
 
 class PhotoOutCreateSchema(BaseSchema):
     id: UUID
-    displaying_order: int
     status: ProcessStatusEnum
     status_description: Optional[str]
-    s3_key: Optional[str]
 
     class Config:
         from_attributes = True
@@ -72,7 +70,7 @@ class PhotoOutReadSchema(BaseSchema):
     displaying_order: int
     status: ProcessStatusEnum
     status_description: Optional[str]
-    short_url: str
+    short_url: Optional[str]
 
     class Config:
         from_attributes = True
@@ -84,8 +82,16 @@ class PhotoOutPreprocessSchema(BaseSchema):
 
 class PhotoOutS3CreateSchema(BaseSchema):
     id: UUID
-    s3_key: str
+    key: str
 
 
 class PhotoOutDeleteSchema(BaseSchema):
-    s3_key: str
+    id: UUID
+    profile_id: UUID
+
+    class Config:
+        from_attributes = True
+
+
+class PhotosOutUpdateDisplayOrderSchema(BaseSchema):
+    photos: list[PhotoOutReadSchema]

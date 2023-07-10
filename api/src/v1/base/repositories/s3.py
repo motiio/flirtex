@@ -1,7 +1,4 @@
-from typing import Generic, TypeVar
-
-from sqlalchemy import except_
-from sqlalchemy.orm import with_parent
+from typing import Generic, Optional, TypeVar
 
 from src.v1.config.s3 import S3Session
 from src.v1.config.settings import settings
@@ -21,7 +18,10 @@ IN_S3_UPDATED_SCHEMA = TypeVar("IN_S3_UPDATED_SCHEMA", bound=BaseS3Schema)
 
 class BaseWriteOnlyS3Repository(
     IWriteOnlyRepository,
-    Generic[IN_S3_CREATE_SCHEMA, IN_S3_UPDATED_SCHEMA],
+    Generic[
+        IN_S3_CREATE_SCHEMA,
+        IN_S3_UPDATED_SCHEMA,
+    ],
 ):
     def __init__(self, *, s3_session: S3Session, bucket_name: str):
         self._s3_session = s3_session
@@ -48,15 +48,13 @@ class BaseWriteOnlyS3Repository(
             bucket = await s3.Bucket(self._bucket_name)
             await bucket.put_object(Key=in_schema.key, Body=in_schema.content)  # type: ignore
 
-    async def delete(self, *, key: str) -> ServiceResource:
+    async def delete(self, *, key: str) -> None:
         is_exists = await self._is_exists(key=key)
         if not is_exists:
             raise DoesNotExists
         async with self._s3_resource as s3:
             bucket = await s3.Bucket(self._bucket_name)
-            obj = bucket.Object(key)
-            await obj.delete()
-            return obj
+            await bucket.objects.filter(Prefix=key).delete()
 
     async def update(self, *, in_schema: IN_S3_UPDATED_SCHEMA) -> None:
         ...

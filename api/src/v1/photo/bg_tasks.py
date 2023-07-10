@@ -14,15 +14,15 @@ async def save_photo_to_s3_and_genereat_short_url(
 ):
     photo: PhotoOutS3CreateSchema = await SavePhotoToS3(
         repository=PhotoS3Repository(
-            bucket_name=settings.S3_PROFILES_BUCKET_NAME, s3_session=s3_session
+            bucket_name=settings.S3_PHOTO_BUCKET_NAME, s3_session=s3_session
         )
     ).execute(in_schema=in_schema)
 
     presigned_url: str = await GeneratePresignedUrl(
         repository=PhotoS3Repository(
-            bucket_name=settings.S3_PROFILES_BUCKET_NAME, s3_session=s3_session
+            bucket_name=settings.S3_PHOTO_BUCKET_NAME, s3_session=s3_session
         )
-    ).execute(key=photo.s3_key)
+    ).execute(key=photo.key)
 
     await GenerateShortUrl(repository=PhotoRepository(db_session=db_session)).execute(
         photo_id=photo.id, presigned_url=presigned_url

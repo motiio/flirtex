@@ -25,7 +25,6 @@ class Photo(Base, TimeStampMixin):
     )
     status_description: Mapped[str] = mapped_column(String(32), nullable=True)
     profile: Mapped["Profile"] = relationship(back_populates="photos")  # type: ignore
-    s3_key: Mapped[str] = mapped_column(String(100), nullable=True)
     hash: Mapped[str] = mapped_column(String(32), nullable=False)
     short_url: Mapped[str] = mapped_column(String(64), unique=True, nullable=True)
     presigned_url: Mapped[str] = mapped_column(String(512), unique=True, nullable=True)

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from pydantic import TypeAdapter
+from sqlalchemy import delete
 
 from src.v1.profile.exceptions import ProfileAlreadyExists, ProfileNotFound
 from src.v1.profile.models import Interest
@@ -54,7 +55,7 @@ class GetUserProfile(
             return ProfileOutReadSchema.model_validate(profile)
 
 
-class UpdateUserProfile(
+class UpdateProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
@@ -76,7 +77,7 @@ class UpdateUserProfile(
             return ProfileOutReadSchema.model_validate(new_profile)
 
 
-class DeleteUserProfile(
+class DeleteProfile(
     BaseUseCase[
         ProfileRepository,
         ProfileInCreateSchema,
@@ -86,10 +87,10 @@ class DeleteUserProfile(
     async def execute(
         self,
         *,
-        profile_owner: UUID,
+        profile_id: UUID,
     ) -> None:
         async with self.repository as repo:
-            await repo.delete_by_owner(owner_id=profile_owner)
+            await repo.delete(entry_id=profile_id)
 
 
 class CreateProfileInterests(
