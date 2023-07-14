@@ -53,7 +53,9 @@ class PhotoOrderChangeRequest(BaseSchema):
     def check_displaying_order_value(cls, v):
         if 1 <= v <= settings.MAX_PROFILE_PHOTOS_COUNT:
             return v
-        raise ValueError(f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}")
+        raise ValueError(
+            f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}"
+        )
 
 
 ################################################################
@@ -87,6 +89,10 @@ class ProfileReadResponse(BaseSchema):
     gender: GenderEnum
     interests: list[InterestReadResponse]
     photos: list[PhotoReadResponse]
+
+    def model_post_init(self, *args):
+        # Сортируем поле my_array
+        self.photos = sorted(self.photos, key=lambda x: x.displaying_order)
 
 
 class PhotoOrderChangeResponse(BaseSchema):

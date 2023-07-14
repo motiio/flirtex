@@ -1,4 +1,6 @@
+from io import BytesIO
 from typing import Annotated
+from PIL import Image
 
 from fastapi import Depends, UploadFile
 
@@ -8,10 +10,14 @@ from src.v1.photo.exceptions import InvalidPhotoSize, InvalidPhotoType
 
 def _check_is_image(photo: UploadFile):
     image_data_b = photo.file.read()
-    if image_data_b[:4] not in settings.ACCEPTED_PHOTO_TYPES_B:
+    try:
+        image = Image.open(BytesIO(image_data_b))
+        image.verify()
+        return image.format in settings.ACCEPTED_PHOTO_TYPES
+    except (IOError, SyntaxError, ValueError):
         return False
-    photo.file.seek(0)
-    return True
+    finally:
+        photo.file.seek(0)
 
 
 def _check_size(photo: UploadFile):

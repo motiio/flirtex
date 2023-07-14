@@ -1,11 +1,9 @@
 from typing import Generic, TypeVar
 
-from boto3.resources.base import ServiceResource
 from botocore.exceptions import ClientError
 
-from src.v1.base.aio import AsyncContextManagerRepository
 from src.v1.base.exceptions import AlreadyExists, DoesNotExists
-from src.v1.base.interfaces import IReadOnlyRepository, IWriteOnlyRepository
+from src.v1.base.interfaces import IWriteOnlyRepository
 from src.v1.base.schemas import BaseS3Schema
 from src.v1.config.s3 import S3Session
 from src.v1.config.settings import settings
