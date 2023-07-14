@@ -127,9 +127,9 @@ ipython_config.py
 
 # SageMath parsed files
 *.sage.py
-
 # Environments
-src/v1/config/.env
+.env
+api/src/v1/config/.env
 !data/.env
 .venv
 env/
