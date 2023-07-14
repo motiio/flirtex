@@ -16,6 +16,7 @@ from src.v1.config.settings import settings
 from src.v1.interest.views import interest_router
 from src.v1.photo.views import photo_router
 from src.v1.profile.views import profile_router
+from src.v1.deck.views import deck_router
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
@@ -32,7 +33,7 @@ api.include_router(auth_router, prefix=settings.API_V1_PREFIX, tags=["Auth"])
 api.include_router(photo_router, prefix=settings.API_V1_PREFIX, tags=["Photos"])
 api.include_router(profile_router, prefix=settings.API_V1_PREFIX, tags=["Profile"])
 api.include_router(interest_router, prefix=settings.API_V1_PREFIX, tags=["Interests"])
-
+api.include_router(deck_router, prefix=settings.API_V1_PREFIX, tags=["Deck"])
 
 origins = ["*"]
 api.add_middleware(

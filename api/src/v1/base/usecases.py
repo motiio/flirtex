@@ -20,8 +20,8 @@ REPOSITORY = TypeVar(
         ]
     ],
 )
-IN_SCHEMA = TypeVar("IN_SCHEMA", bound=Union[BaseSchema, BaseS3Schema])
-OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=Union[BaseSchema, BaseS3Schema])
+IN_SCHEMA = TypeVar("IN_SCHEMA", bound=Union[BaseSchema, BaseS3Schema, None])
+OUT_SCHEMA = TypeVar("OUT_SCHEMA", bound=Union[BaseSchema, BaseS3Schema, None])
 
 
 class BaseUseCase(Generic[REPOSITORY, IN_SCHEMA, OUT_SCHEMA], metaclass=ABCMeta):

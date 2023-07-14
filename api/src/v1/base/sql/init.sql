@@ -1,10 +1,10 @@
 CREATE OR REPLACE FUNCTION set_displaying_order()
     RETURNS TRIGGER AS
 $BODY$
-    declare
-        photo_count integer;
+declare
+    photo_count integer;
 BEGIN
-     select count(1) into photo_count from core.photo where profile_id=NEW.profile_id;
+    select count(1) into photo_count from core.photo where profile_id = NEW.profile_id;
 
     IF NEW.displaying_order IS NULL THEN
         NEW.displaying_order := photo_count + 1;
@@ -16,7 +16,8 @@ $BODY$
     LANGUAGE plpgsql;
 
 CREATE TRIGGER set_displaying_order_trigger
-    BEFORE INSERT ON core.photo
+    BEFORE INSERT
+    ON core.photo
     FOR EACH ROW
 EXECUTE FUNCTION set_displaying_order();
 
@@ -121,3 +122,68 @@ values (uuid_in(overlay(overlay(md5(random()::text || ':' || random()::text) pla
         current_timestamp, current_timestamp);
 
 commit;
+
+drop table if exists core.like;
+drop table if exists core.skip;
+drop table if exists core.match;
+drop table if exists core.save;
+
+create table core.like
+(
+    source_profile uuid      not null
+        references core.profile
+            on delete cascade,
+    target_profile uuid      not null
+        references core.profile
+            on delete cascade,
+    created_at     timestamp not null,
+    updated_at     timestamp not null
+) partition by list (source_profile);
+CREATE INDEX IF NOT EXISTS idx_like_source_profile ON core.like (source_profile);
+CREATE INDEX IF NOT EXISTS idx_like_target_profile ON core.like (target_profile);
+
+create table core.skip
+(
+    source_profile uuid      not null
+        references core.profile
+            on delete cascade,
+    target_profile uuid      not null
+        references core.profile
+            on delete cascade,
+    created_at     timestamp not null,
+    updated_at     timestamp not null
+) partition by list (source_profile);
+CREATE INDEX IF NOT EXISTS idx_skip_source_profile ON core.skip (source_profile);
+CREATE INDEX IF NOT EXISTS idx_skip_target_profile ON core.skip (target_profile);
+
+create table core.match
+(
+    profile_1  uuid      not null
+        references core.profile
+            on delete cascade,
+    profile_2  uuid      not null
+        references core.profile
+            on delete cascade,
+    created_at timestamp not null,
+    updated_at timestamp not null
+);
+CREATE INDEX IF NOT EXISTS idx_skip_profile_1 ON core.match (profile_1);
+CREATE INDEX IF NOT EXISTS idx_skip_profile_2 ON core.match (profile_2);
+
+create table core.save
+(
+    profile_id       uuid      not null
+        references core.profile
+            on delete cascade,
+    saved_profile_id uuid      not null
+        references core.profile
+            on delete cascade,
+    created_at       timestamp not null,
+    updated_at       timestamp not null
+)partition by list (profile_id);
+CREATE INDEX IF NOT EXISTS idx_skip_profile_1 ON core.save (profile_id);
+CREATE INDEX IF NOT EXISTS idx_skip_profile_2 ON core.save (saved_profile_id);
+
+
+
+

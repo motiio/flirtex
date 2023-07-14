@@ -1,7 +1,7 @@
-from typing import Generic, List, Optional, TypeVar, cast
+from typing import Generic, List, Optional, TypeVar, cast, Union
 from uuid import UUID, uuid4
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, inspect, select, update
 
 from src.v1.base.aio import AsyncContextManagerRepository
 from src.v1.base.interfaces import IReadOnlyDbRepository, IWriteOnlyDbRepository
@@ -9,10 +9,8 @@ from src.v1.base.models import Base
 from src.v1.base.schemas import BaseSchema
 from src.v1.config.database import DbSession
 
-from typing import Type
-
-IN_CREATE_SCHEMA = TypeVar("IN_CREATE_SCHEMA", bound=BaseSchema)
-IN_UPDATE_SCHEMA = TypeVar("IN_UPDATE_SCHEMA", bound=BaseSchema)
+IN_CREATE_SCHEMA = TypeVar("IN_CREATE_SCHEMA", bound=Union[BaseSchema, None])
+IN_UPDATE_SCHEMA = TypeVar("IN_UPDATE_SCHEMA", bound=Union[BaseSchema, None])
 TABLE = TypeVar("TABLE", bound=Base)
 
 
@@ -59,7 +57,13 @@ class BaseWriteOnlyRepository(
         self._db_session = db_session
 
     async def create(self, *, in_schema: IN_CREATE_SCHEMA) -> TABLE:
-        entry = self._table(id=uuid4(), **in_schema.model_dump())
+        inst = inspect(self._table)
+        attr_names = [c_attr.key for c_attr in inst.mapper.column_attrs]
+
+        entry = self._table(**in_schema.model_dump())
+        if "id" in attr_names:
+            entry = self._table(id=uuid4(), **in_schema.model_dump())
+
         self._db_session.add(entry)
         return entry
 

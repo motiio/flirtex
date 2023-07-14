@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, ForeignKey, String, Text, UUID
+from sqlalchemy import Boolean, ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.v1.base.models import Base, TimeStampMixin
@@ -38,4 +38,15 @@ class Match(Base, TimeStampMixin):
         UUID,
         ForeignKey("core.profile.id", ondelete="CASCADE"),
     )
-    is_connected: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class Save(Base, TimeStampMixin):
+    __table_args__ = {"schema": "core"}
+    profile_id: Mapped[UUID] = mapped_column(
+        UUID,
+        ForeignKey("core.profile.id", ondelete="CASCADE"),
+    )
+    saved_profile_id: Mapped[UUID] = mapped_column(
+        UUID,
+        ForeignKey("core.profile.id", ondelete="CASCADE"),
+    )

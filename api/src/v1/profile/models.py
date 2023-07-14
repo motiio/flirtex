@@ -16,6 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.v1.auth.models import User
 from src.v1.base.models import Base, TimeStampMixin
+from src.v1.deck.models import Like
 from src.v1.interest.models import Interest
 
 
@@ -61,7 +62,7 @@ class Profile(Base, TimeStampMixin):
         secondary="core.profile_interests", lazy="selectin"
     )
     photos: Mapped[list["Photo"]] = relationship(
-        back_populates="profile", lazy="selectin"
+        back_populates="profile", lazy="selectin", order_by="Photo.displaying_order"
     )
 
     def __repr__(self):

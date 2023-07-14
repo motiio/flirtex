@@ -40,7 +40,9 @@ class BaseWriteOnlyS3Repository(
         is_exists = await self._is_exists(key=in_schema.key)
         if is_exists:
             raise AlreadyExists
-        async with self._s3_resource as s3:
+        async with self._s3_session.resource(
+            "s3", endpoint_url=settings.S3_CLOUD_ENDPOINT
+        ) as s3:
             bucket = await s3.Bucket(self._bucket_name)
             await bucket.put_object(Key=in_schema.key, Body=in_schema.content)  # type: ignore
 
@@ -48,7 +50,9 @@ class BaseWriteOnlyS3Repository(
         is_exists = await self._is_exists(key=key)
         if not is_exists:
             raise DoesNotExists
-        async with self._s3_resource as s3:
+        async with self._s3_session.resource(
+            "s3", endpoint_url=settings.S3_CLOUD_ENDPOINT
+        ) as s3:
             bucket = await s3.Bucket(self._bucket_name)
             await bucket.objects.filter(Prefix=key).delete()
 

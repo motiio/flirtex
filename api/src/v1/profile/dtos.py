@@ -90,10 +90,6 @@ class ProfileReadResponse(BaseSchema):
     interests: list[InterestReadResponse]
     photos: list[PhotoReadResponse]
 
-    def model_post_init(self, *args):
-        # Сортируем поле my_array
-        self.photos = sorted(self.photos, key=lambda x: x.displaying_order)
-
 
 class PhotoOrderChangeResponse(BaseSchema):
     id: UUID
