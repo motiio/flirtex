@@ -54,6 +54,25 @@ class GetUserProfile(
             return ProfileOutReadSchema.model_validate(profile)
 
 
+class GetProfile(
+    BaseUseCase[
+        ProfileRepository,
+        ProfileInCreateSchema,
+        ProfileOutReadSchema,
+    ]
+):
+    async def execute(
+        self,
+        *,
+        profile_id: UUID,
+    ):
+        async with self.repository as repo:
+            profile = await repo.get(entry_id=profile_id)
+            if not profile:
+                raise ProfileNotFound
+            return ProfileOutReadSchema.model_validate(profile)
+
+
 class UpdateProfile(
     BaseUseCase[
         ProfileRepository,
@@ -111,5 +130,7 @@ class CreateProfileInterests(
                 raise ProfileNotFound
             profile.interests = interests
             return InterestsOutSchema(
-                interests=TypeAdapter(list[InterestOutSchema]).validate_python(profile.interests)
+                interests=TypeAdapter(list[InterestOutSchema]).validate_python(
+                    profile.interests
+                )
             )

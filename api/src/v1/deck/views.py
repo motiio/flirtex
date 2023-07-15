@@ -12,7 +12,7 @@ from src.v1.deck.schemas import (
     SkipInCreateSchema,
 )
 from src.v1.deck.usecases import CreateLike, CreateSave, CreateSkip
-from src.v1.profile.usecases import GetUserProfile
+from src.v1.profile.usecases import GetProfile, GetUserProfile
 from src.v1.profile.schemas import ProfileOutReadSchema
 from src.v1.profile.repositories.db import ProfileRepository
 
@@ -34,9 +34,9 @@ async def like(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
 
-    liked_profile: ProfileOutReadSchema = await GetUserProfile(
+    liked_profile: ProfileOutReadSchema = await GetProfile(
         repository=ProfileRepository(db_session=db_session)
-    ).execute(user_id=like.profile)
+    ).execute(profile_id=like.profile)
 
     like_data = LikeInCreateSchema(
         source_profile=profile.id,
@@ -67,9 +67,9 @@ async def skip(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
 
-    skiped_profile: ProfileOutReadSchema = await GetUserProfile(
+    skiped_profile: ProfileOutReadSchema = await GetProfile(
         repository=ProfileRepository(db_session=db_session)
-    ).execute(user_id=skip.profile)
+    ).execute(profile_id=skip.profile)
 
     skip_data = SkipInCreateSchema(
         source_profile=profile.id, target_profile=skiped_profile.id
@@ -93,9 +93,9 @@ async def save(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
 
-    saved_profile: ProfileOutReadSchema = await GetUserProfile(
+    saved_profile: ProfileOutReadSchema = await GetProfile(
         repository=ProfileRepository(db_session=db_session)
-    ).execute(user_id=save.profile)
+    ).execute(profile_id=save.profile)
 
     save_data = SaveInCreateSchema(
         source_profile=profile.id, target_profile=saved_profile.id
