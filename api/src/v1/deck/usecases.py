@@ -77,3 +77,17 @@ class CheckMatch(
             if result:
                 return True
             return False
+
+
+class DeleteMutualLikes(
+    BaseUseCase[
+        LikeRepository,
+        None,
+        None,
+    ]
+):
+    async def execute(self, *, source_profile: UUID, target_profile: UUID):
+        async with self.repository as repo:
+            await repo.delete_mutual_like(
+                source_profile=source_profile, target_profile=target_profile
+            )

@@ -2,7 +2,7 @@ from uuid import UUID
 from src.v1.config.database import DbSession
 from src.v1.deck.repositories.db import LikeRepository, MatchRepository
 from src.v1.deck.schemas import MatchInCreateSchema
-from src.v1.deck.usecases import CheckMatch, CreateMatch
+from src.v1.deck.usecases import CheckMatch, CreateMatch, DeleteMutualLikes
 
 
 async def check_match(
@@ -17,6 +17,12 @@ async def check_match(
         )
         await CreateMatch(repository=MatchRepository(db_session=db_session)).execute(
             in_schema=match_data
+        )
+        await DeleteMutualLikes(
+            repository=LikeRepository(db_session=db_session)
+        ).execute(
+            source_profile=source_profile,
+            target_profile=target_profile,
         )
         # TODO Notify service
         # await send notify

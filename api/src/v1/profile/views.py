@@ -7,6 +7,7 @@ from starlette.status import (
     HTTP_201_CREATED,
     HTTP_202_ACCEPTED,
 )
+from src.v1 import profile
 
 from src.v1.auth.dependencies.user import CurrentUser
 from src.v1.config.database import DbSession
@@ -43,6 +44,7 @@ from src.v1.profile.dtos import (
     PhotosOrderChangeResponse,
     ProfileCreateRequest,
     ProfileCreateResponse,
+    ProfileLocationCreateRequest,
     ProfileReadResponse,
     ProfileUpdateRequest,
 )
@@ -61,6 +63,7 @@ from src.v1.profile.usecases import (
     GetUserProfile,
     UpdateProfile,
 )
+from src.v1.profile.utils.geo.models import Point
 
 profile_router = APIRouter(prefix="/profile")
 
@@ -85,7 +88,6 @@ async def get_curret_user_profile(
     profile: ProfileOutReadSchema = await GetUserProfile(
         repository=ProfileRepository(db_session=db_session)
     ).execute(user_id=current_user_id)
-    print(profile.photos)
 
     return ProfileReadResponse(**profile.model_dump())
 
@@ -169,9 +171,9 @@ async def delete_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    profile = await GetUserProfile(repository=ProfileRepository(db_session=db_session)).execute(
-        user_id=current_user_id
-    )
+    profile = await GetUserProfile(
+        repository=ProfileRepository(db_session=db_session)
+    ).execute(user_id=current_user_id)
 
     await DeleteProfile(
         repository=ProfileRepository(db_session=db_session),
@@ -206,9 +208,9 @@ async def add_profile_interests(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's refresh token is invalid
     """
-    interests: list[Interest] = await InterestReadOnlyRepository(db_session=db_session).fetch(
-        entry_ids=added_profile_interests.interests
-    )
+    interests: list[Interest] = await InterestReadOnlyRepository(
+        db_session=db_session
+    ).fetch(entry_ids=added_profile_interests.interests)
 
     profile_interests: InterestsOutSchema = await CreateProfileInterests(
         repository=ProfileRepository(db_session=db_session)
@@ -314,3 +316,10 @@ async def update_photo_order(
     ).execute(profile_id=current_profile.id, in_schema=changing_display_order_data)
 
     return PhotosOrderChangeResponse(**new_ordered_photos.model_dump())
+
+
+@profile_router.post("/location")
+async def create_position(
+    location: ProfileLocationCreateRequest,
+):
+    return location

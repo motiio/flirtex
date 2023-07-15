@@ -10,6 +10,7 @@ from src.v1.base.schemas import BaseSchema
 from src.v1.config.settings import settings
 from src.v1.photo.dtos import PhotoReadResponse
 from src.v1.profile.models import GenderEnum, LookingGenderEnum
+from src.v1.profile.utils.geo.models import Point
 
 ###############################################################
 #                Request data transfer objects                #
@@ -56,6 +57,10 @@ class PhotoOrderChangeRequest(BaseSchema):
         raise ValueError(
             f"Value should be between 1 and {settings.MAX_PROFILE_PHOTOS_COUNT}"
         )
+
+
+class ProfileLocationCreateRequest(BaseSchema):
+    point: Point
 
 
 ################################################################

@@ -38,6 +38,7 @@ tenacity = "^8.2.2"
 fastapi = "0.100.0-beta2"
 pydantic = "^2.0"
 pydantic-settings = "^2.0.0"
+geoalchemy2 = "^0.14.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

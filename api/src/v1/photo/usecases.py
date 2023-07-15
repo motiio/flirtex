@@ -57,7 +57,9 @@ class SavePhotoToS3(
     ]
 ):
     async def execute(self, *, in_schema: PhotoInS3CreateSchema):
-        webp_image_bytes = PreprocessImage(repository=None).execute(in_photo_data=in_schema.content)
+        webp_image_bytes = PreprocessImage(repository=None).execute(
+            in_photo_data=in_schema.content
+        )
         in_schema.content = webp_image_bytes
         await self.repository.create(in_schema=in_schema)
         return PhotoOutS3CreateSchema(key=in_schema.key, id=in_schema.id)
@@ -93,7 +95,9 @@ class PreprocessImage(
         return temp_buffer.getvalue()
 
     def execute(self, *, in_photo_data: bytes):
-        resized_image = self._resize(image_data=in_photo_data, new_height=848, new_width=600)
+        resized_image = self._resize(
+            image_data=in_photo_data, new_height=848, new_width=600
+        )
         clear_image_data = self._remove_metadata(image_data=resized_image)
         webp_image = self._convert_to_webp(image_data=clear_image_data)
         return webp_image
@@ -150,7 +154,9 @@ class GenerateShortUrl(
     async def execute(self, photo_id: UUID, presigned_url):
         url: str = self._generate_unique_string(7)
         async with self.repository as repo:
-            await repo.set_short_url(photo_id=photo_id, short_url=url, presigned_url=presigned_url)
+            await repo.set_short_url(
+                photo_id=photo_id, short_url=url, presigned_url=presigned_url
+            )
 
     def _generate_unique_string(self, length):
         unique_string = secrets.token_urlsafe(length)[:length]
@@ -182,8 +188,12 @@ class ChangeDisplayingOrder(
         async with self.repository as repo:
             await repo.update(in_schema=in_schema)
 
-        new_photo_orders = await self.repository.get_profile_photos(profile_id=profile_id)
+        new_photo_orders = await self.repository.get_profile_photos(
+            profile_id=profile_id
+        )
 
         return PhotosOutUpdateDisplayOrderSchema(
-            photos=TypeAdapter(list[PhotoOutReadSchema]).validate_python(new_photo_orders)
+            photos=TypeAdapter(list[PhotoOutReadSchema]).validate_python(
+                new_photo_orders
+            )
         )

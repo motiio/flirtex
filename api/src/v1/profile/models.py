@@ -13,10 +13,10 @@ from sqlalchemy import (
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from starlette.background import P
 
 from src.v1.auth.models import User
 from src.v1.base.models import Base, TimeStampMixin
-from src.v1.deck.models import Like
 from src.v1.interest.models import Interest
 
 
@@ -61,6 +61,7 @@ class Profile(Base, TimeStampMixin):
     interests: Mapped[list[Interest]] = relationship(
         secondary="core.profile_interests", lazy="selectin"
     )
+    location: Mapped["Location"] = relationship(back_populates="profile")
     photos: Mapped[list["Photo"]] = relationship(
         back_populates="profile", lazy="selectin", order_by="Photo.displaying_order"
     )
