@@ -61,7 +61,7 @@ class Profile(Base, TimeStampMixin):
     interests: Mapped[list[Interest]] = relationship(
         secondary="core.profile_interests", lazy="selectin"
     )
-    location: Mapped["Location"] = relationship(back_populates="profile")
+    # location: Mapped["Location"] = relationship(back_populates="profile")
     photos: Mapped[list["Photo"]] = relationship(
         back_populates="profile", lazy="selectin", order_by="Photo.displaying_order"
     )
