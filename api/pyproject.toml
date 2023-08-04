@@ -44,6 +44,10 @@ geoalchemy2 = "^0.14.0"
 black = "^23.3.0"
 ruff = "^0.0.265"
 mypy = "^1.2.0"
+factory-boy = "^3.3.0"
+pytest = "^7.4.0"
+freezegun = "^1.2.2"
+pytest-asyncio = "^0.21.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -53,6 +57,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 100
 target_version = ['py311']
 include = '\.pyi?$'
+ensure_newline = true
 
 [tool.ruff]
 select = [

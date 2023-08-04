@@ -5,11 +5,12 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.v1.config.settings import settings as app_settings
+from src.config.settings import settings as app_settings
+from src.modules import *
 
 # from src.config.models import Base
 
-from src.v1.base.models import Base
+from src.core.models import BaseModel
 
 CORE_SCHEMA_NAME = "core"
 
@@ -34,7 +35,7 @@ config.set_main_option("sqlalchemy.url", app_settings.DATABASE_URI)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = BaseModel.metadata
 
 
 # other values from the config, defined by the needs of env.py,
