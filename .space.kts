@@ -27,10 +27,7 @@ job("Run on git push") {
                     -o StrictHostKeyChecking=no \
                     -o LogLevel=quiet \
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
-                    docker login connecta.registry.jetbrains.space \
-                           --username ${'$'}HUB_USER \
-                           --password "${'$'}HUB_TOKEN" \
-                     && cd api/api && git pull origin test \
+                     cd api/api && git pull origin test \
                      && sh deploy_api.sh"
             """
         }
