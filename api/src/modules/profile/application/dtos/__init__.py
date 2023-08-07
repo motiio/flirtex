@@ -2,8 +2,11 @@ __all__ = [
     # Profile
     "CreateProfileInDTO",
     "UpdateProfileInDTO",
-    "ProfileOutDTO"
-    # update token
+    "ProfileOutDTO",
+    # photo
+    "PhotoOutDTO",
+    "PhotoInS3UploadDTO",
+    "PhotoInDeleteDTO",
 ]
 
 from .profile import (
@@ -11,3 +14,4 @@ from .profile import (
     UpdateProfileInDTO,
     ProfileOutDTO,
 )
+from .photo import PhotoInS3UploadDTO, PhotoOutDTO, PhotoInDeleteDTO

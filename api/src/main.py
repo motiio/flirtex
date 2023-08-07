@@ -1,15 +1,15 @@
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory
+from src.config.s3 import create_s3_session
 from src.config.settings import settings
 from src.core.middlewares.db import DatabaseMiddleware
 from src.modules.auth.api import auth_router_v1
 from src.modules.common.api import common_router_v1
 from src.modules.profile.api import profile_router_v1
-
 
 # from src.v1.deck.views import deck_router
 # from src.v1.interest.views import interest_router
@@ -42,3 +42,10 @@ api.add_middleware(
     DatabaseMiddleware,
     session_factory=async_session_factory,
 )
+
+
+@api.middleware("http")
+async def s3_resource_middleware(request: Request, call_next):
+    request.state.s3 = create_s3_session()
+    response = await call_next(request)
+    return response

@@ -1,4 +1,3 @@
-from uuid import UUID
 
 from src.core.usecases import IUseCase
 from src.modules.common.application.dtos import InterestsOutDTO

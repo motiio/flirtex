@@ -10,3 +10,9 @@ class LookingGenderEnum(Enum):
     nevemind = -1
     male = 0
     female = 1
+
+
+class PhotoProcessStatusEnum(Enum):
+    approved = 1
+    processing = 0
+    rejected = -1

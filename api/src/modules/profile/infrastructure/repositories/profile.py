@@ -7,6 +7,7 @@ from sqlalchemy.orm import selectinload
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.modules.profile.application.repositories import IProfileRepository
 from src.modules.profile.domain.entities import Interest, Profile
+from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
 from src.modules.profile.infrastructure.models import InterestORM, ProfileORM
 
 
@@ -33,6 +34,7 @@ class ProfileRepository(
             .values(**in_entity.model_dump(exclude={"interests"}))
             .returning(self._table)
             .options(selectinload(self._table.interests))
+            .options(selectinload(self._table.photos))
         )
 
         result = (await self._db_session.execute(q)).scalars().one()
@@ -60,6 +62,9 @@ class ProfileRepository(
             entity: Profile = self._entity.create(**result.dict())
             entity.put_interests(
                 [Interest.create(**interest.dict()) for interest in result.interests]
+            )
+            entity.add_photos(
+                [PhotoDAE.create(**photo.dict()) for photo in result.photos]
             )
             return entity
 

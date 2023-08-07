@@ -3,6 +3,7 @@ from datetime import date
 from uuid import UUID, uuid4
 
 from src.core.entities import BaseEntity
+from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
 
 from .interest import Interest
 
@@ -16,6 +17,7 @@ class Profile(BaseEntity):
     gender: int
     looking_gender: int
     interests: list[Interest]
+    photos: list[PhotoDAE]
     owner_id: UUID
 
     # _banned: bool
@@ -77,3 +79,6 @@ class Profile(BaseEntity):
 
     def put_interests(self, interests: list[Interest]):
         self.interests = interests
+
+    def add_photos(self, photos: list[PhotoDAE]):
+        self.photos = photos

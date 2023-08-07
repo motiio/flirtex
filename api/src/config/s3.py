@@ -4,7 +4,7 @@ import aioboto3
 from fastapi import Depends
 from starlette.requests import Request
 
-from src.v1.config.settings import settings
+from src.config.settings import settings
 
 
 def create_s3_session():

@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
-from typing import Generic, Type, List, TypeVar
-from src.core.types import ENTITY, TABLE
+from typing import Generic, Optional, Type, List, TypeVar
+
+from sqlalchemy.sql.base import Options
+from src.core.types import ENTITY, IN_S3_DTO, OUT_DTO, OUT_S3_DTO, TABLE
 from uuid import UUID
 from src.core.aio import IAsyncContextManagerRepository
 
@@ -22,7 +24,7 @@ class IRepository(
         ...
 
     @abstractmethod
-    async def create(self, *, in_entity: ENTITY) -> ENTITY:
+    async def create(self, *, in_entity: ENTITY) -> Optional[ENTITY]:
         ...
 
     @abstractmethod
@@ -53,15 +55,21 @@ class ISqlAlchemyRepository(
     def _entity(self) -> Type[ENTITY]:
         raise NotImplemented
 
-        # class IS3Repository(
-        #     IRepository,
-        #     Generic[
-        #         IN_DTO,
-        #         OUT_DTO,
-        #     ],
-        #     metaclass=ABCMeta,
-        # ):
-        #     @property
-        #     @abstractmethod
-        #     async def _bucket(self):
+
+class IS3Repository(
+    IRepository,
+    Generic[
+        IN_S3_DTO,
+        OUT_S3_DTO,
+    ],
+    metaclass=ABCMeta,
+):
+    @property
+    @abstractmethod
+    def _bucket_name(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
+    def _out_dto(self) -> Type[OUT_S3_DTO]:
         ...

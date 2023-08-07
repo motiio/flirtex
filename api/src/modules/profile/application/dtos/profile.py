@@ -4,6 +4,7 @@ from uuid import UUID
 
 from src.core.dtos import BaseDTO
 from src.modules.profile.application.dtos.interest import InterestOutDTO
+from src.modules.profile.application.dtos.photo import PhotoOutDTO
 from src.modules.profile.application.utils.enums import GenderEnum, LookingGenderEnum
 
 
@@ -30,3 +31,4 @@ class ProfileOutDTO(BaseDTO):
     gender: GenderEnum
     looking_gender: LookingGenderEnum
     interests: Optional[list[InterestOutDTO]]
+    photos: Optional[list[PhotoOutDTO]]

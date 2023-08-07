@@ -1,11 +1,15 @@
 from datetime import date
 from uuid import UUID
 
-from sqlalchemy import Date, Enum, ForeignKey, String, Text, Uuid
+from sqlalchemy import Date, Enum, ForeignKey, Integer, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import BaseModel, TimeStampMixin
-from src.modules.profile.application.utils.enums import GenderEnum, LookingGenderEnum
+from src.modules.profile.application.utils.enums import (
+    GenderEnum,
+    LookingGenderEnum,
+    PhotoProcessStatusEnum,
+)
 
 
 class InterestORM(BaseModel, TimeStampMixin):
@@ -46,9 +50,28 @@ class ProfileORM(BaseModel, TimeStampMixin):
         secondary="core.profile_interests", lazy="selectin"
     )
     # location: Mapped["Location"] = relationship(back_populates="profile")
-    # photos: Mapped[list["Photo"]] = relationship(
-    # back_populates="profile", lazy="selectin", order_by="Photo.displaying_order"
-    # )
+    photos: Mapped[list["PhotoORM"]] = relationship(
+        back_populates="profile", lazy="selectin", order_by="PhotoORM.displaying_order"
+    )
 
     def __repr__(self):
         return f"Profile[{self.id=}, {self.owner_id=}, {self.name=}, {self.birthdate=}, {self.gender=}, Interests={','.join([interest.name for interest in self.interests])}]"
+
+
+class PhotoORM(BaseModel, TimeStampMixin):
+    __table_args__ = {"schema": "core"}
+
+    profile_id: Mapped[UUID] = mapped_column(
+        ForeignKey("core.profile.id", ondelete="CASCADE")
+    )
+    displaying_order: Mapped[int] = mapped_column(Integer)
+    status: Mapped[PhotoProcessStatusEnum] = mapped_column(
+        Enum(PhotoProcessStatusEnum, schema="core"),
+    )
+    status_description: Mapped[str] = mapped_column(String(32), nullable=True)
+    profile: Mapped["ProfileORM"] = relationship(back_populates="photos")  # type: ignore
+    hash: Mapped[str] = mapped_column(String(32), nullable=False)
+    url: Mapped[str] = mapped_column(String(512), unique=True, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"Photo[{self.id=},{self.displaying_order=}, {self.status=}, {self.status_description=}, {self.photo_url=}]"

@@ -40,14 +40,14 @@ class BaseSqlAlchemyRepository(
         result = (await self._db_session.execute(q)).scalars().one()
         return self._entity.create(**result.dict())
 
-    async def delete(self, *, entity_id: UUID) -> None:
+    async def delete(self, *, entity_id: UUID) -> ENTITY:
         q = (
             delete(self._table)
             .where(self._table.id == entity_id)
             .returning(self._table)
         )
-        _ = (await self._db_session.execute(q)).scalars().first()
-        return None
+        result = (await self._db_session.execute(q)).scalars().one()
+        return self._entity.create(**result.dict())
 
     async def update(self, *, in_entity: ENTITY) -> ENTITY | None:  # type: ignore
         q = (
