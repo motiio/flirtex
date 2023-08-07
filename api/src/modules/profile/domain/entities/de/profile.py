@@ -31,7 +31,6 @@ class Profile(BaseEntity):
         birthdate: date,
         gender: int,
         looking_gender: int,
-        # interests: list[Interest],
         owner_id: UUID,
     ):
         self.id = id

@@ -2,13 +2,9 @@ from hashlib import md5
 from io import BytesIO
 
 from PIL import Image
-from src.config.settings import settings
 
+from src.config.settings import settings
 from src.core.usecases import IUseCase
-from src.modules.profile.application.dtos import (
-    CreateProfileInDTO,
-    ProfileOutDTO,
-)
 from src.modules.profile.application.dtos.photo import (
     PhotoInCreateDTO,
     PhotoInS3UploadDTO,
@@ -27,18 +23,13 @@ from src.modules.profile.domain.exceptions import (
 )
 
 
-class AddProfilePhotoUsecase(
-    IUseCase[
-        CreateProfileInDTO,
-        ProfileOutDTO,
-    ],
-):
+class AddProfilePhotoUsecase(IUseCase):
     def __init__(
         self,
         *,
         photo_repository: IProfilePhotoRepository,
         profile_repository: IProfileRepository,
-        photo_s3_repository: IProfilePhotoS3Repository
+        photo_s3_repository: IProfilePhotoS3Repository,
     ):
         self._photo_repo: IProfilePhotoRepository = photo_repository
         self._profile_repo: IProfileRepository = profile_repository
@@ -55,11 +46,16 @@ class AddProfilePhotoUsecase(
 
             if photo_numbers + 1 > settings.MAX_PROFILE_PHOTOS_COUNT:
                 raise PhotosLimit
+
+            max_displayin_num = await self._photo_repo.max_displaying_num(
+                profile_id=profile.id
+            )
+
             photo = PhotoDAE.create(
                 **in_dto.model_dump(),
                 profile_id=profile.id,
                 hash=md5(in_dto.content).hexdigest(),
-                displaying_order=photo_numbers + 1
+                displaying_order=max_displayin_num + 1,
             )
             if await self._photo_repo.get_by_hash(
                 profile_id=profile.id,

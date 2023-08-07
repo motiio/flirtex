@@ -26,12 +26,7 @@ class _TelegramUserInfo(BaseDTO):
     tg_language_code: Optional[str] = Field(None, alias="language_code")
 
 
-class TelegramLoginUsecase(
-    IUseCase[
-        TelegramLoginInDTO,
-        TelegramLoginOutDTO,
-    ],
-):
+class TelegramLoginUsecase(IUseCase):
     def __init__(
         self,
         *,

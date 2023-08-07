@@ -3,7 +3,6 @@ from uuid import UUID
 from src.core.usecases import IUseCase
 from src.modules.profile.application.dtos import (
     ProfileOutDTO,
-    UpdateProfileInDTO,
 )
 from src.modules.profile.application.repositories import (
     IProfileRepository,
@@ -11,12 +10,7 @@ from src.modules.profile.application.repositories import (
 from src.modules.profile.domain.exceptions import ProfileNotFound
 
 
-class GetProfileUsecase(
-    IUseCase[
-        UpdateProfileInDTO,
-        ProfileOutDTO,
-    ],
-):
+class GetProfileUsecase(IUseCase):
     def __init__(
         self,
         *,

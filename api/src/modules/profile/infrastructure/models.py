@@ -61,9 +61,7 @@ class ProfileORM(BaseModel, TimeStampMixin):
 class PhotoORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
 
-    profile_id: Mapped[UUID] = mapped_column(
-        ForeignKey("core.profile.id", ondelete="CASCADE")
-    )
+    profile_id: Mapped[UUID] = mapped_column(ForeignKey("core.profile.id", ondelete="CASCADE"))
     displaying_order: Mapped[int] = mapped_column(Integer)
     status: Mapped[PhotoProcessStatusEnum] = mapped_column(
         Enum(PhotoProcessStatusEnum, schema="core"),

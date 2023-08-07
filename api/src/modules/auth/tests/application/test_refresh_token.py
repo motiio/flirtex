@@ -72,9 +72,7 @@ EXISTS_STORE_2: dict = generate_store(
             tg_is_premium=False,
             tg_language_code="ru",
         ),
-        UserORMFactory.create(
-            id=UUID("71d18c32-5565-4c6a-9881-2bf824cb67c6"), tg_id=11111111
-        ),
+        UserORMFactory.create(id=UUID("71d18c32-5565-4c6a-9881-2bf824cb67c6"), tg_id=11111111),
         UserORMFactory.create(id=uuid4()),
         RefreshTokenORMFactory.create(
             id=uuid4(),
@@ -119,9 +117,7 @@ def store(request):
     return request.param
 
 
-@pytest.mark.parametrize(
-    "store", [EMPTY_STORE, EXISTS_STORE_1, EXISTS_STORE_2], indirect=True
-)
+@pytest.mark.parametrize("store", [EMPTY_STORE, EXISTS_STORE_1, EXISTS_STORE_2], indirect=True)
 @pytest.mark.asyncio
 async def test_telegram_login(tg_login_request, store):
     login_service = telegram_login_service_factory(db_session=store)

@@ -10,12 +10,7 @@ from src.modules.profile.domain.entities import Profile
 from src.modules.profile.domain.exceptions import ProfileAlreadyExists
 
 
-class CreateProfileUsecase(
-    IUseCase[
-        CreateProfileInDTO,
-        ProfileOutDTO,
-    ],
-):
+class CreateProfileUsecase(IUseCase):
     def __init__(
         self,
         *,
@@ -25,9 +20,7 @@ class CreateProfileUsecase(
 
     async def execute(self, in_dto: CreateProfileInDTO) -> ProfileOutDTO:
         async with self._profile_repo:
-            existent_profile = await self._profile_repo.get_by_owner(
-                owner_id=in_dto.owner_id
-            )
+            existent_profile = await self._profile_repo.get_by_owner(owner_id=in_dto.owner_id)
             if existent_profile:
                 raise ProfileAlreadyExists
 

@@ -7,12 +7,7 @@ from src.modules.profile.application.repositories import (
 from src.modules.profile.domain.exceptions import ProfileNotFound
 
 
-class DeleteProfileUsecase(
-    IUseCase[
-        None,
-        None,
-    ],
-):
+class DeleteProfileUsecase(IUseCase):
     def __init__(
         self,
         *,

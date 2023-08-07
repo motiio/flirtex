@@ -1,14 +1,4 @@
-from hashlib import md5
-from io import BytesIO
-
-from PIL import Image
-from src.config.settings import settings
-
 from src.core.usecases import IUseCase
-from src.modules.profile.application.dtos import (
-    CreateProfileInDTO,
-    ProfileOutDTO,
-)
 from src.modules.profile.application.dtos import (
     PhotoInDeleteDTO,
 )
@@ -17,25 +7,19 @@ from src.modules.profile.application.repositories import (
     IProfilePhotoS3Repository,
     IProfileRepository,
 )
-from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
 from src.modules.profile.domain.exceptions import (
     PhotosLimit,
     ProfileNotFound,
 )
 
 
-class DeleteProfilePhotoUsecase(
-    IUseCase[
-        CreateProfileInDTO,
-        ProfileOutDTO,
-    ],
-):
+class DeleteProfilePhotoUsecase(IUseCase):
     def __init__(
         self,
         *,
         photo_repository: IProfilePhotoRepository,
         profile_repository: IProfileRepository,
-        photo_s3_repository: IProfilePhotoS3Repository
+        photo_s3_repository: IProfilePhotoS3Repository,
     ):
         self._photo_repo: IProfilePhotoRepository = photo_repository
         self._profile_repo: IProfileRepository = profile_repository
@@ -48,11 +32,19 @@ class DeleteProfilePhotoUsecase(
             if not profile:
                 raise ProfileNotFound
 
+            deleted_photo = await self._photo_repo.get(
+                entity_id=in_dto.photo_id, profile_id=profile.id
+            )
+            if not deleted_photo:
+                return
+
             photo_numbers = await self._photo_repo.photos_count(profile_id=profile.id)
 
             if photo_numbers <= 1:
                 raise PhotosLimit
 
-            deleted_photo = await self._photo_repo.delete(entity_id=in_dto.photo_id)
+            deleted_photo = await self._photo_repo.delete(
+                entity_id=in_dto.photo_id, profile_id=profile.id
+            )
 
             await self._photo_s3_repo.delete(key=deleted_photo.url)

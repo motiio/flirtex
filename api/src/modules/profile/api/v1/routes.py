@@ -1,5 +1,6 @@
 from uuid import UUID
-from fastapi import APIRouter, UploadFile
+
+from fastapi import APIRouter
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
 from src.modules.auth.application.dependencies.auth import CurrentUser
@@ -8,13 +9,18 @@ from src.modules.profile.api.v1.schemas import (
     UpdateProfileInterestsRequestSchema,
     UpdateProfileRequestSchema,
 )
+from src.modules.profile.api.v1.schemas.update_photo_order import (
+    UpdatePhotoOrderRequest,
+)
 from src.modules.profile.application.dependencies import (
     AddProfilePhotoService,
     CreateProfileService,
+    DeleteProfilePhotoService,
     DeleteProfileService,
     GetProfileService,
     UpdateProfileService,
     ValidImageFile,
+    UpdatePhotoOrderService,
 )
 from src.modules.profile.application.dtos import (
     CreateProfileInDTO,
@@ -22,7 +28,11 @@ from src.modules.profile.application.dtos import (
     ProfileOutDTO,
     UpdateProfileInDTO,
 )
-from src.modules.profile.application.dtos.photo import PhotoInCreateDTO
+from src.modules.profile.application.dtos.photo import (
+    PhotoInCreateDTO,
+    PhotoInDeleteDTO,
+    UpdatePhotosOrderInDTO,
+)
 
 profile_router = APIRouter(prefix="/profile")
 
@@ -168,7 +178,6 @@ async def add_profile_photo(
 @profile_router.delete(
     "/photo",
     status_code=HTTP_200_OK,
-    # response_model=PhotoOutDTO,
 )
 async def delete_profile_photo(
     photo_id: UUID,
@@ -178,3 +187,20 @@ async def delete_profile_photo(
     await delete_profile_photo_service.execute(
         in_dto=PhotoInDeleteDTO(user_id=user_id, photo_id=photo_id)
     )
+
+
+@profile_router.patch(
+    "/photo",
+    status_code=HTTP_200_OK,
+)
+async def update_photo_order(
+    displayin_order: UpdatePhotoOrderRequest,
+    user_id: CurrentUser,
+    update_photo_order_service: UpdatePhotoOrderService,
+):
+    new_order = await update_photo_order_service.execute(
+        in_dto=UpdatePhotosOrderInDTO(
+            user_id=user_id, photo_orders=displayin_order.new_order
+        )
+    )
+    return new_order

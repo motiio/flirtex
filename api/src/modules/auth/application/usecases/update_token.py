@@ -13,12 +13,7 @@ from src.modules.auth.domain.entities import RefreshTokenDAE
 from src.modules.auth.domain.exceptions import InvalidJWTToken, UserNotFound
 
 
-class UpdateTokenUsecase(
-    IUseCase[
-        UpdateTokenInDTO,
-        UpdateTokenOutDTO,
-    ],
-):
+class UpdateTokenUsecase(IUseCase):
     def __init__(
         self,
         *,
@@ -52,9 +47,7 @@ class UpdateTokenUsecase(
                 ),
             )
 
-            new_refresh_token = await self._refresh_token_repo.create(
-                in_entity=created_token
-            )
+            new_refresh_token = await self._refresh_token_repo.create(in_entity=created_token)
 
             return UpdateTokenOutDTO(
                 access_token=generate_token(

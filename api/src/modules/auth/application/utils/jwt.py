@@ -8,9 +8,7 @@ from src.config.settings import settings
 from src.modules.auth.domain.exceptions import InvalidJWTToken
 
 
-def generate_token(
-    *, sub: str, expiration_seconds: int, secret: str = settings.JWT_SECRET
-) -> str:
+def generate_token(*, sub: str, expiration_seconds: int, secret: str = settings.JWT_SECRET) -> str:
     now = timegm(datetime.utcnow().utctimetuple())
     exp = now + expiration_seconds
     data = {

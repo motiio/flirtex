@@ -15,9 +15,7 @@ class BaseS3Repository(
         OUT_DTO,
     ],
 ):
-    def __init__(
-        self, *, s3_session: S3Session, endpoint_url: str = settings.S3_CLOUD_ENDPOINT
-    ):
+    def __init__(self, *, s3_session: S3Session, endpoint_url: str = settings.S3_CLOUD_ENDPOINT):
         self._s3_session = s3_session
         self._endpoint_url = endpoint_url
 
@@ -27,16 +25,12 @@ class BaseS3Repository(
         ...
 
     async def create(self, *, in_dto: IN_S3_DTO) -> None:
-        async with self._s3_session.resource(
-            "s3", endpoint_url=settings.S3_CLOUD_ENDPOINT
-        ) as s3:
+        async with self._s3_session.resource("s3", endpoint_url=settings.S3_CLOUD_ENDPOINT) as s3:
             bucket = await s3.Bucket(self._bucket_name)
             await bucket.put_object(Key=in_dto.key, Body=in_dto.content)  # type: ignore
 
     async def delete(self, *, key: UUID) -> None:
-        async with self._s3_session.resource(
-            "s3", endpoint_url=settings.S3_CLOUD_ENDPOINT
-        ) as s3:
+        async with self._s3_session.resource("s3", endpoint_url=settings.S3_CLOUD_ENDPOINT) as s3:
             bucket = await s3.Bucket(self._bucket_name)
             await bucket.objects.filter(Prefix=key).delete()
 
@@ -59,7 +53,7 @@ class BaseS3Repository(
         pass
 
     async def __aenter__(self):
-        return self._s3_client.__aenter__()
+        pass
 
     async def __aexit__(self, exc_type, exc_value, tb):
         if exc_type is not None:

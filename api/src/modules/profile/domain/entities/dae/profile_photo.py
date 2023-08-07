@@ -62,3 +62,6 @@ class PhotoDAE(BaseEntity):
             url=url,
         )
         return photo
+
+    def set_displaying_order(self, value: int):
+        self.displaying_order = value

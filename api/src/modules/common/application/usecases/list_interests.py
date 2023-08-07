@@ -1,15 +1,9 @@
-
 from src.core.usecases import IUseCase
 from src.modules.common.application.dtos import InterestsOutDTO
 from src.modules.profile.application.repositories.interest import IInterestRepository
 
 
-class ListInterestUsecase(
-    IUseCase[
-        None,
-        InterestsOutDTO,
-    ],
-):
+class ListInterestUsecase(IUseCase):
     def __init__(
         self,
         *,

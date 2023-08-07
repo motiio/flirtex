@@ -23,17 +23,15 @@ class BaseSqlAlchemyRepository(
             return self._entity.create(**result.dict())
         return None
 
-    async def fetch(self, *, entities_ids: List[UUID]) -> List[ENTITY] | None:  # type: ignore
+    async def fetch(self, *, entities_ids: List[UUID]) -> List[ENTITY]:  # type: ignore
         q = select(self._table).where(self._table.id.in_(entities_ids))
         entries = (await self._db_session.execute(q)).scalars().all()
         return [self._entity.create(**entry.dict()) for entry in entries]
 
-    async def list(self) -> List[ENTITY] | None:  # type: ignore
+    async def list(self) -> List[ENTITY]:  # type: ignore
         q = select(self._table)
         entities = await self._db_session.execute(q)
-        return [
-            self._entity.create(**entity.dict()) for entity in entities.scalars().all()
-        ]
+        return [self._entity.create(**entity.dict()) for entity in entities.scalars().all()]
 
     async def create(self, *, in_entity: ENTITY, **kwargs) -> ENTITY:
         q = insert(self._table).values(**in_entity.model_dump()).returning(self._table)
@@ -41,11 +39,7 @@ class BaseSqlAlchemyRepository(
         return self._entity.create(**result.dict())
 
     async def delete(self, *, entity_id: UUID) -> ENTITY:
-        q = (
-            delete(self._table)
-            .where(self._table.id == entity_id)
-            .returning(self._table)
-        )
+        q = delete(self._table).where(self._table.id == entity_id).returning(self._table)
         result = (await self._db_session.execute(q)).scalars().one()
         return self._entity.create(**result.dict())
 

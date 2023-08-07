@@ -7,6 +7,9 @@ __all__ = [
     "PhotoOutDTO",
     "PhotoInS3UploadDTO",
     "PhotoInDeleteDTO",
+    "UpdatePhotosOrderInDTO",
+    "UpdatePhotosOrderOutDTO",
+    "PhotoOrderDTO",
 ]
 
 from .profile import (
@@ -14,4 +17,11 @@ from .profile import (
     UpdateProfileInDTO,
     ProfileOutDTO,
 )
-from .photo import PhotoInS3UploadDTO, PhotoOutDTO, PhotoInDeleteDTO
+from .photo import (
+    PhotoInS3UploadDTO,
+    PhotoOutDTO,
+    PhotoInDeleteDTO,
+    UpdatePhotosOrderInDTO,
+    UpdatePhotosOrderOutDTO,
+    PhotoOrderDTO,
+)
