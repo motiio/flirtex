@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from pydantic import field_validator
 
 from src.core.schemas import BaseSchema

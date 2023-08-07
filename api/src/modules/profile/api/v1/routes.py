@@ -18,9 +18,9 @@ from src.modules.profile.application.dependencies import (
     DeleteProfilePhotoService,
     DeleteProfileService,
     GetProfileService,
+    UpdatePhotoOrderService,
     UpdateProfileService,
     ValidImageFile,
-    UpdatePhotoOrderService,
 )
 from src.modules.profile.application.dtos import (
     CreateProfileInDTO,
@@ -199,8 +199,6 @@ async def update_photo_order(
     update_photo_order_service: UpdatePhotoOrderService,
 ):
     new_order = await update_photo_order_service.execute(
-        in_dto=UpdatePhotosOrderInDTO(
-            user_id=user_id, photo_orders=displayin_order.new_order
-        )
+        in_dto=UpdatePhotosOrderInDTO(user_id=user_id, photo_orders=displayin_order.new_order)
     )
     return new_order

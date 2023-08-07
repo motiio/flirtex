@@ -28,9 +28,7 @@ class IProfilePhotoRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def fetch(
-        self, *, entities_ids: list[UUID], profile_id: UUID
-    ) -> list[PhotoDAE]:
+    async def fetch(self, *, entities_ids: list[UUID], profile_id: UUID) -> list[PhotoDAE]:
         ...
 
     @abstractmethod

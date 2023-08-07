@@ -47,9 +47,7 @@ class AddProfilePhotoUsecase(IUseCase):
             if photo_numbers + 1 > settings.MAX_PROFILE_PHOTOS_COUNT:
                 raise PhotosLimit
 
-            max_displayin_num = await self._photo_repo.max_displaying_num(
-                profile_id=profile.id
-            )
+            max_displayin_num = await self._photo_repo.max_displaying_num(profile_id=profile.id)
 
             photo = PhotoDAE.create(
                 **in_dto.model_dump(),
