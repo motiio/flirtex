@@ -38,7 +38,6 @@ class ProfileORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
 
     owner_id: Mapped[UUID] = mapped_column(ForeignKey("core.user.id"))
-    # owner: Mapped[UserORM] = relationship(back_populates="profile")
     name: Mapped[str] = mapped_column(String(32))
     bio: Mapped[str] = mapped_column(String(600), nullable=True)
     birthdate: Mapped[date] = mapped_column(Date)

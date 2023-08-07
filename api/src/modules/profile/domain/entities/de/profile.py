@@ -41,6 +41,7 @@ class Profile(BaseEntity):
         self.looking_gender = looking_gender
         self.interests = []
         self.owner_id = owner_id
+        self.photos = []
         # self._banned = banned
 
     @classmethod

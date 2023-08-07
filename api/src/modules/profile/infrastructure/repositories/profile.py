@@ -29,7 +29,7 @@ class ProfileRepository(
     async def create(self, *, in_entity: Profile, interests_ids: list[UUID] | None) -> Profile:
         q = (
             insert(self._table)
-            .values(**in_entity.model_dump(exclude={"interests"}))
+            .values(**in_entity.model_dump(exclude={"interests", "photos"}))
             .returning(self._table)
             .options(selectinload(self._table.interests))
             .options(selectinload(self._table.photos))
@@ -68,7 +68,7 @@ class ProfileRepository(
         q = (
             update(self._table)
             .where(self._table.id == in_entity.id)  # type: ignore
-            .values(**in_entity.model_dump(exclude={"interests"}))
+            .values(**in_entity.model_dump(exclude={"interests", "photos"}))
             .returning(self._table)
             .options(selectinload(self._table.interests))
         )
