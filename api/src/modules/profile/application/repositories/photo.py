@@ -28,7 +28,9 @@ class IProfilePhotoRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def fetch(self, *, entities_ids: list[UUID], profile_id: UUID) -> list[PhotoDAE]:
+    async def fetch(
+        self, *, entities_ids: list[UUID], profile_id: UUID
+    ) -> list[PhotoDAE]:
         ...
 
     @abstractmethod
@@ -47,4 +49,7 @@ class IProfilePhotoS3Repository(IAsyncContextManagerRepository, ABC):
 
     @abstractmethod
     async def delete(self, *, key: str) -> None:
+        ...
+
+    async def drop(self, *, key: str) -> None:
         ...

@@ -4,6 +4,7 @@ from src.core.usecases import IUseCase
 from src.modules.profile.application.repositories import (
     IProfileRepository,
 )
+from src.modules.profile.application.repositories.photo import IProfilePhotoS3Repository
 from src.modules.profile.domain.exceptions import ProfileNotFound
 
 
@@ -12,8 +13,10 @@ class DeleteProfileUsecase(IUseCase):
         self,
         *,
         profile_repository: IProfileRepository,
+        photo_s3_repo: IProfilePhotoS3Repository,
     ):
         self._profile_repo: IProfileRepository = profile_repository
+        self._photo_s3_repo: IProfilePhotoS3Repository = photo_s3_repo
 
     async def execute(self, owner_id: UUID) -> None:
         async with self._profile_repo:
@@ -22,3 +25,4 @@ class DeleteProfileUsecase(IUseCase):
                 raise ProfileNotFound
 
             await self._profile_repo.delete(entity_id=existent_profile.id)
+            await self._photo_s3_repo.delete(key=str(existent_profile.id))
