@@ -161,7 +161,7 @@ async def delete_profile(
 
 @profile_router.post(
     "/photo",
-    status_code=HTTP_200_OK,
+    status_code=HTTP_201_CREATED,
     response_model=PhotoOutDTO,
 )
 async def add_profile_photo(
