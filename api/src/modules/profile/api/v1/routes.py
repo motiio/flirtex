@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter
-from starlette.status import HTTP_200_OK, HTTP_201_CREATED
+from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 from src.modules.auth.application.dependencies.auth import CurrentUser
 from src.modules.profile.api.v1.schemas import (
@@ -40,7 +40,7 @@ profile_router = APIRouter(prefix="/profile")
 @profile_router.get(
     "",
     response_model=ProfileOutDTO,
-    status_code=HTTP_201_CREATED,
+    status_code=HTTP_200_OK,
 )
 async def get_profile(
     get_profile_service: GetProfileService,
@@ -145,7 +145,7 @@ async def update_profile_interests(
 
 @profile_router.delete(
     "",
-    status_code=HTTP_200_OK,
+    status_code=HTTP_204_NO_CONTENT,
 )
 async def delete_profile(
     delete_profile_service: DeleteProfileService,
@@ -177,7 +177,7 @@ async def add_profile_photo(
 
 @profile_router.delete(
     "/photo/{photo_id}",
-    status_code=HTTP_200_OK,
+    status_code=HTTP_204_NO_CONTENT,
 )
 async def delete_profile_photo(
     photo_id: UUID,
