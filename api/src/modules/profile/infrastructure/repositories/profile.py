@@ -26,7 +26,9 @@ class ProfileRepository(
     def _entity(self) -> Type[Profile]:
         return Profile
 
-    async def create(self, *, in_entity: Profile, interests_ids: list[UUID] | None) -> Profile:
+    async def create(
+        self, *, in_entity: Profile, interests_ids: list[UUID] | None
+    ) -> Profile:
         q = (
             insert(self._table)
             .values(**in_entity.model_dump(exclude={"interests", "photos"}))
@@ -44,7 +46,9 @@ class ProfileRepository(
         result.interests = interests  # type: ignore
 
         entity = self._entity.create(**result.dict())
-        entity.put_interests([Interest.create(**interest.dict()) for interest in interests])
+        entity.put_interests(
+            [Interest.create(**interest.dict()) for interest in interests]
+        )
         return entity
 
     async def get_by_owner(self, *, owner_id) -> Profile | None:  # type: ignore
@@ -59,12 +63,16 @@ class ProfileRepository(
             entity.put_interests(
                 [Interest.create(**interest.dict()) for interest in result.interests]
             )
-            entity.add_photos([PhotoDAE.create(**photo.dict()) for photo in result.photos])
+            entity.add_photos(
+                [PhotoDAE.create(**photo.dict()) for photo in result.photos]
+            )
             return entity
 
         return None
 
-    async def update(self, *, in_entity: Profile, interests_ids: list[UUID] | None) -> Profile:
+    async def update(
+        self, *, in_entity: Profile, interests_ids: list[UUID] | None
+    ) -> Profile:
         q = (
             update(self._table)
             .where(self._table.id == in_entity.id)  # type: ignore
@@ -78,9 +86,10 @@ class ProfileRepository(
         if interests_ids:
             q = select(InterestORM).where(InterestORM.id.in_(interests_ids))
             interests = (await self._db_session.execute(q)).scalars().all()
-
-        result.interests = interests  # type: ignore
+            result.interests = interests  # type: ignore
 
         entity = self._entity.create(**result.dict())
-        entity.put_interests([Interest.create(**interest.dict()) for interest in result.interests])
+        entity.put_interests(
+            [Interest.create(**interest.dict()) for interest in result.interests]
+        )
         return entity
