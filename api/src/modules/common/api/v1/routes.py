@@ -5,7 +5,7 @@ from src.modules.auth.application.dependencies import CurrentUser
 from src.modules.common.application.dtos import InterestsOutDTO
 from src.modules.common.dependencies import ListInterestsService
 
-common_router = APIRouter(prefix="/common")
+common_router = APIRouter(prefix="")
 
 
 @common_router.get(
