@@ -6,7 +6,7 @@ from src.modules.profile.application.utils.enums import PhotoProcessStatusEnum
 
 
 @dataclass
-class PhotoDAE(BaseEntity):
+class ProfilePhoto(BaseEntity):
     id: UUID
     profile_id: UUID
     displaying_order: int
@@ -52,7 +52,7 @@ class PhotoDAE(BaseEntity):
         if url is None:
             url = f"{profile_id}/photo/{id}.webp"
 
-        photo = PhotoDAE(
+        photo = ProfilePhoto(
             id=id,
             profile_id=profile_id,
             displaying_order=displaying_order,

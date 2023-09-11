@@ -9,6 +9,12 @@ __all__ = [
     "InterestORM",
     "ProfileInterestsORM",
     "PhotoORM",
+    # deck
+    "LikeORM",
+    "SkipORM",
+    "SaveORM",
+    "MatchORM",
+    "FilterORM",
 ]
 from src.modules.profile.infrastructure.models import (
     ProfileORM,
@@ -17,3 +23,10 @@ from src.modules.profile.infrastructure.models import (
     PhotoORM,
 )
 from src.modules.auth.infrastructure.models import UserORM, RefreshTokenORM
+from src.modules.deck.infrastructure.models import (
+    LikeORM,
+    SkipORM,
+    SaveORM,
+    MatchORM,
+    FilterORM,
+)

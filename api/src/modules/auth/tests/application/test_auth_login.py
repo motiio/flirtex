@@ -128,7 +128,6 @@ async def test_telegram_login(tg_login_request, store):
 
 
 def user_agent_count(user: UUID, user_agent: str, store: dict) -> int:
-    print(store)
     filtered_tokens = [
         value.user
         for value in store.values()
@@ -136,7 +135,6 @@ def user_agent_count(user: UUID, user_agent: str, store: dict) -> int:
         and value.user_agent == user_agent
         and str(value.user) == str(user)
     ]
-    print(filtered_tokens)
 
     count = sum(1 for _ in filtered_tokens)
     return count

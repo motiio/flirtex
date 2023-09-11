@@ -15,7 +15,7 @@ from src.modules.profile.application.repositories import (
     IProfilePhotoS3Repository,
     IProfileRepository,
 )
-from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
+from src.modules.profile.domain.entities import ProfilePhoto
 from src.modules.profile.domain.exceptions import (
     PhotoAlreadyExists,
     PhotosLimit,
@@ -49,7 +49,7 @@ class AddProfilePhotoUsecase(IUseCase):
 
             max_displayin_num = await self._photo_repo.max_displaying_num(profile_id=profile.id)
 
-            photo = PhotoDAE.create(
+            photo = ProfilePhoto.create(
                 **in_dto.model_dump(),
                 profile_id=profile.id,
                 hash=md5(in_dto.content).hexdigest(),

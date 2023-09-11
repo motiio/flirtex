@@ -10,13 +10,13 @@ from src.modules.profile.application.repositories.photo import (
     IProfilePhotoRepository,
     IProfilePhotoS3Repository,
 )
-from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
+from src.modules.profile.domain.entities import ProfilePhoto
 from src.modules.profile.infrastructure.models import PhotoORM
 
 
 class ProfilePhotoRepository(
     BaseSqlAlchemyRepository[
-        PhotoDAE,
+        ProfilePhoto,
         PhotoORM,
     ],
     IProfilePhotoRepository,
@@ -26,20 +26,20 @@ class ProfilePhotoRepository(
         return PhotoORM
 
     @property
-    def _entity(self) -> Type[PhotoDAE]:
-        return PhotoDAE
+    def _entity(self) -> Type[ProfilePhoto]:
+        return ProfilePhoto
 
-    async def get_by_hash(self, *, profile_id: UUID, hash: str) -> PhotoDAE | None:
+    async def get_by_hash(self, *, profile_id: UUID, hash: str) -> ProfilePhoto | None:
         q = select(self._table).where(
             self._table.hash == hash, self._table.profile_id == profile_id
         )
         result = (await self._db_session.execute(q)).scalars().first()
         if result:
-            return PhotoDAE.create(**result.dict())
+            return self._entity.create(**result.dict())
 
         return None
 
-    async def delete(self, *, entity_id: UUID, profile_id: UUID) -> PhotoDAE:
+    async def delete(self, *, entity_id: UUID, profile_id: UUID) -> ProfilePhoto:
         q = (
             delete(self._table)
             .where(self._table.id == entity_id, self._table.profile_id == profile_id)
@@ -48,14 +48,14 @@ class ProfilePhotoRepository(
         result = (await self._db_session.execute(q)).scalars().one()
         return self._entity.create(**result.dict())
 
-    async def get(self, *, entity_id: UUID, profile_id: UUID) -> PhotoDAE | None:
+    async def get(self, *, entity_id: UUID, profile_id: UUID) -> ProfilePhoto | None:
         q = select(self._table).where(
             self._table.id == entity_id, self._table.profile_id == profile_id
         )
         result = (await self._db_session.execute(q)).scalars().first()
 
         if result:
-            return PhotoDAE.create(**result.dict())
+            return self._entity.create(**result.dict())
 
         return None
 
@@ -77,7 +77,7 @@ class ProfilePhotoRepository(
         result: int = await self._db_session.scalar(q) or 0
         return result
 
-    async def fetch(self, *, entities_ids: list[UUID], profile_id) -> list[PhotoDAE]:  # type: ignore
+    async def fetch(self, *, entities_ids: list[UUID], profile_id) -> list[ProfilePhoto]:  # type: ignore
         q = select(self._table).where(
             self._table.id.in_(entities_ids), self._table.profile_id == profile_id
         )

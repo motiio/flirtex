@@ -24,7 +24,7 @@ class IRepository(
         ...
 
     @abstractmethod
-    async def create(self, *, in_entity: ENTITY) -> Optional[ENTITY]:
+    async def create(self, *, in_entity: ENTITY) -> ENTITY:
         ...
 
     @abstractmethod

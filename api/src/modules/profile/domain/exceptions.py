@@ -25,3 +25,13 @@ InvalidOrderList = HTTPException(
     status_code=HTTP_400_BAD_REQUEST,
     detail={"msg": "Invalid order list"},
 )
+
+InvalidLongitude = HTTPException(
+    status_code=HTTP_400_BAD_REQUEST,
+    detail={"msg": "Invalid longitude. Must by -180 < value < 180"},
+)
+
+InvalidLatitude = HTTPException(
+    status_code=HTTP_400_BAD_REQUEST,
+    detail={"msg": "Invalid latitude. Must by -90 < value < 90"},
+)

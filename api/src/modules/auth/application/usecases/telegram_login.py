@@ -53,7 +53,7 @@ class TelegramLoginUsecase(IUseCase):
                 user=user.id,
                 user_agent=in_dto.user_agent,
                 value=generate_token(
-                    sub=user.str_id,
+                    sub=str(user.id),
                     expiration_seconds=settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS,
                     secret=settings.JWT_SECRET,
                 ),
@@ -62,7 +62,7 @@ class TelegramLoginUsecase(IUseCase):
 
         return TelegramLoginOutDTO(
             access_token=generate_token(
-                sub=user.str_id,
+                sub=str(user.id),
                 expiration_seconds=settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS,
                 secret=settings.JWT_SECRET,
             ),

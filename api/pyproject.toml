@@ -38,7 +38,11 @@ tenacity = "^8.2.2"
 fastapi = "0.100.0-beta2"
 pydantic = "^2.0"
 pydantic-settings = "^2.0.0"
-geoalchemy2 = "^0.14.0"
+pydantic-extra-types = "^2.0.0"
+geoalchemy2 = {extras = ["shapely"], version = "^0.14.1"}
+hiredis = "^2.2.3"
+redis = "^5.0.0"
+geopy = "^2.4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
@@ -48,16 +52,19 @@ factory-boy = "^3.3.0"
 pytest = "^7.4.0"
 freezegun = "^1.2.2"
 pytest-asyncio = "^0.21.1"
+bandit = "^1.7.5"
+pytest-cov = "^4.1.0"
+pytest-env = "^0.8.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
+ensure_newline = true
 line-length = 100
 target_version = ['py311']
 include = '\.pyi?$'
-ensure_newline = true
 
 [tool.ruff]
 select = [
@@ -118,3 +125,4 @@ max-complexity = 10
 
 [tool.ruff.isort]
 known-third-party = ["fastapi", "pydantic", "starlette"]
+

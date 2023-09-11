@@ -3,20 +3,20 @@ from uuid import UUID
 
 from src.core.aio import IAsyncContextManagerRepository
 from src.core.dtos import BaseDTO
-from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
+from src.modules.profile.domain.entities import ProfilePhoto
 
 
 class IProfilePhotoRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def create(self, *, in_entity: PhotoDAE) -> PhotoDAE:
+    async def create(self, *, in_entity: ProfilePhoto) -> ProfilePhoto:
         ...
 
     @abstractmethod
-    async def delete(self, *, entity_id: UUID, profile_id: UUID) -> PhotoDAE:
+    async def delete(self, *, entity_id: UUID, profile_id: UUID) -> ProfilePhoto:
         ...
 
     @abstractmethod
-    async def get_by_hash(self, *, profile_id: UUID, hash: str) -> PhotoDAE | None:
+    async def get_by_hash(self, *, profile_id: UUID, hash: str) -> ProfilePhoto | None:
         ...
 
     @abstractmethod
@@ -24,17 +24,15 @@ class IProfilePhotoRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get(self, *, entity_id: UUID, profile_id: UUID) -> PhotoDAE:
+    async def get(self, *, entity_id: UUID, profile_id: UUID) -> ProfilePhoto:
         ...
 
     @abstractmethod
-    async def fetch(
-        self, *, entities_ids: list[UUID], profile_id: UUID
-    ) -> list[PhotoDAE]:
+    async def fetch(self, *, entities_ids: list[UUID], profile_id: UUID) -> list[ProfilePhoto]:
         ...
 
     @abstractmethod
-    async def update(self, *, in_entity: PhotoDAE) -> PhotoDAE:
+    async def update(self, *, in_entity: ProfilePhoto) -> ProfilePhoto:
         ...
 
     @abstractmethod

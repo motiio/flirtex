@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
+from src.modules.profile.application.dtos.profile import ProfileOutDTO
 from src.modules.profile.application.repositories import (
     IProfileRepository,
 )
@@ -18,11 +19,15 @@ class DeleteProfileUsecase(IUseCase):
         self._profile_repo: IProfileRepository = profile_repository
         self._photo_s3_repo: IProfilePhotoS3Repository = photo_s3_repo
 
-    async def execute(self, owner_id: UUID) -> None:
+    async def execute(self, owner_id: UUID) -> ProfileOutDTO:
         async with self._profile_repo:
             existent_profile = await self._profile_repo.get_by_owner(owner_id=owner_id)
             if not existent_profile:
                 raise ProfileNotFound
 
-            await self._profile_repo.delete(entity_id=existent_profile.id)
+            deleted_profile = await self._profile_repo.delete(
+                entity_id=existent_profile.id
+            )
             await self._photo_s3_repo.delete(key=str(existent_profile.id))
+
+            return ProfileOutDTO(**deleted_profile.model_dump())

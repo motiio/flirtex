@@ -1,24 +1,29 @@
-from datetime import date, datetime
+from datetime import date
 from uuid import UUID
 
-from dateutil.relativedelta import relativedelta
 from pydantic import Field, field_validator
 
+import src.modules.profile.api.shared as shared
 from src.core.schemas import BaseSchema
-from src.modules.profile.application.utils.enums import GenderEnum, LookingGenderEnum
+from src.modules.deck.application.dtos.filter import FilterOutDTO
+from src.modules.deck.application.utils import enums as deck_enums
+from src.modules.profile.application.dtos.profile import ProfileOutDTO
+from src.modules.profile.application.utils import enums as profile_enums
+from src.modules.profile.domain.entities import Profile
 
 
 class CreateProfileRequestSchema(BaseSchema):
     name: str = Field(max_length=32)
     birthdate: date
-    looking_gender: LookingGenderEnum
-    gender: GenderEnum
+    looking_gender: deck_enums.LookingGenderEnum
+    gender: profile_enums.GenderEnum
     bio: str | None = Field("", max_length=600)
     interests: list[UUID] | None = None
+    location: shared.DistortedPointSchema | None = None
 
     @field_validator("birthdate")
     def check_legal_age(cls, v):
-        years_from_born = relativedelta(datetime.now(), v).years
+        years_from_born = Profile._calculate_age(birthdate=v)
         if years_from_born < 18:
             raise ValueError("Your age must be 18+")
         elif years_from_born > 100:
@@ -34,3 +39,8 @@ class CreateProfileRequestSchema(BaseSchema):
             return v
 
         raise ValueError("Invaled number of interests. Must be [1, 7]")
+
+
+class ProfileResponseSchema(BaseSchema):
+    profile: ProfileOutDTO
+    filter: FilterOutDTO

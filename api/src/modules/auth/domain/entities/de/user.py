@@ -73,6 +73,5 @@ class User(BaseEntity):
     def is_banned(self):
         return self._is_banned
 
-    @property
     def str_id(self) -> str:
         return str(self.id)

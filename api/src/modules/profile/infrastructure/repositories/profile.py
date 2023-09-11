@@ -1,13 +1,13 @@
 from typing import Type
 from uuid import UUID
 
+from geoalchemy2.elements import WKTElement
 from sqlalchemy import insert, select, update
 from sqlalchemy.orm import selectinload
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.modules.profile.application.repositories import IProfileRepository
-from src.modules.profile.domain.entities import Interest, Profile
-from src.modules.profile.domain.entities.dae.profile_photo import PhotoDAE
+from src.modules.profile.domain.entities import Interest, Profile, ProfilePhoto
 from src.modules.profile.infrastructure.models import InterestORM, ProfileORM
 
 
@@ -29,10 +29,27 @@ class ProfileRepository(
     async def create(
         self, *, in_entity: Profile, interests_ids: list[UUID] | None
     ) -> Profile:
+        geo_point = (
+            WKTElement(in_entity.wkt_point, srid=4326) if in_entity.wkt_point else None
+        )
         q = (
             insert(self._table)
-            .values(**in_entity.model_dump(exclude={"interests", "photos"}))
-            .returning(self._table)
+            .values(
+                **in_entity.model_dump(
+                    exclude={
+                        "interests",
+                        "photos",
+                        "age",
+                        "location",
+                        "wkt_point",
+                        "distance",
+                    }
+                ),
+                location=geo_point
+            )
+            .returning(
+                self._table,
+            )
             .options(selectinload(self._table.interests))
             .options(selectinload(self._table.photos))
         )
@@ -49,6 +66,8 @@ class ProfileRepository(
         entity.put_interests(
             [Interest.create(**interest.dict()) for interest in interests]
         )
+        entity.put_location(location=result.dict_location)
+
         return entity
 
     async def get_by_owner(self, *, owner_id) -> Profile | None:  # type: ignore
@@ -64,8 +83,10 @@ class ProfileRepository(
                 [Interest.create(**interest.dict()) for interest in result.interests]
             )
             entity.add_photos(
-                [PhotoDAE.create(**photo.dict()) for photo in result.photos]
+                [ProfilePhoto.create(**photo.dict()) for photo in result.photos]
             )
+
+            entity.put_location(location=result.dict_location)
             return entity
 
         return None
@@ -73,10 +94,19 @@ class ProfileRepository(
     async def update(
         self, *, in_entity: Profile, interests_ids: list[UUID] | None
     ) -> Profile:
+        geo_point = (
+            WKTElement(in_entity.wkt_point, srid=4326) if in_entity.wkt_point else None
+        )
+
         q = (
             update(self._table)
             .where(self._table.id == in_entity.id)  # type: ignore
-            .values(**in_entity.model_dump(exclude={"interests", "photos"}))
+            .values(
+                **in_entity.model_dump(
+                    exclude={"interests", "photos", "age", "location", "wkt_point"}
+                ),
+                location=geo_point
+            )
             .returning(self._table)
             .options(selectinload(self._table.interests))
         )
@@ -92,4 +122,28 @@ class ProfileRepository(
         entity.put_interests(
             [Interest.create(**interest.dict()) for interest in result.interests]
         )
+        entity.put_location(location=result.dict_location)
         return entity
+
+    async def fetch(self, *, entities_ids: list[UUID]) -> list[Profile]:
+        q = (
+            select(self._table)
+            .where(self._table.id.in_(entities_ids))
+            .options(selectinload(self._table.interests))
+        )
+
+        entries = (await self._db_session.execute(q)).scalars().all()
+        result: list[Profile] = []
+        for entity in entries:
+            profile: Profile = self._entity.create(**entity.dict())
+            profile.put_interests(
+                [Interest.create(**interest.dict()) for interest in entity.interests]
+            )
+            profile.add_photos(
+                [ProfilePhoto.create(**photo.dict()) for photo in entity.photos]
+            )
+
+            profile.put_location(location=entity.dict_location)
+            result.append(profile)
+
+        return result

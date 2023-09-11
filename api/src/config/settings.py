@@ -39,6 +39,16 @@ class GlobalConfig(BaseSettings):
     MAX_PROFILE_PHOTOS_COUNT: int = 7
     ACCEPTED_PHOTO_TYPES: tuple = ("JPEG",)
 
+    MIN_PROFILE_AGE: int = 18
+    MAX_PROFILE_AGE: int = 100
+    MIN_FILTER_DISTANCE: int = 5
+    MAX_FILTER_DISTANCE: int = 100
+
+    REDIS_HOST: str
+    DECK_REDIS_DB: int = 0
+    DECK_TTL_S: int = 3600
+    DECK_BATCH_SIZE: int = 5
+
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
         env_file_encoding = "utf-8"

@@ -4,6 +4,8 @@ from fastapi import APIRouter
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 from src.modules.auth.application.dependencies.auth import CurrentUser
+from src.modules.deck.application.dependencies.filter import CreateFilterService
+from src.modules.deck.application.dtos.filter import FilterInCreateDTO
 from src.modules.profile.api.v1.schemas import (
     CreateProfileRequestSchema,
     UpdateProfileInterestsRequestSchema,
@@ -32,6 +34,7 @@ from src.modules.profile.application.dtos.photo import (
     PhotoInCreateDTO,
     PhotoInDeleteDTO,
     UpdatePhotosOrderInDTO,
+    UpdatePhotosOrderOutDTO,
 )
 
 profile_router = APIRouter(prefix="/profile")
@@ -54,7 +57,7 @@ async def get_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile = await get_profile_service.execute(owner_id=user_id)
+    profile: ProfileOutDTO = await get_profile_service.execute(owner_id=user_id)
 
     return profile
 
@@ -65,9 +68,10 @@ async def get_profile(
     status_code=HTTP_201_CREATED,
 )
 async def create_profile(
+    user_id: CurrentUser,
     profile_data: CreateProfileRequestSchema,
     create_profile_service: CreateProfileService,
-    user_id: CurrentUser,
+    filter_service: CreateFilterService,
 ):
     """
     Login user.
@@ -77,13 +81,20 @@ async def create_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile = await create_profile_service.execute(
+    profile: ProfileOutDTO = await create_profile_service.execute(
         in_dto=CreateProfileInDTO(
             owner_id=user_id,
             **profile_data.model_dump(),
         )
     )
-
+    default_filter_data = FilterInCreateDTO(
+        profile_id=profile.id,
+        age_to=profile.age + 5,
+        age_from=profile.age - 5,
+        looking_gender=profile_data.looking_gender,
+        max_distance=10,
+    )
+    _ = await filter_service.execute(in_dto=default_filter_data)
     return profile
 
 
@@ -105,7 +116,7 @@ async def update_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile = await update_profile_service.execute(
+    profile: ProfileOutDTO = await update_profile_service.execute(
         in_dto=UpdateProfileInDTO(
             owner_id=user_id,
             **profile_data.model_dump(),
@@ -133,7 +144,7 @@ async def update_profile_interests(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile = await update_profile_service.execute(
+    profile: ProfileOutDTO = await update_profile_service.execute(
         in_dto=UpdateProfileInDTO(
             owner_id=user_id,
             interests=new_interests.interests,
@@ -156,7 +167,7 @@ async def delete_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    await delete_profile_service.execute(owner_id=user_id)
+    _ = await delete_profile_service.execute(owner_id=user_id)
 
 
 @profile_router.post(
@@ -169,7 +180,7 @@ async def add_profile_photo(
     user_id: CurrentUser,
     add_profile_photo_service: AddProfilePhotoService,
 ):
-    created_photo = await add_profile_photo_service.execute(
+    created_photo: PhotoOutDTO = await add_profile_photo_service.execute(
         in_dto=PhotoInCreateDTO(user_id=user_id, content=await photo.read())
     )
     return created_photo
@@ -198,7 +209,7 @@ async def update_photo_order(
     user_id: CurrentUser,
     update_photo_order_service: UpdatePhotoOrderService,
 ):
-    new_order = await update_photo_order_service.execute(
+    new_order: UpdatePhotosOrderOutDTO = await update_photo_order_service.execute(
         in_dto=UpdatePhotosOrderInDTO(
             user_id=user_id, photo_orders=displayin_order.new_order
         )

@@ -1,10 +1,12 @@
-from sqlalchemy import UUID, ForeignKey
+from sqlalchemy import UUID, ForeignKey, Integer, Uuid
+from sqlalchemy.dialects.postgresql import ENUM as Enum
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.models import BaseModel, TimeStampMixin
+from src.modules.deck.application.utils.enums import LookingGenderEnum
 
 
-class Like(BaseModel, TimeStampMixin):
+class LikeORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     source_profile: Mapped[UUID] = mapped_column(
         UUID,
@@ -16,7 +18,7 @@ class Like(BaseModel, TimeStampMixin):
     )
 
 
-class Skip(BaseModel, TimeStampMixin):
+class SkipORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     source_profile: Mapped[UUID] = mapped_column(
         UUID,
@@ -28,7 +30,7 @@ class Skip(BaseModel, TimeStampMixin):
     )
 
 
-class Match(Base, TimeStampMixin):
+class MatchORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     profile_1: Mapped[UUID] = mapped_column(
         UUID,
@@ -40,7 +42,7 @@ class Match(Base, TimeStampMixin):
     )
 
 
-class Save(Base, TimeStampMixin):
+class SaveORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
     profile_id: Mapped[UUID] = mapped_column(
         UUID,
@@ -48,5 +50,19 @@ class Save(Base, TimeStampMixin):
     )
     saved_profile_id: Mapped[UUID] = mapped_column(
         UUID,
+        ForeignKey("core.profile.id", ondelete="CASCADE"),
+    )
+
+
+class FilterORM(BaseModel, TimeStampMixin):
+    __table_args__ = {"schema": "core"}
+    looking_gender: Mapped[LookingGenderEnum] = mapped_column(
+        Enum(LookingGenderEnum, schema="core", create_type=False),
+    )
+    age_from: Mapped[int] = mapped_column(Integer)
+    age_to: Mapped[int] = mapped_column(Integer)
+    max_distance: Mapped[int] = mapped_column(Integer)
+    profile_id: Mapped[UUID] = mapped_column(
+        Uuid,
         ForeignKey("core.profile.id", ondelete="CASCADE"),
     )

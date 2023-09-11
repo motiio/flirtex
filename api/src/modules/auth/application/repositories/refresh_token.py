@@ -13,3 +13,7 @@ class IRefreshTokenRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
     async def expire_user_tokens(self, *, user: UUID, user_agent: str) -> None:
         ...
+
+    @abstractmethod
+    async def create(self, *, in_entity: RefreshTokenDAE) -> RefreshTokenDAE:
+        ...
