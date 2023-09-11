@@ -6,7 +6,6 @@ __all__ = [
     "SkipUsecase",
 ]
 
-from pytest import importorskip
 from .create_filter import CreateFilterUsecase
 from .update_filter import UpdateFilterUsecase
 from .get_filter import GetFilterUsecase
