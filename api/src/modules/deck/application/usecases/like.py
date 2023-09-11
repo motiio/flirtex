@@ -7,7 +7,7 @@ from src.modules.deck.application.dtos import (
 from src.modules.deck.application.repositories import ILikeRepository, IMatchRepository
 from src.modules.deck.domain.entities import Like, Match
 from src.modules.profile.application.repositories.profile import IProfileRepository
-from src.modules.profile.domain.exceptions import ProfileNotFound
+from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound
 
 
 class LikeUsecase(IUseCase):
@@ -22,26 +22,32 @@ class LikeUsecase(IUseCase):
         self._match_repo: IMatchRepository = match_repository
         self._profile_repo: IProfileRepository = profile_repository
 
-    async def execute(
+    async def execute(  # type: ignore
         self,
         *,
         user_id: UUID,
-        target_profile: UUID,
+        target_profile_id: UUID,
     ) -> MatchOutDTO | None:
         async with self._like_repo, self._profile_repo, self._match_repo:
-            existent_profile = await self._profile_repo.get_by_owner(owner_id=user_id)
-            if not existent_profile:
+            source_profile = await self._profile_repo.get_by_owner(owner_id=user_id)
+
+            target_profile = await self._profile_repo.get(entity_id=target_profile_id)
+            print(target_profile)
+
+            if not source_profile:
                 raise ProfileNotFound
+            if not target_profile:
+                raise TargetProfileNotFound
 
             my_like, side_like = await self._like_repo.get_likes_by_profiles(
-                target_profile=target_profile, source_profile=existent_profile.id
+                target_profile=target_profile.id, source_profile=source_profile.id
             )
             # если лайк этому профилю уже был поставлен
             if my_like:
                 return None
 
             like_entitie = Like.create(
-                source_profile=existent_profile.id, target_profile=target_profile
+                source_profile=source_profile.id, target_profile=target_profile.id
             )
             my_like = await self._like_repo.create(in_entity=like_entitie)
             if not side_like:

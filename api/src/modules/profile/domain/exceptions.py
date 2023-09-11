@@ -18,7 +18,9 @@ PhotoAlreadyExists = HTTPException(
 
 PhotosLimit = HTTPException(
     status_code=HTTP_400_BAD_REQUEST,
-    detail={"msg": "The limit of the number of photos has been reached. Min = 1, max = 7"},
+    detail={
+        "msg": "The limit of the number of photos has been reached. Min = 1, max = 7"
+    },
 )
 
 InvalidOrderList = HTTPException(
@@ -34,4 +36,8 @@ InvalidLongitude = HTTPException(
 InvalidLatitude = HTTPException(
     status_code=HTTP_400_BAD_REQUEST,
     detail={"msg": "Invalid latitude. Must by -90 < value < 90"},
+)
+TargetProfileNotFound = HTTPException(
+    status_code=HTTP_404_NOT_FOUND,
+    detail={"msg": "Target profile not found"},
 )

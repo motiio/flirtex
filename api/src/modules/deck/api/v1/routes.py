@@ -68,32 +68,32 @@ async def get_deck_batch(
 
 
 @deck_router.post(
-    "/like/{target_profile}",
+    "/like/{target_profile_id}",
     response_model=MatchOutDTO | None,
     status_code=HTTP_200_OK,
 )
 async def like(
     user_id: CurrentUser,
-    target_profile: UUID,
+    target_profile_id: UUID,
     like_service: LikeService,
 ):
     match = await like_service.execute(
         user_id=user_id,
-        target_profile=target_profile,
+        target_profile_id=target_profile_id,
     )
     return match
 
 
 @deck_router.post(
-    "/skip/{target_profile}",
+    "/skip/{target_profile_id}",
     status_code=HTTP_204_NO_CONTENT,
 )
 async def skip(
     user_id: CurrentUser,
-    target_profile: UUID,
+    target_profile_id: UUID,
     skip_service: SkipService,
 ):
     _ = await skip_service.execute(
         user_id=user_id,
-        target_profile=target_profile,
+        target_profile_id=target_profile_id,
     )
