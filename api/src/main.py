@@ -2,7 +2,6 @@ import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-from sqlalchemy import values
 
 from src.config.database import async_session_factory
 from src.config.redis import DeckRedisSession, create_redis_pool

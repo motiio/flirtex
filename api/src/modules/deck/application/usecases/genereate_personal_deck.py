@@ -1,14 +1,13 @@
 from uuid import UUID
 
 from src.config.settings import settings
-
 from src.core.usecases import IUseCase
+from src.modules.deck.application.dtos import DeckProfileOutDTO
 from src.modules.deck.application.dtos.deck import DeckBatchOutDTO
 from src.modules.deck.application.repositories import (
     IDeckCacheRepository,
     IDeckRepository,
 )
-from src.modules.deck.application.dtos import DeckProfileOutDTO
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound
 

@@ -1,5 +1,4 @@
 from src.config.database import DbSession
-
 from src.modules.deck.application.usecases import LikeUsecase
 from src.modules.deck.infrastructure.repositories import LikeRepository
 from src.modules.deck.infrastructure.repositories.match import MatchRepository

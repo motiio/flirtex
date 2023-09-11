@@ -1,8 +1,8 @@
+import time
 from uuid import UUID
 
 from src.core.repositories.implementations.redis import BaseRedisRepository
 from src.modules.deck.application.repositories.deck_cache import IDeckCacheRepository
-import time
 
 
 class DeckCacheRepository(BaseRedisRepository, IDeckCacheRepository):

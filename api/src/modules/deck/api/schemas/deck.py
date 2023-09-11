@@ -1,8 +1,8 @@
 from uuid import UUID
+
 from src.core.dtos import BaseDTO
 from src.modules.profile.application.dtos.interest import InterestOutDTO
 from src.modules.profile.application.dtos.photo import PhotoOutDTO
-
 from src.modules.profile.application.utils import enums as profile_enums
 
 

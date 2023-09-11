@@ -1,4 +1,5 @@
-from sqlalchemy.util.langhelpers import repr_tuple_names
+from uuid import UUID
+
 from src.core.usecases import IUseCase
 from src.modules.deck.application.dtos import (
     MatchOutDTO,
@@ -7,7 +8,6 @@ from src.modules.deck.application.repositories import ILikeRepository, IMatchRep
 from src.modules.deck.domain.entities import Like, Match
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound
-from uuid import UUID
 
 
 class LikeUsecase(IUseCase):

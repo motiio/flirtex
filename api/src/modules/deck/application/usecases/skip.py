@@ -1,14 +1,10 @@
-from pytest import importorskip
-from sqlalchemy.util.langhelpers import repr_tuple_names
+from uuid import UUID
+
 from src.core.usecases import IUseCase
-from src.modules.deck.application.dtos import (
-    MatchOutDTO,
-)
 from src.modules.deck.application.repositories import ISkipRepository
 from src.modules.deck.domain.entities import Skip
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound
-from uuid import UUID
 
 
 class SkipUsecase(IUseCase):

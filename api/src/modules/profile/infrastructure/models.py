@@ -4,7 +4,6 @@ from uuid import UUID
 
 from geoalchemy2 import Geometry, WKBElement
 from geoalchemy2.shape import to_shape
-from geoalchemy2.types import Geometry
 from sqlalchemy import Date, ForeignKey, Integer, String, Text, Uuid
 from sqlalchemy.dialects.postgresql import ENUM as Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
