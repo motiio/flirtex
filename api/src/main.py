@@ -66,3 +66,7 @@ async def read_root(val: str, redis: DeckRedisSession):
 
     val = await redis.get(name="tst")
     return s
+
+
+def a(b: int, c: str) -> str:
+    return b + c

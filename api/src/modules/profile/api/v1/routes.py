@@ -8,6 +8,7 @@ from src.modules.deck.application.dependencies.filter import CreateFilterService
 from src.modules.deck.application.dtos.filter import FilterInCreateDTO
 from src.modules.profile.api.v1.schemas import (
     CreateProfileRequestSchema,
+    ProfileCardResponseSchema,
     UpdateProfileInterestsRequestSchema,
     UpdateProfileRequestSchema,
 )
@@ -210,8 +211,19 @@ async def update_photo_order(
     update_photo_order_service: UpdatePhotoOrderService,
 ):
     new_order: UpdatePhotosOrderOutDTO = await update_photo_order_service.execute(
-        in_dto=UpdatePhotosOrderInDTO(
-            user_id=user_id, photo_orders=displayin_order.new_order
-        )
+        in_dto=UpdatePhotosOrderInDTO(user_id=user_id, photo_orders=displayin_order.new_order)
     )
     return new_order
+
+
+@profile_router.get(
+    "/like",
+    status_code=HTTP_200_OK,
+    response_model=list[ProfileCardResponseSchema],
+)
+async def kek():
+    ...
+# async def get_profile_likes(user_id: CurrentUser, likes_service: GetLikeReactions):
+    ...
+    # likes = like_service.execute(user_id=user_id)
+    # return

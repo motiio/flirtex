@@ -14,9 +14,5 @@ class IDeckCacheRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get_time_since_creation_s(self, *, profile_id: UUID) -> int | None:
-        ...
-
-    @abstractmethod
-    async def remove_deck(self, *, profile_id: UUID) -> None:
+    async def delete(self, *, profile_id: UUID) -> None:
         ...

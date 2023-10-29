@@ -8,6 +8,7 @@ from src.modules.deck.application.repositories import (
     IDeckCacheRepository,
     IDeckRepository,
 )
+from src.modules.deck.domain.exceptions import DeckNoLongerExists
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound
 
@@ -29,25 +30,13 @@ class GenereatePersonalDeckUsecase(IUseCase):
             existent_profile = await self._profile_repo.get_by_owner(owner_id=user_id)
             if not existent_profile:
                 raise ProfileNotFound
-
-            time_since_deck_creation: int | None = (
-                await self._deck_cache_repo.get_time_since_creation_s(
-                    profile_id=existent_profile.id
-                )
-            )
-            profiles_to_fetch: list[UUID]
-            if (
-                time_since_deck_creation
-                and time_since_deck_creation < settings.DECK_TTL_S
-            ):
+            try:
                 profiles_to_fetch = await self._deck_cache_repo.get_batch(
                     profile_id=existent_profile.id,
                     batch_size=settings.DECK_BATCH_SIZE,
                 )
-            else:
-                profiles_to_fetch = await self._deck_repo.generate(
-                    profile_id=existent_profile.id
-                )
+            except DeckNoLongerExists:
+                profiles_to_fetch = await self._deck_repo.generate(profile_id=existent_profile.id)
 
             batch = await self._profile_repo.fetch(
                 entities_ids=profiles_to_fetch[: settings.DECK_BATCH_SIZE]

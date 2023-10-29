@@ -32,14 +32,12 @@ class UpdateFilterUsecase(IUseCase):
             if not existent_profile:
                 raise ProfileNotFound
 
-            existent_filter = await self._filter_repo.get_by_profile(
-                profile_id=existent_profile.id
-            )
+            existent_filter = await self._filter_repo.get_by_profile(profile_id=existent_profile.id)
             if not existent_filter:
                 raise FilterNotFound
 
             new_filter = existent_filter.update(**in_entity.model_dump())
             updated_filter = await self._filter_repo.update(in_entity=new_filter)
-            await self._deck_cache_repo.remove_deck(profile_id=existent_profile.id)
+            await self._deck_cache_repo.delete(profile_id=existent_profile.id)
 
             return FilterOutDTO(**updated_filter.model_dump())
