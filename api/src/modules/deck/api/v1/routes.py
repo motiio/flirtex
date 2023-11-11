@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 
 from src.modules.auth.application.dependencies import CurrentUser
@@ -8,12 +8,18 @@ from src.modules.deck.api.schemas import UpdateFilterRequestSchema
 from src.modules.deck.api.schemas.deck import DeckBatchOutResponse
 from src.modules.deck.application.dependencies import (
     GetFilterService,
+    LikeReactionsService,
     LikeService,
     PersonalDeckService,
     SkipService,
     UpdateFilterService,
 )
-from src.modules.deck.application.dtos import DeckBatchOutDTO, FilterOutDTO, MatchOutDTO
+from src.modules.deck.application.dtos import (
+    DeckBatchOutDTO,
+    FilterOutDTO,
+    LikeReactionsDTO,
+    MatchOutDTO,
+)
 
 # from src.modules.deck.application.dependencies.filter import GetOrCreateFilterService
 # from src.modules.deck.application.dtos import DeckBatchOutDTO, FilterOutDTO
@@ -61,9 +67,7 @@ async def get_deck_batch(
     user_id: CurrentUser,
     personal_deck_service: PersonalDeckService,
 ):
-    profiles_batch: DeckBatchOutDTO = await personal_deck_service.execute(
-        user_id=user_id
-    )
+    profiles_batch: DeckBatchOutDTO = await personal_deck_service.execute(user_id=user_id)
     return profiles_batch
 
 
@@ -97,3 +101,20 @@ async def skip(
         user_id=user_id,
         target_profile_id=target_profile_id,
     )
+
+
+@deck_router.get(
+    "/like_reactions",
+    response_model=LikeReactionsDTO,
+    status_code=HTTP_200_OK,
+)
+async def like_reactions(
+    user_id: CurrentUser,
+    like_reactions_service: LikeReactionsService,
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
+):
+    like_reactions: LikeReactionsDTO = await like_reactions_service.execute(
+        user_id=user_id, limit=limit, offset=offset
+    )
+    return like_reactions

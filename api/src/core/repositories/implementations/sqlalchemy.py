@@ -1,7 +1,7 @@
 from typing import Generic, List
 from uuid import UUID
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, select, update, func
 
 from src.config.database import DbSession
 from src.core.repositories import ISqlAlchemyRepository
@@ -23,8 +23,11 @@ class BaseSqlAlchemyRepository(
             return self._entity.create(**result.dict())
         return None
 
-    async def fetch(self, *, entities_ids: List[UUID]) -> List[ENTITY]:  # type: ignore
+    async def fetch(self, *, entities_ids: List[UUID], ordering: bool = False) -> List[ENTITY]:  # type: ignore
         q = select(self._table).where(self._table.id.in_(entities_ids))
+        if ordering:
+            q = q.order_by(func.array_position(entities_ids, self._table.id))
+
         entries = (await self._db_session.execute(q)).scalars().all()
         return [self._entity.create(**entry.dict()) for entry in entries]
 

@@ -31,5 +31,5 @@ class IProfileRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def fetch(self, *, entities_ids: list[UUID]) -> list[Profile]:
+    async def fetch(self, *, entities_ids: list[UUID], ordering: bool) -> list[Profile]:
         ...
