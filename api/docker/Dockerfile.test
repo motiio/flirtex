@@ -56,6 +56,7 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 # Copying in our entrypoint
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
+RUN apt update && apt install vim
 
 # venv already has runtime deps installed we get a quicker install
 WORKDIR $PYSETUP_PATH
