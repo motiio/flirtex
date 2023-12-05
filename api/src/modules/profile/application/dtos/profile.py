@@ -13,12 +13,8 @@ from src.modules.profile.application.utils import enums as profile_enums
 class CreateProfileInDTO(BaseDTO):
     owner_id: UUID
     name: str
-    bio: str
     birthdate: date
     gender: profile_enums.GenderEnum
-    looking_gender: deck_enums.LookingGenderEnum
-    interests: list[UUID] | None = None
-    location: types.Location | None
 
 
 class UpdateProfileInDTO(BaseDTO):
@@ -31,9 +27,9 @@ class UpdateProfileInDTO(BaseDTO):
 class ProfileOutDTO(BaseDTO):
     id: UUID
     name: str
-    bio: str
+    bio: str | None
     age: int
     gender: profile_enums.GenderEnum
-    interests: Optional[list[InterestOutDTO]]
-    photos: Optional[list[PhotoOutDTO]]
-    distance: Optional[float] = None
+    interests: list[InterestOutDTO] | None
+    photos: list[PhotoOutDTO] | None
+    distance: float | None = None

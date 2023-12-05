@@ -7,9 +7,7 @@ from src.modules.profile.domain.entities import Profile
 
 class IProfileRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def create(
-        self, *, in_entity: Profile, interests_ids: list[UUID] | None
-    ) -> Profile:
+    async def create(self, *, in_entity: Profile) -> Profile:
         ...
 
     @abstractmethod
@@ -17,9 +15,7 @@ class IProfileRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def update(
-        self, *, in_entity: Profile, interests_ids: list[UUID] | None
-    ) -> Profile:
+    async def update(self, *, in_entity: Profile, interests_ids: list[UUID] | None) -> Profile:
         ...
 
     @abstractmethod
@@ -31,5 +27,5 @@ class IProfileRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def fetch(self, *, entities_ids: list[UUID], ordering: bool) -> list[Profile]:
+    async def fetch(self, *, entities_ids: list[UUID], ordering: bool = False) -> list[Profile]:
         ...

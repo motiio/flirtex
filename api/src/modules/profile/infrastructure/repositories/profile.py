@@ -26,8 +26,7 @@ class ProfileRepository(
     def _entity(self) -> Type[Profile]:
         return Profile
 
-    async def create(self, *, in_entity: Profile, interests_ids: list[UUID] | None) -> Profile:
-        geo_point = WKTElement(in_entity.wkt_point, srid=4326) if in_entity.wkt_point else None
+    async def create(self, *, in_entity: Profile) -> Profile:
         q = (
             insert(self._table)
             .values(
@@ -41,7 +40,6 @@ class ProfileRepository(
                         "distance",
                     }
                 ),
-                location=geo_point,
             )
             .returning(
                 self._table,
@@ -51,17 +49,7 @@ class ProfileRepository(
         )
 
         result = (await self._db_session.execute(q)).scalars().one()
-
-        interests = []
-        if interests_ids:
-            q = select(InterestORM).where(InterestORM.id.in_(interests_ids))
-            interests = (await self._db_session.execute(q)).scalars().all()
-        result.interests = interests  # type: ignore
-
         entity = self._entity.create(**result.dict())
-        entity.put_interests([Interest.create(**interest.dict()) for interest in interests])
-        entity.put_location(location=result.dict_location)
-
         return entity
 
     async def get_by_owner(self, *, owner_id) -> Profile | None:  # type: ignore
@@ -112,7 +100,10 @@ class ProfileRepository(
         return entity
 
     async def fetch(
-        self, *, entities_ids: list[UUID], ordering: Optional[bool] = False,
+        self,
+        *,
+        entities_ids: list[UUID],
+        ordering: Optional[bool] = False,
     ) -> list[Profile]:
         q = (
             select(self._table)

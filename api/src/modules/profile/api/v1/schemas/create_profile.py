@@ -2,6 +2,8 @@ from datetime import date
 from uuid import UUID
 
 from pydantic import Field, field_validator
+from pydantic.fields import computed_field
+
 
 import src.modules.profile.api.shared as shared
 from src.core.schemas import BaseSchema
@@ -15,7 +17,6 @@ from src.modules.profile.domain.entities import Profile
 class CreateProfileRequestSchema(BaseSchema):
     name: str = Field(max_length=32)
     birthdate: date
-    looking_gender: deck_enums.LookingGenderEnum
     gender: profile_enums.GenderEnum
     bio: str | None = Field("", max_length=600)
     interests: list[UUID] | None = None
@@ -39,6 +40,14 @@ class CreateProfileRequestSchema(BaseSchema):
             return v
 
         raise ValueError("Invaled number of interests. Must be [1, 7]")
+
+    @computed_field
+    def looking_gender(self) -> deck_enums.LookingGenderEnum:
+        return (
+            deck_enums.LookingGenderEnum.male
+            if self.gender == 0
+            else deck_enums.LookingGenderEnum.female
+        )
 
 
 class ProfileResponseSchema(BaseSchema):

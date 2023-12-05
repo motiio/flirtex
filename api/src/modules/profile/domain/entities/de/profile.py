@@ -50,7 +50,7 @@ class Profile(BaseEntity):
         *,
         id: UUID | None = None,
         name: str,
-        bio: str,
+        bio: str | None = None,
         birthdate: date,
         gender: int,
         owner_id: UUID,

@@ -26,9 +26,8 @@ class CreateProfileUsecase(IUseCase):
             if existent_profile:
                 raise ProfileAlreadyExists
 
-            created_profile = Profile.create(**in_dto.model_dump(exclude={"interests"}))
-            created_profile.put_location(location=in_dto.location)
+            created_profile = Profile.create(**in_dto.model_dump())
             profile = await self._profile_repo.create(
-                in_entity=created_profile, interests_ids=in_dto.interests
+                in_entity=created_profile
             )
             return ProfileOutDTO(**profile.model_dump())
