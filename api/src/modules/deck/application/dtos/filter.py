@@ -10,6 +10,7 @@ class FilterInCreateDTO(BaseDTO):
     age_to: int
     max_distance: int
     looking_gender: enums.LookingGenderEnum
+    max_distance: int
 
 
 class FilterOutDTO(BaseDTO):

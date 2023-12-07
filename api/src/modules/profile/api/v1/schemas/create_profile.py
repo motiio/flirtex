@@ -40,8 +40,8 @@ class CreateProfileRequestSchema(BaseSchema):
 
         raise ValueError("Invaled number of interests. Must be [1, 7]")
 
-    @property
     @computed_field
+    @property
     def looking_gender(self) -> deck_enums.LookingGenderEnum:
         return (
             deck_enums.LookingGenderEnum.female
