@@ -25,9 +25,7 @@ class DeleteProfileUsecase(IUseCase):
             if not existent_profile:
                 raise ProfileNotFound
 
-            deleted_profile = await self._profile_repo.delete(
-                entity_id=existent_profile.id
-            )
+            deleted_profile = await self._profile_repo.delete(entity_id=existent_profile.id)
             await self._photo_s3_repo.delete(key=str(existent_profile.id))
 
             return ProfileOutDTO(**deleted_profile.model_dump())

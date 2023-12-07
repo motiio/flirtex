@@ -15,4 +15,3 @@ def like_service_factory(db_session: DbSession):
         like_repository=like_repository,
         profile_repository=profile_repository,
     )
-

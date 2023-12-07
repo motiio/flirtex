@@ -19,9 +19,7 @@ class UpdateProfileUsecase(IUseCase):
 
     async def execute(self, in_dto: UpdateProfileInDTO) -> ProfileOutDTO:
         async with self._profile_repo:
-            existent_profile = await self._profile_repo.get_by_owner(
-                owner_id=in_dto.owner_id
-            )
+            existent_profile = await self._profile_repo.get_by_owner(owner_id=in_dto.owner_id)
             if not existent_profile:
                 raise ProfileNotFound
 

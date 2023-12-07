@@ -1,4 +1,5 @@
 {
   "venv": "backend-AwTr28Y--py3.11",
-  "venvPath": "/Users/matveichernov/Library/Caches/pypoetry/virtualenvs"
+  "venvPath": "/Users/matveichernov/Library/Caches/pypoetry/virtualenvs",
+  "insert_final_newline": true
 }

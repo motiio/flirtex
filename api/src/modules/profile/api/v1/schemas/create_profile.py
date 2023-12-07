@@ -4,7 +4,6 @@ from uuid import UUID
 from pydantic import Field, field_validator
 from pydantic.fields import computed_field
 
-
 import src.modules.profile.api.shared as shared
 from src.core.schemas import BaseSchema
 from src.modules.deck.application.dtos.filter import FilterOutDTO
@@ -41,8 +40,8 @@ class CreateProfileRequestSchema(BaseSchema):
 
         raise ValueError("Invaled number of interests. Must be [1, 7]")
 
-    @computed_field
     @property
+    @computed_field
     def looking_gender(self) -> deck_enums.LookingGenderEnum:
         return (
             deck_enums.LookingGenderEnum.female

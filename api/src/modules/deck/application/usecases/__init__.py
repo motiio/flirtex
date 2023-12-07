@@ -4,7 +4,7 @@ __all__ = [
     "GetFilterUsecase",
     "LikeUsecase",
     "SkipUsecase",
-    "GetLikeReactionsUsecase"
+    "GetLikeReactionsUsecase",
 ]
 
 from .create_filter import CreateFilterUsecase

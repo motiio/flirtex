@@ -14,4 +14,5 @@ FilterAlreadyExists = HTTPException(
 )
 
 
-class DeckNoLongerExists(DoesNotExists): ...
+class DeckNoLongerExists(DoesNotExists):
+    ...

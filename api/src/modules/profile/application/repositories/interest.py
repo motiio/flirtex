@@ -7,7 +7,7 @@ from src.modules.profile.domain.entities import Interest
 
 class IInterestRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def fetch(self, *, entities_ids: list[UUID]) -> list[Interest]:
+    async def fetch(self, *, entities_ids: list[UUID], ordering: bool = False) -> list[Interest]:
         ...
 
     @abstractmethod

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 from src.core.aio import IAsyncContextManagerRepository
-from src.core.dtos import BaseDTO
+from src.core.dtos import BaseS3DTO
 from src.modules.profile.domain.entities import ProfilePhoto
 
 
@@ -42,7 +42,7 @@ class IProfilePhotoRepository(IAsyncContextManagerRepository, ABC):
 
 class IProfilePhotoS3Repository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def create(self, *, in_dto: BaseDTO) -> None:
+    async def create(self, *, in_dto: BaseS3DTO) -> None:
         ...
 
     @abstractmethod

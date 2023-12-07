@@ -2,7 +2,7 @@ from typing import Optional, Type
 from uuid import UUID
 
 from geoalchemy2.elements import WKTElement
-from sqlalchemy import insert, select, update, func
+from sqlalchemy import func, insert, select, update
 from sqlalchemy.orm import selectinload
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository

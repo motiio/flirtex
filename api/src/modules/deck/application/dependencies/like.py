@@ -8,4 +8,3 @@ from src.modules.deck.application.factories import (
 )
 
 LikeService = Annotated[IUseCase, Depends(like_service_factory)]
-

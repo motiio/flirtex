@@ -13,7 +13,7 @@ from .interest import Interest
 class Profile(BaseEntity):
     id: UUID
     name: str
-    bio: str
+    bio: str | None
     birthdate: date
     gender: int
     interests: list[Interest]
@@ -28,7 +28,7 @@ class Profile(BaseEntity):
         *,
         id: UUID,
         name: str,
-        bio: str,
+        bio: str | None,
         birthdate: date,
         gender: int,
         owner_id: UUID,

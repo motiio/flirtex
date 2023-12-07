@@ -11,4 +11,4 @@ __all__ = [
 from .filter import FilterOutDTO, FilterInCreateDTO, FilterInUpdateDTO
 from .deck import DeckBatchOutDTO, DeckProfileOutDTO
 from .match import MatchOutDTO
-from .like import LikeReactionsDTO,LikeReactionProfileDTO
+from .like import LikeReactionsDTO, LikeReactionProfileDTO

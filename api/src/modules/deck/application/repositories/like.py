@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 from uuid import UUID
 
 from src.core.aio import IAsyncContextManagerRepository
 from src.modules.deck.domain.entities import Like
-from typing import Optional
 
 
 class ILikeRepository(IAsyncContextManagerRepository, ABC):

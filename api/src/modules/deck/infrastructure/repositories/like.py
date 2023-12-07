@@ -1,6 +1,6 @@
 from typing import Optional, Type
 
-from sqlalchemy import UUID, and_, case, or_, select, desc
+from sqlalchemy import UUID, and_, case, desc, or_, select
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.modules.deck.application.repositories import ILikeRepository

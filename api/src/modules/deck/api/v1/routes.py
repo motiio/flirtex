@@ -1,11 +1,16 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Query
-from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_204_NO_CONTENT,
+)
 
 from src.modules.auth.application.dependencies import CurrentUser
-from src.modules.deck.api.schemas import UpdateFilterRequestSchema
-from src.modules.deck.api.schemas.deck import DeckBatchOutResponse
+from src.modules.deck.api.schemas import (
+    DeckBatchOutResponse,
+    UpdateFilterRequestSchema,
+)
 from src.modules.deck.application.dependencies import (
     GetFilterService,
     LikeReactionsService,
@@ -20,10 +25,6 @@ from src.modules.deck.application.dtos import (
     LikeReactionsDTO,
     MatchOutDTO,
 )
-
-# from src.modules.deck.application.dependencies.filter import GetOrCreateFilterService
-# from src.modules.deck.application.dtos import DeckBatchOutDTO, FilterOutDTO
-# from src.modules.deck.dependencies import PersonalDeckService, FilterGetOrCreateService
 
 deck_router = APIRouter(prefix="/deck")
 
