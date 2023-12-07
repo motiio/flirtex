@@ -22,6 +22,17 @@ class UpdateProfileInDTO(BaseDTO):
     location: types.Location | None = None
 
 
+class UpdateProfileOutDTO(BaseDTO):
+    id: UUID
+    name: str
+    bio: str | None
+    age: int
+    gender: profile_enums.GenderEnum
+    interests: list[InterestOutDTO] | None
+    photos: list[PhotoOutDTO] | None
+    is_location: bool
+
+
 class ProfileOutDTO(BaseDTO):
     id: UUID
     name: str

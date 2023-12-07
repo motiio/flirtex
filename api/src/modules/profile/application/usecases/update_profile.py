@@ -3,6 +3,7 @@ from src.modules.profile.application.dtos import (
     ProfileOutDTO,
     UpdateProfileInDTO,
 )
+from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
 from src.modules.profile.application.repositories import (
     IProfileRepository,
 )
@@ -17,7 +18,7 @@ class UpdateProfileUsecase(IUseCase):
     ):
         self._profile_repo: IProfileRepository = profile_repository
 
-    async def execute(self, in_dto: UpdateProfileInDTO) -> ProfileOutDTO:
+    async def execute(self, in_dto: UpdateProfileInDTO) -> UpdateProfileOutDTO:
         async with self._profile_repo:
             existent_profile = await self._profile_repo.get_by_owner(owner_id=in_dto.owner_id)
             if not existent_profile:
@@ -30,4 +31,4 @@ class UpdateProfileUsecase(IUseCase):
                 in_entity=existent_profile, interests_ids=in_dto.interests
             )
 
-            return ProfileOutDTO(**profile.model_dump())
+            return UpdateProfileOutDTO(**profile.model_dump(), is_location=True if profile.location else False)

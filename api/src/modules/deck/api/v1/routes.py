@@ -82,7 +82,7 @@ async def like(
     target_profile_id: UUID,
     like_service: LikeService,
 ):
-    match = await like_service.execute(
+    match: MatchOutDTO = await like_service.execute(
         user_id=user_id,
         target_profile_id=target_profile_id,
     )

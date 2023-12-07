@@ -36,6 +36,7 @@ from src.modules.profile.application.dtos.photo import (
     UpdatePhotosOrderInDTO,
     UpdatePhotosOrderOutDTO,
 )
+from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
 
 profile_router = APIRouter(prefix="/profile")
 
@@ -100,7 +101,7 @@ async def create_profile(
 
 @profile_router.patch(
     "",
-    response_model=ProfileOutDTO,
+    response_model=UpdateProfileOutDTO,
     status_code=HTTP_200_OK,
 )
 async def update_profile(
@@ -116,7 +117,7 @@ async def update_profile(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile: ProfileOutDTO = await update_profile_service.execute(
+    profile: UpdateProfileOutDTO = await update_profile_service.execute(
         in_dto=UpdateProfileInDTO(
             owner_id=user_id,
             **profile_data.model_dump(),
