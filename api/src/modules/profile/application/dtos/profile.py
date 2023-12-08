@@ -30,8 +30,7 @@ class UpdateProfileOutDTO(BaseDTO):
     gender: profile_enums.GenderEnum
     interests: list[InterestOutDTO] | None
     photos: list[PhotoOutDTO] | None
-    is_location: bool
-
+    location: types.Location | None
 
 class ProfileOutDTO(BaseDTO):
     id: UUID
@@ -42,3 +41,4 @@ class ProfileOutDTO(BaseDTO):
     interests: list[InterestOutDTO] | None
     photos: list[PhotoOutDTO] | None
     distance: float | None = None
+    location: types.Location | None

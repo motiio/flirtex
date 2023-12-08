@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -10,6 +11,10 @@ from src.modules.profile.api.v1.schemas import (
     CreateProfileRequestSchema,
     UpdateProfileInterestsRequestSchema,
     UpdateProfileRequestSchema,
+)
+from src.modules.profile.api.v1.schemas.out import (
+    ReadPhotoOutSchema,
+    ReadProfileOutSchema,
 )
 from src.modules.profile.api.v1.schemas.update_photo_order import (
     UpdatePhotoOrderRequest,
@@ -43,13 +48,13 @@ profile_router = APIRouter(prefix="/profile")
 
 @profile_router.get(
     "",
-    response_model=ProfileOutDTO,
+    response_model=ReadProfileOutSchema,
     status_code=HTTP_200_OK,
 )
 async def get_profile(
     get_profile_service: GetProfileService,
     user_id: CurrentUser,
-):
+) -> dict[str, Any]:
     """
     Login user.
 
@@ -60,12 +65,12 @@ async def get_profile(
     """
     profile: ProfileOutDTO = await get_profile_service.execute(owner_id=user_id)
 
-    return profile
+    return profile.model_dump()
 
 
 @profile_router.post(
     "",
-    response_model=ProfileOutDTO,
+    response_model=ReadProfileOutSchema,
     status_code=HTTP_201_CREATED,
 )
 async def create_profile(
@@ -73,7 +78,7 @@ async def create_profile(
     profile_data: CreateProfileRequestSchema,
     create_profile_service: CreateProfileService,
     filter_service: CreateFilterService,
-):
+) -> dict[str, Any]:
     """
     Login user.
 
@@ -96,24 +101,24 @@ async def create_profile(
         max_distance=10,
     )
     _ = await filter_service.execute(in_dto=default_filter_data)
-    return profile
+    return profile.model_dump()
 
 
 @profile_router.patch(
     "",
-    response_model=UpdateProfileOutDTO,
+    response_model=ReadProfileOutSchema,
     status_code=HTTP_200_OK,
 )
 async def update_profile(
     profile_data: UpdateProfileRequestSchema,
     update_profile_service: UpdateProfileService,
     user_id: CurrentUser,
-):
+) -> dict[str, Any]:
     """
-    Login user.
+    Update profile.
 
     Returns:
-        The user's **access token** and **refresh token**.
+        The updated profile info.
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
@@ -124,19 +129,19 @@ async def update_profile(
         )
     )
 
-    return profile
+    return profile.model_dump()
 
 
 @profile_router.put(
     "/interests",
     status_code=HTTP_200_OK,
-    response_model=ProfileOutDTO,
+    response_model=ReadProfileOutSchema,
 )
 async def update_profile_interests(
     new_interests: UpdateProfileInterestsRequestSchema,
     update_profile_service: UpdateProfileService,
     user_id: CurrentUser,
-):
+) -> dict[str, Any]:
     """
     Update profile interests.
 
@@ -152,7 +157,7 @@ async def update_profile_interests(
         )
     )
 
-    return profile
+    return profile.model_dump()
 
 
 @profile_router.delete(
@@ -174,17 +179,17 @@ async def delete_profile(
 @profile_router.post(
     "/photo",
     status_code=HTTP_201_CREATED,
-    response_model=PhotoOutDTO,
+    response_model=ReadPhotoOutSchema,
 )
 async def add_profile_photo(
     photo: ValidImageFile,
     user_id: CurrentUser,
     add_profile_photo_service: AddProfilePhotoService,
-):
+) -> dict[str, Any]:
     created_photo: PhotoOutDTO = await add_profile_photo_service.execute(
         in_dto=PhotoInCreateDTO(user_id=user_id, content=await photo.read())
     )
-    return created_photo
+    return created_photo.model_dump()
 
 
 @profile_router.delete(
@@ -213,4 +218,4 @@ async def update_photo_order(
     new_order: UpdatePhotosOrderOutDTO = await update_photo_order_service.execute(
         in_dto=UpdatePhotosOrderInDTO(user_id=user_id, photo_orders=displayin_order.new_order)
     )
-    return new_order
+    return new_order.model_dump()

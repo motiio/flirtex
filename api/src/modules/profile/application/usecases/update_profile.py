@@ -31,4 +31,4 @@ class UpdateProfileUsecase(IUseCase):
                 in_entity=existent_profile, interests_ids=in_dto.interests
             )
 
-            return UpdateProfileOutDTO(**profile.model_dump(), is_location=True if profile.location else False)
+            return UpdateProfileOutDTO(**profile.model_dump())
