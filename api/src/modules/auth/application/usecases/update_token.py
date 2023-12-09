@@ -1,16 +1,17 @@
-from src.config.settings import settings
-from src.core.usecases import IUseCase
-from src.modules.auth.application.dtos import (
+from config.settings import settings
+from core.usecases import IUseCase
+from auth.application.dtos import (
     UpdateTokenInDTO,
     UpdateTokenOutDTO,
 )
-from src.modules.auth.application.repositories import (
+from auth.application.repositories import (
     IRefreshTokenRepository,
     IUserRepository,
 )
-from src.modules.auth.application.utils.jwt import generate_token
-from src.modules.auth.domain.entities import RefreshTokenDAE
-from src.modules.auth.domain.exceptions import InvalidJWTToken, UserNotFound
+from auth.application.utils.jwt import generate_token
+from auth.domain.entities import RefreshTokenDAE
+from auth.domain.entities.de.user import User
+from auth.domain.exceptions import InvalidJWTToken, UserNotFound
 
 
 class UpdateTokenUsecase(IUseCase):
@@ -25,7 +26,7 @@ class UpdateTokenUsecase(IUseCase):
 
     async def execute(self, in_dto: UpdateTokenInDTO) -> UpdateTokenOutDTO:
         async with self._user_repo, self._refresh_token_repo:
-            existent_user = await self._user_repo.get(entity_id=in_dto.user)
+            existent_user: User | None = await self._user_repo.get(entity_id=in_dto.user)
             if not existent_user:
                 raise UserNotFound
 

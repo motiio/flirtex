@@ -22,7 +22,7 @@ from src.modules.profile.infrastructure.models import (
     InterestORM,
     PhotoORM,
 )
-from src.modules.auth.infrastructure.models import UserORM, RefreshTokenORM
+from auth.infrastructure.models import UserORM, RefreshTokenORM
 from src.modules.deck.infrastructure.models import (
     LikeORM,
     SkipORM,

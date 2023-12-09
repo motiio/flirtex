@@ -1,6 +1,6 @@
-from src.config.database import DbSession
-from src.modules.auth.application.usecases.update_token import UpdateTokenUsecase
-from src.modules.auth.infrastructure import (
+from config.database import DbSession
+from auth.application.usecases.update_token import UpdateTokenUsecase
+from auth.infrastructure import (
     RefreshTokenRepository,
     UserRepository,
 )

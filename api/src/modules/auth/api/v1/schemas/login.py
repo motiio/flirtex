@@ -2,9 +2,9 @@ import orjson
 from aiogram.utils.web_app import safe_parse_webapp_init_data
 from pydantic import Field, computed_field
 
-from src.config.settings import settings
-from src.core.schemas import BaseSchema
-from src.modules.auth.domain.exceptions import InvalidInitData
+from config.settings import settings
+from core.schemas import BaseSchema
+from auth.domain.exceptions import InvalidInitData
 
 
 class TelegramLoginRequestSchema(BaseSchema):
@@ -23,3 +23,4 @@ class TelegramLoginRequestSchema(BaseSchema):
         except ValueError:
             raise InvalidInitData from None
         return data
+

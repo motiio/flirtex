@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from src.modules.auth.application.utils import jwt
+from auth.application.utils import jwt
 
 security = HTTPBearer()
 

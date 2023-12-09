@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 
-from src.core.entities import BaseEntity
+from core.entities import BaseEntity
 
 
 @dataclass

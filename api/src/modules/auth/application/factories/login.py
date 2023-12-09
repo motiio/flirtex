@@ -1,6 +1,6 @@
-from src.config.database import DbSession
-from src.modules.auth.application.usecases.telegram_login import TelegramLoginUsecase
-from src.modules.auth.infrastructure import (
+from config.database import DbSession
+from auth.application.usecases.telegram_login import TelegramLoginUsecase
+from auth.infrastructure import (
     RefreshTokenRepository,
     UserRepository,
 )

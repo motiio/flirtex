@@ -1,14 +1,12 @@
 __all__ = [
-    # login
     "TelegramLoginInDTO",
     "TelegramLoginOutDTO",
-    # update token
     "UpdateTokenOutDTO",
     "UpdateTokenInDTO",
 ]
 
-from .telegram_login import (
+from auth.application.dtos.telegram_login import (
     TelegramLoginInDTO,
     TelegramLoginOutDTO,
 )
-from .update_token import UpdateTokenInDTO, UpdateTokenOutDTO
+from auth.application.dtos.update_token import UpdateTokenInDTO, UpdateTokenOutDTO

@@ -2,10 +2,10 @@ from typing import Type
 
 from sqlalchemy import select
 
-from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
-from src.modules.auth.application.repositories.user import IUserRepository
-from src.modules.auth.domain.entities import User
-from src.modules.auth.infrastructure.models import UserORM
+from core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
+from auth.application.repositories.user import IUserRepository
+from auth.domain.entities import User
+from auth.infrastructure.models import UserORM
 
 
 class UserRepository(

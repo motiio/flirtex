@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.core.usecases import IUseCase
-from src.modules.auth.application.factories.update_token import (
+from core.usecases import IUseCase
+from auth.application.factories.update_token import (
     update_token_service_factory,
 )
 

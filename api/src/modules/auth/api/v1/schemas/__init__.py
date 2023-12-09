@@ -1,3 +1,3 @@
 __all__ = ["TelegramLoginRequestSchema", "UpdateTokenRequestSchema"]
-from .login import TelegramLoginRequestSchema
-from .update_token import UpdateTokenRequestSchema
+from auth.api.v1.schemas.login import TelegramLoginRequestSchema
+from auth.api.v1.schemas.update_token import UpdateTokenRequestSchema

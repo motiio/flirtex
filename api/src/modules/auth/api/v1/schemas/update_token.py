@@ -1,7 +1,7 @@
 from pydantic import Field, computed_field, field_validator
 
-from src.core.schemas import BaseSchema
-from src.modules.auth.application.utils.jwt import check_token_signature
+from core.schemas import BaseSchema
+from auth.application.utils.jwt import check_token_signature
 
 
 class UpdateTokenRequestSchema(BaseSchema):

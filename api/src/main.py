@@ -1,6 +1,13 @@
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./modules")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
+
 import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from modules.auth.api import auth_router_v1
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory
@@ -8,7 +15,6 @@ from src.config.redis import create_redis_pool
 from src.config.s3 import create_s3_session
 from src.config.settings import settings
 from src.core.middlewares import DatabaseMiddleware, RedisMiddleware
-from src.modules.auth.api import auth_router_v1
 from src.modules.common.api import common_router_v1
 from src.modules.deck.api import deck_router_v1
 from src.modules.profile.api import profile_router_v1

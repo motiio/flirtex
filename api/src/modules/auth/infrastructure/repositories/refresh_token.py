@@ -3,12 +3,12 @@ from uuid import UUID
 
 from sqlalchemy import delete, select
 
-from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
-from src.modules.auth.application.repositories.refresh_token import (
+from core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
+from auth.application.repositories.refresh_token import (
     IRefreshTokenRepository,
 )
-from src.modules.auth.domain.entities import RefreshTokenDAE
-from src.modules.auth.infrastructure.models import RefreshTokenORM
+from auth.domain.entities import RefreshTokenDAE
+from auth.infrastructure.models import RefreshTokenORM
 
 
 class RefreshTokenRepository(
@@ -28,7 +28,6 @@ class RefreshTokenRepository(
 
     async def get_by_value(self, *, token_value: UUID) -> RefreshTokenDAE | None:
         q = select(self._table).where(self._table.value == token_value)
-        print(q)
         result = (await self._db_session.execute(q)).scalars().first()
 
         if result:

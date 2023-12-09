@@ -2,19 +2,19 @@ from typing import Optional, cast
 
 from pydantic import Field
 
-from src.config.settings import settings
-from src.core.dtos import BaseDTO
-from src.core.usecases import IUseCase
-from src.modules.auth.application.dtos import (
+from config.settings import settings
+from core.dtos import BaseDTO
+from core.usecases import IUseCase
+from auth.application.dtos import (
     TelegramLoginInDTO,
     TelegramLoginOutDTO,
 )
-from src.modules.auth.application.repositories import (
+from auth.application.repositories import (
     IRefreshTokenRepository,
     IUserRepository,
 )
-from src.modules.auth.application.utils.jwt import generate_token
-from src.modules.auth.domain.entities import RefreshTokenDAE, User
+from auth.application.utils.jwt import generate_token
+from auth.domain.entities import RefreshTokenDAE, User
 
 
 class _TelegramUserInfo(BaseDTO):

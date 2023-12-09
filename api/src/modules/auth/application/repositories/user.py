@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.core.aio import IAsyncContextManagerRepository
-from src.modules.auth.domain.entities.de.user import User
+from core.aio import IAsyncContextManagerRepository
+from auth.domain.entities.de.user import User
 
 
 class IUserRepository(IAsyncContextManagerRepository, ABC):

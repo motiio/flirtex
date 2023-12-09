@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.core.dtos import BaseDTO
+from core.dtos import BaseDTO
 
 
 class UpdateTokenInDTO(BaseDTO):

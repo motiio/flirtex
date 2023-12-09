@@ -4,8 +4,8 @@ from datetime import datetime
 from jose import JWTError, jwt
 from jose.exceptions import JWKError
 
-from src.config.settings import settings
-from src.modules.auth.domain.exceptions import InvalidJWTToken
+from config.settings import settings
+from auth.domain.exceptions import InvalidJWTToken
 
 
 def generate_token(*, sub: str, expiration_seconds: int, secret: str = settings.JWT_SECRET) -> str:

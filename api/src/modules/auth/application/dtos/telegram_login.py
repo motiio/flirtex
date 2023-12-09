@@ -1,4 +1,4 @@
-from src.core.dtos import BaseDTO
+from core.dtos import BaseDTO
 
 
 class TelegramLoginInDTO(BaseDTO):

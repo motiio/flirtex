@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from src.core.aio import IAsyncContextManagerRepository
-from src.modules.auth.domain.entities.dae.refresh_token import RefreshTokenDAE
+from core.aio import IAsyncContextManagerRepository
+from auth.domain.entities.dae.refresh_token import RefreshTokenDAE
 
 
 class IRefreshTokenRepository(IAsyncContextManagerRepository, ABC):

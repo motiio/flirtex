@@ -1,26 +1,25 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Header
-from starlette.status import HTTP_201_CREATED
-
-from src.modules.auth.api.v1.schemas import (
+from auth.api.v1.schemas import (
     TelegramLoginRequestSchema,
     UpdateTokenRequestSchema,
 )
-from src.modules.auth.api.v1.schemas.out import (
+from auth.api.v1.schemas.out import (
     TelegramLoginOutSchema,
     UpdateTokenOutSchema,
 )
-from src.modules.auth.application.dependencies import (
+from auth.application.dependencies import (
     TelegramLoginService,
     UpdateTokenService,
 )
-from src.modules.auth.application.dtos import (
+from auth.application.dtos import (
     TelegramLoginInDTO,
     TelegramLoginOutDTO,
     UpdateTokenInDTO,
     UpdateTokenOutDTO,
 )
+from fastapi import APIRouter, Header
+from starlette.status import HTTP_201_CREATED
 
 auth_router = APIRouter(prefix="/auth")
 
