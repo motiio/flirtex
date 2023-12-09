@@ -1,13 +1,13 @@
+from typing import Any
 from uuid import UUID
 
 from pydantic import model_validator
 
 from src.core.schemas import BaseSchema
-from src.modules.deck.application.utils import enums as deck_enums
 from src.modules.profile.api.v1.schemas.out.interest import ReadInterestOutSchema
-from .photo import ReadPhotoOutSchema
 from src.modules.profile.application.utils import enums as profile_enums
-from typing import Any
+
+from .photo import ReadPhotoOutSchema
 
 
 class ReadProfileOutSchema(BaseSchema):

@@ -39,19 +39,21 @@ class UpdateTokenUsecase(IUseCase):
                 user=existent_user.id, user_agent=in_dto.user_agent
             )
 
-            created_token = RefreshTokenDAE.create(
+            new_refresh_token_dae = RefreshTokenDAE.create(
                 **in_dto.model_dump(exclude={"value"}),
                 value=generate_token(
-                    sub=existent_user.str_id,
+                    sub=str(existent_user.id),  # type: ignore
                     expiration_seconds=settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS,
                 ),
             )
 
-            new_refresh_token = await self._refresh_token_repo.create(in_entity=created_token)
+            new_refresh_token = await self._refresh_token_repo.create(
+                in_entity=new_refresh_token_dae
+            )
 
             return UpdateTokenOutDTO(
                 access_token=generate_token(
-                    sub=existent_user.str_id,
+                    sub=str(existent_user.id),  # type: ignore
                     expiration_seconds=settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS,
                     secret=settings.JWT_SECRET,
                 ),

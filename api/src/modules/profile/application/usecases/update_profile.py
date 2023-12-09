@@ -1,6 +1,5 @@
 from src.core.usecases import IUseCase
 from src.modules.profile.application.dtos import (
-    ProfileOutDTO,
     UpdateProfileInDTO,
 )
 from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
