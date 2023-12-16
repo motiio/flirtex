@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from modules.auth.api import auth_router_v1
+from modules.auth.api.public import auth_router_v1
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory

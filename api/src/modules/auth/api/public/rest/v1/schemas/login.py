@@ -23,4 +23,3 @@ class TelegramLoginRequestSchema(BaseSchema):
         except ValueError:
             raise InvalidInitData from None
         return data
-

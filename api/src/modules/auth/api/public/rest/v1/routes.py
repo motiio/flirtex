@@ -1,10 +1,10 @@
 from typing import Annotated, Any
 
-from auth.api.v1.schemas import (
+from auth.api.public.rest.v1.schemas import (
     TelegramLoginRequestSchema,
     UpdateTokenRequestSchema,
 )
-from auth.api.v1.schemas.out import (
+from auth.api.public.rest.v1.schemas.out import (
     TelegramLoginOutSchema,
     UpdateTokenOutSchema,
 )
