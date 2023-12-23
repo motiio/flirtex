@@ -1,40 +1,20 @@
 from typing import Any
 from uuid import UUID
 
+from src.modules.deck.application.dependencies.filter import CreateFilterService
+from src.modules.deck.application.dtos.filter import FilterInCreateDTO
 from fastapi import APIRouter
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from src.modules.profile.application.dependencies import CurrentUser
-from deck.application.dependencies.filter import CreateFilterService
-from deck.application.dtos.filter import FilterInCreateDTO
 from src.modules.profile.api.public.rest.v1.schemas import (
     CreateProfileRequestSchema,
     UpdateProfileInterestsRequestSchema,
     UpdateProfileRequestSchema,
 )
-from src.modules.rofile.api.v1.schemas.out import (
-    ReadPhotoOutSchema,
-    ReadProfileOutSchema,
-)
 from src.modules.profile.api.v1.schemas.update_photo_order import (
     UpdatePhotoOrderRequest,
 )
-from src.modules.rofile.application.dependencies import (
-    AddProfilePhotoService,
-    CreateProfileService,
-    DeleteProfilePhotoService,
-    DeleteProfileService,
-    GetProfileService,
-    UpdatePhotoOrderService,
-    UpdateProfileService,
-    ValidImageFile,
-)
-from src.modules.rofile.application.dtos import (
-    CreateProfileInDTO,
-    PhotoOutDTO,
-    ProfileOutDTO,
-    UpdateProfileInDTO,
-)
+from src.modules.profile.application.dependencies import CurrentUser
 from src.modules.profile.application.dtos.photo import (
     PhotoInCreateDTO,
     PhotoInDeleteDTO,
@@ -42,6 +22,27 @@ from src.modules.profile.application.dtos.photo import (
     UpdatePhotosOrderOutDTO,
 )
 from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
+from src.modules.profile.api.v1.schemas.out import (
+    ReadPhotoOutSchema,
+    ReadProfileOutSchema,
+)
+from src.modules.profile.application.dependencies import (
+    AddProfilePhotoService,
+    CreateProfileService,
+    DeleteProfilePhotoService,
+    DeleteProfileService,
+    GetProfileService,
+    GetProfileByIdService,
+    UpdatePhotoOrderService,
+    UpdateProfileService,
+    ValidImageFile,
+)
+from src.modules.profile.application.dtos import (
+    CreateProfileInDTO,
+    PhotoOutDTO,
+    ProfileOutDTO,
+    UpdateProfileInDTO,
+)
 
 profile_router = APIRouter(prefix="/profile")
 
@@ -64,6 +65,29 @@ async def get_profile(
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
     profile: ProfileOutDTO = await get_profile_service.execute(owner_id=user_id)
+
+    return profile.model_dump()
+
+
+@profile_router.get(
+    "/{profile_id}",
+    response_model=ReadProfileOutSchema,
+    status_code=HTTP_200_OK,
+)
+async def get_profile_by_id(
+    get_profile_service: GetProfileByIdService,
+    user_id: CurrentUser,
+    profile_id: UUID,
+) -> dict[str, Any]:
+    """
+    Login user.
+
+    Returns:
+        The user's **access token** and **refresh token**.
+
+    - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
+    """
+    profile: ProfileOutDTO = await get_profile_service.execute(profile_id=profile_id)
 
     return profile.model_dump()
 

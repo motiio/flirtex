@@ -1,7 +1,6 @@
 import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from src.modules.auth.api.public.rest import auth_router_v1
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory
@@ -9,9 +8,10 @@ from src.config.redis import create_redis_pool
 from src.config.s3 import create_s3_session
 from src.config.settings import settings
 from src.core.middlewares import DatabaseMiddleware, RedisMiddleware
+from src.modules.auth.api.public.rest import auth_router_v1
 from src.modules.common.api import common_router_v1
 from src.modules.deck.api import deck_router_v1
-from src.modules.profile.api import profile_router_v1
+from src.modules.profile.api.public.rest import profile_router_v1
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
