@@ -1,13 +1,7 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "./modules")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
-
 import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from modules.auth.api.public import auth_router_v1
+from src.modules.auth.api.public.rest import auth_router_v1
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory

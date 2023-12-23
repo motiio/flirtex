@@ -1,4 +1,4 @@
-from core.schemas import BaseSchema
+from src.core.schemas import BaseSchema
 
 
 class UpdateTokenOutSchema(BaseSchema):

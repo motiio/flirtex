@@ -3,10 +3,10 @@ __all__ = [
     "TelegramLoginService",
     "UpdateTokenService",
 ]
-from auth.application.dependencies.auth import CurrentUser
-from auth.application.dependencies.login import (
+from src.modules.auth.application.dependencies.auth import CurrentUser
+from src.modules.auth.application.dependencies.login import (
     TelegramLoginService,
 )
-from auth.application.dependencies.update_token import (
+from src.modules.auth.application.dependencies.update_token import (
     UpdateTokenService,
 )

@@ -3,12 +3,12 @@ from uuid import UUID
 
 from sqlalchemy import delete, select
 
-from core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
-from auth.application.repositories.refresh_token import (
+from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
+from src.modules.auth.application.repositories.refresh_token import (
     IRefreshTokenRepository,
 )
-from auth.domain.entities import RefreshTokenDAE
-from auth.infrastructure.models import RefreshTokenORM
+from src.modules.auth.domain.entities import RefreshTokenDAE
+from src.modules.auth.infrastructure.models import RefreshTokenORM
 
 
 class RefreshTokenRepository(

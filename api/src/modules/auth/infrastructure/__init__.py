@@ -3,5 +3,5 @@ __all__ = [
     "RefreshTokenRepository",
 ]
 
-from auth.infrastructure.repositories.user import UserRepository
-from auth.infrastructure.repositories.refresh_token import RefreshTokenRepository
+from src.modules.auth.infrastructure.repositories.user import UserRepository
+from src.modules.auth.infrastructure.repositories.refresh_token import RefreshTokenRepository

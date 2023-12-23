@@ -1,18 +1,18 @@
 from typing import Annotated, Any
 
-from auth.api.public.rest.v1.schemas import (
+from src.modules.auth.api.public.rest.v1.schemas import (
     TelegramLoginRequestSchema,
     UpdateTokenRequestSchema,
 )
-from auth.api.public.rest.v1.schemas.out import (
+from src.modules.auth.api.public.rest.v1.schemas.out import (
     TelegramLoginOutSchema,
     UpdateTokenOutSchema,
 )
-from auth.application.dependencies import (
+from src.modules.auth.application.dependencies import (
     TelegramLoginService,
     UpdateTokenService,
 )
-from auth.application.dtos import (
+from src.modules.auth.application.dtos import (
     TelegramLoginInDTO,
     TelegramLoginOutDTO,
     UpdateTokenInDTO,
