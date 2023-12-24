@@ -3,6 +3,7 @@ __all__ = [
     "CreateProfileInDTO",
     "UpdateProfileInDTO",
     "ProfileOutDTO",
+    "ProfileWithDistanceOutDTO",
     # photo
     "PhotoOutDTO",
     "PhotoInS3UploadDTO",
@@ -16,6 +17,7 @@ from .profile import (
     CreateProfileInDTO,
     UpdateProfileInDTO,
     ProfileOutDTO,
+    ProfileWithDistanceOutDTO,
 )
 from .photo import (
     PhotoInS3UploadDTO,

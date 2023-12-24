@@ -37,3 +37,5 @@ class ReadProfileOutSchema(BaseSchema):
     bio: str | None
     interests: list[ReadInterestOutSchema] | None
     photos: list[ReadPhotoOutSchema] | None
+
+    distance: float | None = None
