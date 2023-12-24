@@ -10,7 +10,7 @@ from src.modules.profile.application.utils import enums as profile_enums
 from .photo import ReadPhotoOutSchema
 
 
-class ReadProfileOutSchema(BaseSchema):
+class ReadMyProfileOutSchema(BaseSchema):
     id: UUID
     name: str
     age: int
@@ -27,3 +27,13 @@ class ReadProfileOutSchema(BaseSchema):
         is_location = True if values.get("location") else False
         values = values | {"is_location": is_location}
         return values
+
+
+class ReadProfileOutSchema(BaseSchema):
+    id: UUID
+    name: str
+    age: int
+    gender: profile_enums.GenderEnum
+    bio: str | None
+    interests: list[ReadInterestOutSchema] | None
+    photos: list[ReadPhotoOutSchema] | None

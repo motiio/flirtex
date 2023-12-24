@@ -22,9 +22,10 @@ from src.modules.profile.application.dtos.photo import (
     UpdatePhotosOrderOutDTO,
 )
 from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
-from src.modules.profile.api.v1.schemas.out import (
+from src.modules.profile.api.public.rest.v1.schemas.out import (
     ReadPhotoOutSchema,
     ReadProfileOutSchema,
+    ReadMyProfileOutSchema,
 )
 from src.modules.profile.application.dependencies import (
     AddProfilePhotoService,
@@ -49,7 +50,7 @@ profile_router = APIRouter(prefix="/profile")
 
 @profile_router.get(
     "",
-    response_model=ReadProfileOutSchema,
+    response_model=ReadMyProfileOutSchema,
     status_code=HTTP_200_OK,
 )
 async def get_profile(

@@ -26,6 +26,27 @@ class ProfileRepository(
     def _entity(self) -> Type[Profile]:
         return Profile
 
+    async def get(self, *, entity_id: UUID) -> Profile| None:
+        q = (
+            select(self._table)
+            .where(self._table.id == entity_id)
+            .options(selectinload(self._table.interests))
+        )
+        result = (await self._db_session.execute(q)).scalars().first()
+        if result:
+            entity: Profile = self._entity.create(**result.dict())
+            entity.put_interests(
+                [Interest.create(**interest.dict()) for interest in result.interests]
+            )
+            entity.add_photos([ProfilePhoto.create(**photo.dict()) for photo in result.photos])
+
+            entity.put_location(location=result.dict_location)
+            return entity
+
+        return None
+
+       
+
     async def create(self, *, in_entity: Profile) -> Profile:
         q = (
             insert(self._table)
@@ -110,10 +131,8 @@ class ProfileRepository(
             .where(self._table.id.in_(entities_ids))
             .options(selectinload(self._table.interests))
         )
-        print(ordering)
         if ordering:
             q = q.order_by(func.array_position(entities_ids, self._table.id))
-        print(q)
 
         entries = (await self._db_session.execute(q)).scalars().all()
         result: list[Profile] = []
