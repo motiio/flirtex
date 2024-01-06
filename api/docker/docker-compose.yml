@@ -12,6 +12,51 @@ services:
       - ./rabbitmq:/var/lib/rabbitmq
     ports:
       - 15672:15672
-      - 5672:5672
+    networks:
+      - my_network
+        
+  db:
+    build:
+      context: ..
+      dockerfile: docker/db/Dockerfile  # Путь к вашему Dockerfile для PostgreSQL с PostGIS
+    hostname: db
+    environment:
+      - POSTGRES_DB=postgres         # Имя вашей базы данных
+      - POSTGRES_USER=postgres           # Имя пользователя для доступа к базе данных
+      - POSTGRES_PASSWORD=postgrespw   # Пароль пользователя
+      - PGDATA=/var/lib/postgresql/data/pgdata  # Путь к данным внутри контейнера
+    volumes:
+      - ./db/data:/var/lib/postgresql/data  # Том для хранения данных
+    ports:
+      - 5432:5432  # Проброс порта (если требуется доступ с хост-машины)
+    networks:
+      - my_network
+    restart: always
+
+  redis:
+    image: redis:latest
+    networks:
+      - my_network
+
+  fastapi_app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test1
+    ports:
+      - 8080:8080
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    environment:
+      - ENVIRONMENT=production
+    volumes:
+      - ../:/api
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
 
 

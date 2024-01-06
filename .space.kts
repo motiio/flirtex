@@ -27,8 +27,8 @@ job("Run on git push") {
                     -o StrictHostKeyChecking=no \
                     -o LogLevel=quiet \
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
-                     cd api/api && git pull origin test \
-                     && sh deploy_api.sh"
+                     cd api/api/docker && git pull origin test \
+                     && docker-compose up -d"
             """
         }
     }

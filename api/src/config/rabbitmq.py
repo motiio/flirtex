@@ -4,6 +4,7 @@ from typing import Annotated
 import aio_pika
 from aio_pika.abc import AbstractChannel, AbstractQueue, AbstractRobustConnection
 from fastapi import Depends, Request
+import asyncio
 
 from src.config.settings import settings
 
@@ -29,14 +30,22 @@ class RabbitMQConnection:
         self,
         *,
         connection: AbstractRobustConnection | None = None,
+        max_retries=5,
+        delay=5,
     ):
-        try:
-            self.connection = connection or (await aio_pika.connect_robust(self.host_url))
-            self.channel = await self.connection.channel()
-            self.queue = await self.channel.declare_queue(self.queue_name)
-            return self
-        except Exception as e:
-            raise RuntimeError("Error trying to connect to RabbitMQ") from e
+        for attempt in range(max_retries):
+            try:
+                self.connection = connection or (await aio_pika.connect_robust(self.host_url))
+                self.channel = await self.connection.channel()
+                self.queue = await self.channel.declare_queue(self.queue_name)
+                return self
+            except (OSError, ConnectionRefusedError) as e:
+                print(
+                    f"Не удалось подключиться к RabbitMQ (попытка {attempt + 1}/{max_retries}): {e}"
+                )
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(delay)
+        raise RuntimeError("Error trying to connect to RabbitMQ")
 
 
 match_notifier_connection = RabbitMQConnection(
