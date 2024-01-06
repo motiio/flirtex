@@ -38,6 +38,7 @@ class ProfilePhoto(BaseEntity):
         cls,
         *,
         id=None,
+        profile_photo_id=None,
         profile_id,
         displaying_order,
         hash,
@@ -46,14 +47,15 @@ class ProfilePhoto(BaseEntity):
         status_description="",
         **kwargs,
     ):
-        if id is None:
-            id = uuid4()
+        profile_photo_id = id or profile_photo_id
+        if profile_photo_id is None:
+            profile_photo_id = uuid4()
 
         if url is None:
             url = f"{profile_id}/photo/{id}.webp"
 
         photo = ProfilePhoto(
-            id=id,
+            id=profile_photo_id,
             profile_id=profile_id,
             displaying_order=displaying_order,
             status=status,

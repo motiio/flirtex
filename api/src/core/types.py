@@ -1,4 +1,5 @@
-from typing import TypeVar, Union
+from dataclasses import dataclass
+from typing import Generic, Literal, TypeVar, Union
 
 from src.core.dtos import BaseDTO, BaseS3DTO
 from src.core.entities import BaseEntity
@@ -13,3 +14,18 @@ OUT_DTO = TypeVar("OUT_DTO", bound=BaseDTO)
 IN_S3_DTO = TypeVar("IN_S3_DTO", bound=BaseS3DTO)
 OUT_S3_DTO = TypeVar("OUT_S3_DTO", bound=BaseS3DTO)
 BUCKET_NAME = TypeVar("BUCKET_NAME", bound=str)
+
+NotificationType = TypeVar("NotificationType", bound=Literal["match", "like"])
+
+
+@dataclass
+class BaseNotification(Generic[NotificationType]):
+    type: NotificationType
+    message: dict
+
+
+@dataclass
+class Pagination:
+    total: int
+    offset: int
+    limit: int

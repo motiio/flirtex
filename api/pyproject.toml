@@ -43,6 +43,7 @@ geoalchemy2 = {extras = ["shapely"], version = "^0.14.1"}
 hiredis = "^2.2.3"
 redis = "^5.0.0"
 geopy = "^2.4.0"
+aio-pika = "^9.3.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

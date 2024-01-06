@@ -49,6 +49,9 @@ class Profile(BaseEntity):
         cls,
         *,
         id: UUID | None = None,
+        # если в select идет выборка нескольких сущностей с полем id, то для этого необходимо передать alieas.
+        # Значение алиаса попадет в profile_id парамет, а не в id
+        profile_id: UUID | None = None,
         name: str,
         bio: str | None = None,
         birthdate: date,
@@ -56,11 +59,12 @@ class Profile(BaseEntity):
         owner_id: UUID,
         **kwargs,
     ) -> "Profile":
-        if id is None:
-            id = uuid4()
+        profile_id = id or profile_id
+        if profile_id is None:
+            profile_id = uuid4()
 
         user = Profile(
-            id=id,
+            id=profile_id,
             name=name,
             bio=bio,
             birthdate=birthdate,

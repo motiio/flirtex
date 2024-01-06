@@ -84,7 +84,7 @@ class PhotoORM(BaseModel, TimeStampMixin):
     profile: Mapped["ProfileORM"] = relationship(back_populates="photos")  # type: ignore
     hash: Mapped[str] = mapped_column(String(32), nullable=False)
     url: Mapped[str] = mapped_column(String(512), unique=True, nullable=True)
-    geo = (Geometry(geometry_type="POINT", srid=4326),)
+    # geo = (Geometry(geometry_type="POINT", srid=4326),)
 
     def __repr__(self) -> str:
         return f"Photo[{self.id=},{self.displaying_order=}, {self.status=}, {self.status_description=}, {self.photo_url=}]"

@@ -45,7 +45,7 @@ class ProfileRepository(
 
         return None
 
-       
+
 
     async def create(self, *, in_entity: Profile) -> Profile:
         q = (

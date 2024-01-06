@@ -16,3 +16,6 @@ class BaseEntity:
                     data[attr_name] = value
 
         return data
+
+
+

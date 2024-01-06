@@ -1,39 +1,32 @@
 from typing import Any
 from uuid import UUID
 
-from src.modules.deck.application.dependencies.filter import CreateFilterService
-from src.modules.deck.application.dtos.filter import FilterInCreateDTO
 from fastapi import APIRouter
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
+from src.modules.deck.application.dependencies.filter import CreateFilterService
+from src.modules.deck.application.dtos.filter import FilterInCreateDTO
 from src.modules.profile.api.public.rest.v1.schemas import (
     CreateProfileRequestSchema,
     UpdateProfileInterestsRequestSchema,
     UpdateProfileRequestSchema,
 )
-from src.modules.profile.api.v1.schemas.update_photo_order import (
-    UpdatePhotoOrderRequest,
-)
-from src.modules.profile.application.dependencies import CurrentUser
-from src.modules.profile.application.dtos.photo import (
-    PhotoInCreateDTO,
-    PhotoInDeleteDTO,
-    UpdatePhotosOrderInDTO,
-    UpdatePhotosOrderOutDTO,
-)
-from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
 from src.modules.profile.api.public.rest.v1.schemas.out import (
+    ReadMyProfileOutSchema,
     ReadPhotoOutSchema,
     ReadProfileOutSchema,
-    ReadMyProfileOutSchema,
+)
+from src.modules.profile.api.v1.schemas.update_photo_order import (
+    UpdatePhotoOrderRequest,
 )
 from src.modules.profile.application.dependencies import (
     AddProfilePhotoService,
     CreateProfileService,
+    CurrentUser,
     DeleteProfilePhotoService,
     DeleteProfileService,
-    GetProfileService,
     GetProfileByIdService,
+    GetProfileService,
     UpdatePhotoOrderService,
     UpdateProfileService,
     ValidImageFile,
@@ -44,6 +37,13 @@ from src.modules.profile.application.dtos import (
     ProfileOutDTO,
     UpdateProfileInDTO,
 )
+from src.modules.profile.application.dtos.photo import (
+    PhotoInCreateDTO,
+    PhotoInDeleteDTO,
+    UpdatePhotosOrderInDTO,
+    UpdatePhotosOrderOutDTO,
+)
+from src.modules.profile.application.dtos.profile import UpdateProfileOutDTO
 
 profile_router = APIRouter(prefix="/profile")
 

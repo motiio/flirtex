@@ -9,6 +9,8 @@ from starlette.status import (
 from src.modules.auth.application.dependencies import CurrentUser
 from src.modules.deck.api.schemas import (
     DeckBatchOutResponse,
+    LikeReactionsOutSchema,
+    MatchesOutSchema,
     UpdateFilterRequestSchema,
 )
 from src.modules.deck.application.dependencies import (
@@ -19,11 +21,10 @@ from src.modules.deck.application.dependencies import (
     SkipService,
     UpdateFilterService,
 )
+from src.modules.deck.application.dependencies.match import MatchService
 from src.modules.deck.application.dtos import (
     DeckBatchOutDTO,
     FilterOutDTO,
-    LikeReactionsDTO,
-    MatchOutDTO,
 )
 
 deck_router = APIRouter(prefix="/deck")
@@ -74,19 +75,17 @@ async def get_deck_batch(
 
 @deck_router.post(
     "/like/{target_profile_id}",
-    response_model=MatchOutDTO | None,
-    status_code=HTTP_200_OK,
+    status_code=HTTP_204_NO_CONTENT,
 )
 async def like(
     user_id: CurrentUser,
     target_profile_id: UUID,
     like_service: LikeService,
 ):
-    match: MatchOutDTO = await like_service.execute(
+    await like_service.execute(
         user_id=user_id,
         target_profile_id=target_profile_id,
     )
-    return match
 
 
 @deck_router.post(
@@ -105,8 +104,25 @@ async def skip(
 
 
 @deck_router.get(
+    "/matches",
+    response_model=MatchesOutSchema,
+    status_code=HTTP_200_OK,
+)
+async def matches(
+    user_id: CurrentUser,
+    matches_service: MatchService,
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
+):
+    matches, pagination = await matches_service.execute(user_id=user_id, limit=limit, offset=offset)
+    return MatchesOutSchema(
+        profiles=[profile.model_dump() for profile in matches.profiles], pagination=pagination
+    )
+
+
+@deck_router.get(
     "/like_reactions",
-    response_model=LikeReactionsDTO,
+    response_model=LikeReactionsOutSchema,
     status_code=HTTP_200_OK,
 )
 async def like_reactions(
@@ -115,7 +131,10 @@ async def like_reactions(
     limit: int = Query(default=10, ge=1, le=50),
     offset: int = Query(default=0, ge=0),
 ):
-    like_reactions: LikeReactionsDTO = await like_reactions_service.execute(
+    like_reactions, pagination = await like_reactions_service.execute(
         user_id=user_id, limit=limit, offset=offset
     )
-    return like_reactions
+    return LikeReactionsOutSchema(
+        profiles=[profile.model_dump() for profile in like_reactions.profiles],
+        pagination=pagination,
+    )

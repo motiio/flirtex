@@ -1,11 +1,11 @@
 from datetime import date
 from uuid import UUID
 
-from src.core.schemas import BaseSchema
 from pydantic import Field, field_validator
 from pydantic.fields import computed_field
 
 import src.modules.profile.api.shared as shared
+from src.core.schemas import BaseSchema
 from src.modules.deck.application.dtos.filter import FilterOutDTO
 from src.modules.deck.application.utils import enums as deck_enums
 from src.modules.profile.application.dtos.profile import ProfileOutDTO

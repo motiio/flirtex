@@ -1,11 +1,12 @@
 from typing import Optional, Type
 
-from sqlalchemy import UUID, and_, case, desc, or_, select
+from sqlalchemy import UUID, and_, case, desc, func, or_, select, text
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
+from src.core.types import Pagination
 from src.modules.deck.application.repositories import ILikeRepository
 from src.modules.deck.domain.entities import Like
-from src.modules.deck.infrastructure.models import LikeORM
+from src.modules.deck.infrastructure.models import LikeORM, MatchORM
 from src.modules.profile.infrastructure.models import ProfileORM
 
 
@@ -27,6 +28,11 @@ class LikeRepository(
     async def get_likes_by_profiles(
         self, *, target_profile: UUID, source_profile: UUID
     ) -> tuple[Like | None, Like | None]:
+        """
+        Запрос находит лайк между 2 профилями и возвращает 2 лайка.
+        1 - Лайк, поставленные source_profile или None
+        2 - Лайк, поставелнные target_profile или None
+        """
         ordering = case({self._table.source_profile == source_profile: 1}, else_=0).label(
             "ordering"
         )
@@ -52,27 +58,46 @@ class LikeRepository(
 
         return (my_like, other_like)
 
-    async def get_likes_by_target(
+    async def get_likes_by_target_except_match(
         self,
         *,
         target_profile_id: UUID,
         offset: int = 0,
-        limit: int = 10,
+        limit: int = 30,
         order_by: Optional[str] = None,
-    ) -> list[Like]:
+    ) -> tuple[list[Like], Pagination]:
         q = (
             select(self._table, ProfileORM)
             .join(ProfileORM, self._table.source_profile == ProfileORM.id)
-            .where(self._table.target_profile == target_profile_id)
+            .outerjoin(
+                MatchORM,
+                or_(
+                    and_(
+                        MatchORM.profile_1 == self._table.source_profile,
+                        MatchORM.profile_2 == self._table.target_profile,
+                    ),
+                    and_(
+                        MatchORM.profile_1 == self._table.target_profile,
+                        MatchORM.profile_2 == self._table.source_profile,
+                    ),
+                ),
+            )
+            .where(and_(self._table.target_profile == target_profile_id, MatchORM.id.is_(None)))
         )
+        total_count_query = select(func.count()).select_from(q)  # type: ignore
+        total: int = (await self._db_session.execute(total_count_query)).scalar() or 0
 
         # Добавляем сортировку, если параметр order_by предоставлен
         if order_by is not None:
             if order_by.startswith("-"):  # Проверка на сортировку по убыванию
-                q = q.order_by(desc(order_by[1:]))  # Отрезаем '-' для desc сортировки
+                q = q.order_by(desc(text(order_by[1:])))  # Отрезаем '-' для desc сортировки
             else:
-                q = q.order_by(order_by)  # Используем как есть для asc сортировки
+                q = q.order_by(text(order_by))  # Используем как есть для asc сортировки
 
         q = q.offset(offset).limit(limit)
+        print(q)
+
         entries = (await self._db_session.execute(q)).scalars().all()
-        return [self._entity.create(**entry.dict()) for entry in entries]
+        return [self._entity.create(**entry.dict()) for entry in entries], Pagination(
+            total=total, limit=limit, offset=offset
+        )

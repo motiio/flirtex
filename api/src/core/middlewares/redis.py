@@ -9,8 +9,8 @@ class RedisMiddleware(BaseHTTPMiddleware):
         self.redis_pool = redis_pool
 
     async def dispatch(self, request: Request, call_next):
-        redis = await aioredis.Redis(connection_pool=self.redis_pool)
         try:
+            redis = await aioredis.Redis(connection_pool=self.redis_pool)
             request.state.redis = redis
             response = await call_next(request)
         except Exception as e:

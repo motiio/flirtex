@@ -1,9 +1,6 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
-from src.modules.deck.application.dtos import (
-    MatchOutDTO,
-)
 from src.modules.deck.application.repositories import ILikeRepository, IMatchRepository
 from src.modules.deck.domain.entities import Like, Match
 from src.modules.profile.application.repositories.profile import IProfileRepository
@@ -27,7 +24,7 @@ class LikeUsecase(IUseCase):
         *,
         user_id: UUID,
         target_profile_id: UUID,
-    ) -> MatchOutDTO | None:
+    ) -> None:
         async with self._like_repo, self._profile_repo, self._match_repo:
             source_profile = await self._profile_repo.get_by_owner(owner_id=user_id)
             target_profile = await self._profile_repo.get(entity_id=target_profile_id)
@@ -58,5 +55,4 @@ class LikeUsecase(IUseCase):
             match_entitie = Match.create(
                 profile_1=my_like.source_profile, profile_2=his_like.source_profile
             )
-            match = await self._match_repo.create(in_entity=match_entitie)
-            return MatchOutDTO(**match.model_dump())
+            _ = await self._match_repo.create(in_entity=match_entitie)

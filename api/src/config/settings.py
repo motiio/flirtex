@@ -49,6 +49,9 @@ class GlobalConfig(BaseSettings):
     DECK_TTL_S: int = 3600
     DECK_BATCH_SIZE: int = 5
 
+    RABBITMQ_URL: str
+    RABBITMQ_MATCH_QUEUE: str
+
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
         env_file_encoding = "utf-8"

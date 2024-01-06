@@ -3,6 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 from src.core.aio import IAsyncContextManagerRepository
+from src.core.types import Pagination
 from src.modules.deck.domain.entities import Like
 
 
@@ -26,12 +27,12 @@ class ILikeRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get_likes_by_target(
+    async def get_likes_by_target_except_match(
         self,
         *,
         target_profile_id: UUID,
         offset: int = 0,
-        limit: int = 10,
+        limit: int = 30,
         order_by: Optional[str] = None,
-    ) -> list[Like]:
+    ) -> tuple[list[Like], Pagination]:
         ...
