@@ -18,8 +18,10 @@ RUN apt-get update \
            postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR-scripts \
       && rm -rf /var/lib/apt/lists/*
 
+COPY ./docker/db/pg_hba.conf /
+
 RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ./docker/db/initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
-COPY ./docker/db/update-postgis.sh /usr/local/bin
-COPY ./docker/db/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf
+COPY ./docker/db/copy-pg-hba.sh /docker-entrypoint-initdb.d/11_pg_haba.sh
 
+COPY ./docker/db/update-postgis.sh /usr/local/bin
