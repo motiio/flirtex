@@ -216,6 +216,7 @@ src/dispatch/static/dispatch/tests/__snapshots__
 src/dispatch/static/dispatch/coverage
 
 docker/rabbitmq/*
+docker/db/data/*
 
 # Typescript
 components.d.ts

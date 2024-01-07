@@ -21,4 +21,5 @@ RUN apt-get update \
 RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ./docker/db/initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
 COPY ./docker/db/update-postgis.sh /usr/local/bin
+COPY ./docker/db/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf
 
