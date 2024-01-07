@@ -191,7 +191,7 @@ pip-delete-this-directory.txt
 tags
 
 # exclude docker env files
-**/docker/.env
+**/.env
 
 # exclude data dump files
 *.dump
