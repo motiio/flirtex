@@ -14,7 +14,7 @@ class EnvironmentEnum(str, Enum):
 class GlobalConfig(BaseSettings):
     TITLE: str = "API"
     APP_VERSION: str = "0.1"
-    ENVIRONMENT: EnvironmentEnum = "production"
+    ENVIRONMENT: EnvironmentEnum
     DEBUG: bool = False
     API_V1_PREFIX: str = "/v1"
 

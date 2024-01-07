@@ -31,7 +31,7 @@ class RabbitMQConnection:
         *,
         connection: AbstractRobustConnection | None = None,
         max_retries=5,
-        delay=5,
+        delay=10,
     ):
         for attempt in range(max_retries):
             try:

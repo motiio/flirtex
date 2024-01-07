@@ -1,0 +1,57 @@
+version: "2.1"
+services:
+  rabbitmq:
+    image: rabbitmq:3.12.11-management
+    hostname: rabbitmq
+    restart: always
+    env_file:
+      - ./rabbitmq/docker/.env
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq
+    ports:
+      - 15672:15672
+    networks:
+      - flirtex-network
+        
+  pg-db:
+    build:
+      context: ./pg-db
+      dockerfile: ./docker/Dockerfile  # Путь к вашему Dockerfile для PostgreSQL с PostGIS
+    hostname: db
+    env_file:
+      - ./pg-db/docker/.env
+    volumes:
+      - ./pg-db/data:/var/lib/postgresql/data  # Том для хранения данных
+    ports:
+      - 5432:5432  # Проброс порта (если требуется доступ с хост-машины)
+    networks:
+      - flirtex-network
+    restart: always
+
+  redis:
+    image: redis:latest
+    networks:
+      - flirtex-network
+
+  fastapi_app:
+    build:
+      context: ./api
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - rabbitmq
+      - pg-db
+      - redis
+    environment:
+      - ENVIRONMENT=production
+    volumes:
+      - ./api:/api
+    networks:
+      - flirtex-network
+
+networks:
+  flirtex-network:
+    driver: bridge
+
+
