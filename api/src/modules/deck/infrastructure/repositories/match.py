@@ -1,6 +1,7 @@
 from typing import Type
 
-from sqlalchemy import UUID, and_, desc, func, or_, select, text
+from sqlalchemy import UUID, and_, desc, func, label, or_, select, text
+from sqlalchemy.orm import aliased
 
 from src.core.orm import DictBundle
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
@@ -39,31 +40,37 @@ class MatchRepository(
         offset: int = 0,
         order_by: str | None = None,
     ) -> tuple[list[MatchProfileDAE], Pagination]:
+        p1 = aliased(ProfileORM)
+        p2 = aliased(ProfileORM)
         q = (
             select(
                 DictBundle(
                     "match_profile_dae",
                     self._table.id.label("match_id"),
-                    ProfileORM.id.label("profile_id"),
-                    ProfileORM.name.label("profile_name"),
-                    ProfileORM.bio.label("profile_bio"),
+                    p2.id.label("profile_id"),
+                    p2.name.label("profile_name"),
+                    p2.bio.label("profile_bio"),
                     PhotoORM.url.label("profile_main_photo_url"),
-                    AuthAPI.table.tg_username.label("user_tg_username"),  # type: ignore
+                    AuthAPI.user_table.tg_username.label("user_tg_username"),  # type: ignore
                 ),
             )
             .join(
-                ProfileORM,
-                or_(ProfileORM.id == self._table.profile_1, ProfileORM.id == self._table.profile_2),
+                p1,
+                or_(p1.id == self._table.profile_1, p1.id == self._table.profile_2),
             )
-            .join(AuthAPI.table, ProfileORM.owner_id == AuthAPI.table.id)  # type: ignore
-            .outerjoin(
-                PhotoORM, and_(ProfileORM.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1)
+            .join(
+                p2,
+                p2.id
+                == func.coalesce(func.nullif(self._table.profile_1, p1.id), self._table.profile_2),
             )
+            .join(AuthAPI.user_table, p2.owner_id == AuthAPI.user_table.id)  # type: ignore
+            .outerjoin(PhotoORM, and_(p2.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1))
             .where(ProfileORM.id == profile_id)
         )
 
         total_count_query = select(func.count()).select_from(q)  # type: ignore
         total: int = (await self._db_session.execute(total_count_query)).scalar() or 0
+        print(q)
 
         # Добавляем сортировку, если параметр order_by предоставлен
         if order_by is not None:
