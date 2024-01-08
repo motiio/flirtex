@@ -10,6 +10,7 @@ __all__ = [
     "DeleteProfilePhotoService",
     "UpdatePhotoOrderService",
     "CurrentUser",
+    "AuthAPI"
 ]
 from .create_profile import CreateProfileService
 from .update_profile import UpdateProfileService
@@ -20,5 +21,5 @@ from .check_image import ValidImageFile
 from .add_photo import AddProfilePhotoService
 from .delete_photo import DeleteProfilePhotoService
 from .update_photo_order import UpdatePhotoOrderService
-from .auth import CurrentUser
+from .auth import CurrentUser, AuthAPI
 

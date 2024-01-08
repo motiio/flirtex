@@ -29,13 +29,13 @@ class GetMatchesUsecase(IUseCase):
             if not existent_profile:
                 raise ProfileNotFound
 
-            matche_profiles, pagination = await self._match_repo.get_match_profiles(
+            match_profiles, pagination = await self._match_repo.get_match_profiles(
                 profile_id=existent_profile.id,
                 limit=limit,
                 offset=offset,
                 order_by='-"match".created_at',
             )
             return (
-                MatchesOutDTO(profiles=cast(list[MatchProfileOutDTO], matche_profiles)),
+                MatchesOutDTO(profiles=cast(list[MatchProfileOutDTO], match_profiles)),
                 pagination,
             )
