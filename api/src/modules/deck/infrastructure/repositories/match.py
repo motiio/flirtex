@@ -61,7 +61,6 @@ class MatchRepository(
             )
             .where(ProfileORM.id != profile_id)
         )
-        print(q)
 
         total_count_query = select(func.count()).select_from(q)  # type: ignore
         total: int = (await self._db_session.execute(total_count_query)).scalar() or 0

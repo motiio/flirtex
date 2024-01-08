@@ -16,7 +16,7 @@ class MatchProfileOutDTO(BaseDTO):
     name: str = Field(..., alias="profile_name")
     bio: str | None = Field(..., alias="profile_bio")
     photo_url: str | None = Field(..., alias="profile_main_photo_url")
-    tg_user_name: str | None = Field(..., alias="user_tg_username")
+    tg_username: str | None = Field(..., alias="user_tg_username")
 
 
 class MatchesOutDTO(BaseDTO):
