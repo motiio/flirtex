@@ -26,7 +26,7 @@ job("Run on git push on ./api/") {
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
                      cd backend/api && \ 
                      git pull origin test &&\
-                     docker-compose up fastapi_app -d"
+                     docker-compose up -d fastapi_app"
             """
         }
     }
@@ -60,7 +60,7 @@ job("Run on git push on ./pg-db/") {
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
                      cd backend/api && \ 
                      git pull origin test &&\
-                     docker-compose up pg-db -d"
+                     docker-compose up -d pg-db"
             """
         }
     }
@@ -94,7 +94,7 @@ job("Run on git push on ./redis/") {
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
                      cd backend/api && \ 
                      git pull origin test &&\
-                     docker-compose up redis -d"
+                     docker-compose up -d redis"
             """
         }
     }
@@ -128,7 +128,7 @@ job("Run on git push on ./rabbitmq/") {
                     ${'$'}SSH_USER@${'$'}SERVER_IP "\
                      cd backend/api && \ 
                      git pull origin test &&\
-                     docker-compose up rabbitmq -d"
+                     docker-compose up -d rabbitmq"
             """
         }
     }
