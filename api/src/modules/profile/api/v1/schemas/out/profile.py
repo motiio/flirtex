@@ -20,10 +20,10 @@ class ReadProfileOutSchema(BaseSchema):
     photos: list[ReadPhotoOutSchema] | None
 
     # calculated fields
-    is_location: bool
+    has_location: bool
 
     @model_validator(mode="before")
     def pre_root(cls, values: dict[str, Any]) -> dict[str, Any]:
-        is_location = True if values.get("location") else False
-        values = values | {"is_location": is_location}
+        has_location = True if values.get("location") else False
+        values = values | {"has_location": has_location}
         return values
