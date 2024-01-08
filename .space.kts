@@ -1,14 +1,15 @@
-job("Run deploy on ./api/") {
-  //  startOn {
-  //      gitPush {
-  //          branchFilter {
-  //              +"refs/heads/test"
-  //          }
-  //          pathFilter {
-  //              +"/api"
-  //          }
-  //      }
-  //  }
+job("Run on git push on ./api/") {
+    startOn {
+        gitPush {
+            enabled = false,
+            branchFilter {
+                +"refs/heads/test"
+            }
+            pathFilter {
+                +"/api"
+            }
+        }
+    }
     host("Start deployment API to TEST server") {
         env["KEYBASE64"] = "{{ project:KEYBASE64 }}"
         env["SSH_USER"] = "{{ project:TEST_SSH_USER }}"
@@ -33,6 +34,17 @@ job("Run deploy on ./api/") {
 }
 
 job("Run on git push on ./pg-db/") {
+    startOn {
+        gitPush {
+            enabled = false,
+            branchFilter {
+                +"refs/heads/test"
+            }
+            pathFilter {
+                +"/pg-db"
+            }
+        }
+    }
     host("Start deployment api to PI") {
         env["KEYBASE64"] = "{{ project:KEYBASE64 }}"
         env["SSH_USER"] = "{{ project:TEST_SSH_USER }}"
@@ -57,6 +69,17 @@ job("Run on git push on ./pg-db/") {
 }
 
 job("Run on git push on ./redis/") {
+    startOn {
+        gitPush {
+            enabled = false,
+            branchFilter {
+                +"refs/heads/test"
+            }
+            pathFilter {
+                +"./redis/"
+            }
+        }
+    }
     host("Start deployment api to PI") {
         env["KEYBASE64"] = "{{ project:KEYBASE64 }}"
         env["SSH_USER"] = "{{ project:TEST_SSH_USER }}"
@@ -81,6 +104,17 @@ job("Run on git push on ./redis/") {
 }
 
 job("Run on git push on ./rabbitmq/") {
+    startOn {
+        gitPush {
+            enabled = false,
+            branchFilter {
+                +"refs/heads/test"
+            }
+            pathFilter {
+                +"./rabbitmq/"
+            }
+        }
+    }
     host("Start deployment api to PI") {
         env["KEYBASE64"] = "{{ project:KEYBASE64 }}"
         env["SSH_USER"] = "{{ project:TEST_SSH_USER }}"
