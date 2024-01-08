@@ -47,7 +47,7 @@ class JWTAuthFacade:
         return uuid
 
     @property
-    def table(self) -> Type[UserORM]:
+    def user_table(self) -> Type[UserORM]:
         return UserORM
 
     @classmethod
