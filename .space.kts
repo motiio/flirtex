@@ -39,7 +39,7 @@ job("Run on git push on ./pg-db/") {
                 +"refs/heads/test"
             }
             pathFilter {
-                +"./api/"
+                +"./pg-db/"
             }
         }
     }
@@ -107,7 +107,7 @@ job("Run on git push on ./rabbitmq/") {
                 +"refs/heads/test"
             }
             pathFilter {
-                +"./redis/"
+                +"./rabbitmq/"
             }
         }
     }

@@ -14,7 +14,7 @@ from src.modules.profile.domain.entities import Profile
 
 
 class CreateProfileRequestSchema(BaseSchema):
-    name: str = Field(max_length=32)
+    name: str = Field(max_length=14)
     birthdate: date
     gender: profile_enums.GenderEnum
     bio: str | None = Field("", max_length=600)
