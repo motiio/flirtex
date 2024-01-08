@@ -48,18 +48,18 @@ class MatchRepository(
                     ProfileORM.name.label("profile_name"),
                     ProfileORM.bio.label("profile_bio"),
                     PhotoORM.url.label("profile_main_photo_url"),
-                    AuthAPI.table.tg_username.label("user_tg_username"), # type: ignore
+                    AuthAPI.table.tg_username.label("user_tg_username"),  # type: ignore
                 ),
             )
             .join(
                 ProfileORM,
                 or_(ProfileORM.id == self._table.profile_1, ProfileORM.id == self._table.profile_2),
             )
-            .join(AuthAPI.table, ProfileORM.owner_id == AuthAPI.table.id) # type: ignore
+            .join(AuthAPI.table, ProfileORM.owner_id == AuthAPI.table.id)  # type: ignore
             .outerjoin(
                 PhotoORM, and_(ProfileORM.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1)
             )
-            .where(ProfileORM.id != profile_id)
+            .where(ProfileORM.id == profile_id)
         )
 
         total_count_query = select(func.count()).select_from(q)  # type: ignore
