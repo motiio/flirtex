@@ -16,7 +16,7 @@ from src.modules.profile.api.public.rest.v1.schemas.out import (
     ReadPhotoOutSchema,
     ReadProfileOutSchema,
 )
-from src.modules.profile.api.v1.schemas.update_photo_order import (
+from src.modules.profile.api.public.rest.v1.schemas.update_photo_order import (
     UpdatePhotoOrderRequest,
 )
 from src.modules.profile.application.dependencies import (
