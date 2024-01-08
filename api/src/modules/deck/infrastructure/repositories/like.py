@@ -95,7 +95,6 @@ class LikeRepository(
                 q = q.order_by(text(order_by))  # Используем как есть для asc сортировки
 
         q = q.offset(offset).limit(limit)
-        print(q)
 
         entries = (await self._db_session.execute(q)).scalars().all()
         return [self._entity.create(**entry.dict()) for entry in entries], Pagination(
