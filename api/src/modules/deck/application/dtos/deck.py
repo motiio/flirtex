@@ -13,7 +13,7 @@ from src.modules.profile.domain.entities.types import Location
 class DeckProfileOutDTO(BaseDTO):
     id: UUID
     name: str
-    bio: str
+    bio: str | None
     age: int
     gender: profile_enums.GenderEnum
     interests: list[InterestOutDTO] | None = None
