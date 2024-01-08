@@ -9,7 +9,6 @@ class Match(BaseEntity):
     id: UUID
     profile_1: UUID
     profile_2: UUID
-    # _banned: bool
 
     def __init__(self, id: UUID, profile_1: UUID, profile_2: UUID):
         self.id = id
@@ -34,3 +33,4 @@ class Match(BaseEntity):
             profile_2=profile_2,
         )
         return match
+

@@ -52,7 +52,7 @@ class ProfilePhoto(BaseEntity):
             profile_photo_id = uuid4()
 
         if url is None:
-            url = f"{profile_id}/photo/{id}.webp"
+            url = f"{profile_id}/photo/{profile_photo_id}.webp"
 
         photo = ProfilePhoto(
             id=profile_photo_id,

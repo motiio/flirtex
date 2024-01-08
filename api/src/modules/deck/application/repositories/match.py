@@ -4,6 +4,7 @@ from uuid import UUID
 from src.core.aio import IAsyncContextManagerRepository
 from src.core.types import Pagination
 from src.modules.deck.domain.entities import Match
+from src.modules.deck.domain.entities import MatchProfileDAE
 
 
 class IMatchRepository(IAsyncContextManagerRepository, ABC):
@@ -16,6 +17,8 @@ class IMatchRepository(IAsyncContextManagerRepository, ABC):
         self,
         *,
         profile_id: UUID,
+        limit: int = 30,
+        offset: int = 0,
         order_by: str | None = None,
-    ) -> tuple[list[Match], Pagination]:
+    ) -> tuple[list[MatchProfileDAE], Pagination]:
         ...

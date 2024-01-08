@@ -31,6 +31,8 @@ class GetMatchesUsecase(IUseCase):
 
             matche_profiles, pagination = await self._match_repo.get_match_profiles(
                 profile_id=existent_profile.id,
+                limit=limit,
+                offset=offset,
                 order_by='-"match".created_at',
             )
             return (

@@ -22,3 +22,4 @@ class LikeReactionProfileDTO(BaseDTO):
 
 class LikeReactionsDTO(BaseDTO):
     profiles: list[LikeReactionProfileDTO]
+    
