@@ -65,12 +65,11 @@ class MatchRepository(
             )
             .join(AuthAPI.user_table, p2.owner_id == AuthAPI.user_table.id)  # type: ignore
             .outerjoin(PhotoORM, and_(p2.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1))
-            .where(ProfileORM.id == profile_id)
+            .where(p1.id == profile_id)
         )
 
         total_count_query = select(func.count()).select_from(q)  # type: ignore
         total: int = (await self._db_session.execute(total_count_query)).scalar() or 0
-        print(q)
 
         # Добавляем сортировку, если параметр order_by предоставлен
         if order_by is not None:
