@@ -8,8 +8,8 @@ from src.core.types import Pagination
 from src.modules.deck.application.repositories import IMatchRepository
 from src.modules.deck.domain.entities import Match, MatchProfileDAE
 from src.modules.deck.infrastructure.models import MatchORM
-from src.modules.profile.infrastructure.models import PhotoORM, ProfileORM
 from src.modules.profile.application.dependencies import AuthAPI
+from src.modules.profile.infrastructure.models import PhotoORM, ProfileORM
 
 
 class MatchRepository(
