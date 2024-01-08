@@ -5,4 +5,5 @@ from fastapi import Depends
 
 from src.modules.auth.api.private.internal import JWTAuthFacade
 
-CurrentUser = Annotated[UUID, Depends(JWTAuthFacade.auth_user)]
+AuthAPI = JWTAuthFacade.create()
+CurrentUser = Annotated[UUID, Depends(AuthAPI.auth_user)]

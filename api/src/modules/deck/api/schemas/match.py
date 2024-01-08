@@ -10,6 +10,7 @@ class MatchOutSchema(BaseSchema):
     name: str
     bio: str | None
     photo_url: str | None
+    tg_username: str | None
 
 
 class MatchesOutSchema(BaseSchema):
