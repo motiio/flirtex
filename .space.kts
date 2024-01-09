@@ -6,7 +6,7 @@ job("Run on git push on ./api/") {
                 +"refs/heads/test"
             }
             pathFilter {
-                +"/api"
+                +"api/**"
             }
         }
     }
