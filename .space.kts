@@ -1,8 +1,8 @@
 job("Run on git push on ./api/") {
     startOn {
         gitPush {
-            enabled = false,
-            branchFilter {
+            enabled = true,
+            anyBranchMatching {
                 +"refs/heads/test"
             }
             pathFilter {
