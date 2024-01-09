@@ -41,6 +41,6 @@ class SkipUsecase(IUseCase):
                 return None
 
             skip_entitie = Skip.create(
-                source_profile=source_profile.id, target_profile=source_profile.id
+                source_profile=source_profile.id, target_profile=target_profile.id
             )
             _ = await self._skip_repo.create(in_entity=skip_entitie)
