@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
-from src.modules.deck.application.repositories import ISkipRepository
+from src.modules.deck.application.repositories import ISkipRepository, ILikeRepository
 from src.modules.deck.domain.entities import Skip
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound
@@ -13,8 +13,10 @@ class SkipUsecase(IUseCase):
         *,
         profile_repository: IProfileRepository,
         skip_repository: ISkipRepository,
+        like_repository: ILikeRepository,
     ):
         self._skip_repo: ISkipRepository = skip_repository
+        self._like_repo: ILikeRepository = like_repository
         self._profile_repo: IProfileRepository = profile_repository
 
     async def execute(  # type: ignore
@@ -33,6 +35,11 @@ class SkipUsecase(IUseCase):
 
             if not target_profile:
                 raise TargetProfileNotFound
+
+            _ = await self._like_repo.delete_by_target(
+                source_profile=source_profile.id,
+                target_profile=target_profile.id,
+            )
 
             my_skip = await self._skip_repo.get_skip_by_profiles(
                 target_profile=target_profile.id, source_profile=source_profile.id

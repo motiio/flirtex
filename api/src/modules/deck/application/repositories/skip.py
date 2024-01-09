@@ -17,5 +17,9 @@ class ISkipRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get(self, *, entity_id: UUID) -> Skip:
+    async def get(self, *, entity_id: UUID) -> Skip | None:
+        ...
+
+    @abstractmethod
+    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> Skip | None:
         ...

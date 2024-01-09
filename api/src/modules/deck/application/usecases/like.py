@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
-from src.modules.deck.application.repositories import ILikeRepository, IMatchRepository
+from src.modules.deck.application.repositories import ILikeRepository, IMatchRepository, ISkipRepository
 from src.modules.deck.domain.entities import Like, Match
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound
@@ -13,9 +13,11 @@ class LikeUsecase(IUseCase):
         *,
         profile_repository: IProfileRepository,
         like_repository: ILikeRepository,
+        skip_repository: ISkipRepository,
         match_repository: IMatchRepository,
     ):
         self._like_repo: ILikeRepository = like_repository
+        self._skip_repo: ISkipRepository = skip_repository
         self._match_repo: IMatchRepository = match_repository
         self._profile_repo: IProfileRepository = profile_repository
 
@@ -37,6 +39,13 @@ class LikeUsecase(IUseCase):
             my_like, his_like = await self._like_repo.get_likes_by_profiles(
                 target_profile=target_profile.id, source_profile=source_profile.id
             )
+
+
+            _ = await self._skip_repo.delete_by_target(
+                source_profile=source_profile.id,
+                target_profile=target_profile.id,
+            )
+
             # если лайк этому профилю уже был поставлен = выход
             if my_like:
                 return None

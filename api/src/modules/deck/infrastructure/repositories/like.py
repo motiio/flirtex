@@ -1,6 +1,6 @@
 from typing import Optional, Type
 
-from sqlalchemy import UUID, and_, case, desc, func, or_, select, text
+from sqlalchemy import UUID, and_, case, desc, func, or_, select, text, delete
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.core.types import Pagination
@@ -25,8 +25,19 @@ class LikeRepository(
     def _entity(self) -> Type[Like]:
         return Like
 
-    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> None:
-        ...
+    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> Like | None:
+        q = (
+            delete(self._table)
+            .where(
+                and_(
+                    self._table.source_profile == source_profile,
+                    self._table.target_profile == target_profile,
+                )
+            )
+            .returning(self._table)
+        )
+        result = (await self._db_session.execute(q)).scalars().one()
+        return self._entity.create(**result.dict())
 
     async def get_likes_by_profiles(
         self, *, target_profile: UUID, source_profile: UUID
