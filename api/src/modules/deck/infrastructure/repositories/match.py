@@ -78,6 +78,7 @@ class MatchRepository(
             else:
                 q = q.order_by(text(order_by))  # Используем как есть для asc сортировки
 
+        q = q.offset(offset).limit(limit)
         entries = await self._db_session.execute(q)
         return [
             self._match_profile_dae.create(**entry.match_profile_dae) for entry in entries
