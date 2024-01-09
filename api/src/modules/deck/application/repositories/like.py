@@ -23,7 +23,11 @@ class ILikeRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get(self, *, entity_id: UUID) -> Like:
+    async def get(self, *, entity_id: UUID) -> Like | None:
+        ...
+
+    @abstractmethod
+    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> None:
         ...
 
     @abstractmethod

@@ -25,6 +25,9 @@ class LikeRepository(
     def _entity(self) -> Type[Like]:
         return Like
 
+    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> None:
+        ...
+
     async def get_likes_by_profiles(
         self, *, target_profile: UUID, source_profile: UUID
     ) -> tuple[Like | None, Like | None]:
