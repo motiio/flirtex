@@ -6,7 +6,7 @@ from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepos
 from src.core.types import Pagination
 from src.modules.deck.application.repositories import ILikeRepository
 from src.modules.deck.domain.entities import Like
-from src.modules.deck.infrastructure.models import LikeORM, MatchORM
+from src.modules.deck.infrastructure.models import LikeORM, MatchORM, SkipORM
 from src.modules.profile.infrastructure.models import ProfileORM
 
 
@@ -82,7 +82,19 @@ class LikeRepository(
                     ),
                 ),
             )
-            .where(and_(self._table.target_profile == target_profile_id, MatchORM.id.is_(None)))
+            .outerjoin(
+                SkipORM,
+                and_(
+                    SkipORM.target_profile == self._table.source_profile,
+                    SkipORM.source_profile == self._table.target_profile,
+                ),
+            )
+            .where(
+                and_(
+                    and_(self._table.target_profile == target_profile_id, MatchORM.id.is_(None)),
+                    SkipORM.id.is_(None),
+                )
+            )
         )
         total_count_query = select(func.count()).select_from(q)  # type: ignore
         total: int = (await self._db_session.execute(total_count_query)).scalar() or 0
