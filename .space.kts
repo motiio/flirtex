@@ -1,7 +1,7 @@
 job("Run on git push on ./api/") {
     startOn {
         gitPush {
-            enabled = true,
+            enabled = true
             anyBranchMatching {
                 +"refs/heads/test"
             }
@@ -36,7 +36,7 @@ job("Run on git push on ./api/") {
 job("Run on git push on ./pg-db/") {
     startOn {
         gitPush {
-            enabled = false,
+            enabled = false
             branchFilter {
                 +"refs/heads/test"
             }
@@ -71,7 +71,7 @@ job("Run on git push on ./pg-db/") {
 job("Run on git push on ./redis/") {
     startOn {
         gitPush {
-            enabled = false,
+            enabled = false
             branchFilter {
                 +"refs/heads/test"
             }
@@ -106,7 +106,7 @@ job("Run on git push on ./redis/") {
 job("Run on git push on ./rabbitmq/") {
     startOn {
         gitPush {
-            enabled = false,
+            enabled = false
             branchFilter {
                 +"refs/heads/test"
             }
