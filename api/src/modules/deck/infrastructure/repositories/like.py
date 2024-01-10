@@ -36,8 +36,10 @@ class LikeRepository(
             )
             .returning(self._table)
         )
-        result = (await self._db_session.execute(q)).scalars().one()
-        return self._entity.create(**result.dict())
+        result = (await self._db_session.execute(q)).scalars().first()
+        if result:
+         return self._entity.create(**result.dict())
+        return None
 
     async def get_likes_by_profiles(
         self, *, target_profile: UUID, source_profile: UUID
