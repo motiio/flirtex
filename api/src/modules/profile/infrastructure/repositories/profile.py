@@ -26,11 +26,10 @@ class ProfileRepository(
     def _entity(self) -> Type[Profile]:
         return Profile
 
-    async def get(self, *, entity_id: UUID) -> Profile| None:
+    async def get(self, *, entity_id: UUID) -> Profile | None:
         q = (
             select(self._table)
-            .where(self._table.id == entity_id)
-            .options(selectinload(self._table.interests))
+            .where(self._table.id == entity_id).options(selectinload(self._table.interests))
         )
         result = (await self._db_session.execute(q)).scalars().first()
         if result:
@@ -41,11 +40,10 @@ class ProfileRepository(
             entity.add_photos([ProfilePhoto.create(**photo.dict()) for photo in result.photos])
 
             entity.put_location(location=result.dict_location)
+            entity.put_tg_username(tg_username=result.owner.tg_username)
             return entity
 
         return None
-
-
 
     async def create(self, *, in_entity: Profile) -> Profile:
         q = (
@@ -59,6 +57,7 @@ class ProfileRepository(
                         "location",
                         "wkt_point",
                         "distance",
+                        "tg_username",
                     }
                 ),
             )

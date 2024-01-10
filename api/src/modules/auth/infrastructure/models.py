@@ -1,9 +1,11 @@
 from typing import Optional
 
 from sqlalchemy import UUID, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models import BaseModel, TimeStampMixin
+
+# from src.modules.profile.infrastructure.models import ProfileORM
 
 
 class UserORM(BaseModel, TimeStampMixin):
@@ -16,7 +18,7 @@ class UserORM(BaseModel, TimeStampMixin):
     tg_is_premium: Mapped[Optional[bool]] = mapped_column(default=False)
     tg_language_code: Mapped[Optional[str]] = mapped_column(nullable=True)
 
-    # profile: Mapped["Profile"] = relationship(back_populates="owner")  # type: ignore # noqa
+    profiles: Mapped["ProfileORM"] = relationship("ProfileORM", back_populates="owner")  # type: ignore # noqa
 
     def __repr__(self) -> str:
         return f"User[{self.id=}, {self.tg_id=}, {self.tg_username=}]"

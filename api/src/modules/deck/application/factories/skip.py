@@ -1,6 +1,6 @@
 from src.config.database import DbSession
 from src.modules.deck.application.usecases import SkipUsecase
-from src.modules.deck.infrastructure.repositories import SkipRepository, LikeRepository
+from src.modules.deck.infrastructure.repositories import LikeRepository, SkipRepository
 from src.modules.profile.infrastructure.repositories.profile import ProfileRepository
 
 

@@ -3,8 +3,7 @@ from uuid import UUID
 
 from src.core.aio import IAsyncContextManagerRepository
 from src.core.types import Pagination
-from src.modules.deck.domain.entities import Match
-from src.modules.deck.domain.entities import MatchProfileDAE
+from src.modules.deck.domain.entities import Match, MatchProfileDAE
 
 
 class IMatchRepository(IAsyncContextManagerRepository, ABC):

@@ -9,7 +9,7 @@ from src.config.settings import settings
 
 def create_redis_pool():
     return aioredis.ConnectionPool.from_url(
-        url=settings.REDIS_HOST, port=6379, db=0, decode_responses=True
+        url=settings.REDIS_HOST.unicode_string(), port=6379, db=0, decode_responses=True
     )
 
 

@@ -9,8 +9,12 @@ __all__ = [
     "MatchOutDTO",
     "LikeReactionsDTO",
     "LikeReactionProfileDTO",
+    "MatchMessageDTO",
+    "SkipMessageDTO",
+    "LikeMessageDTO"
 ]
 from .filter import FilterOutDTO, FilterInCreateDTO, FilterInUpdateDTO
 from .deck import DeckBatchOutDTO, DeckProfileOutDTO
-from .match import MatchProfileOutDTO, MatchesOutDTO, MatchOutDTO
-from .like import LikeReactionsDTO, LikeReactionProfileDTO
+from .match import MatchProfileOutDTO, MatchesOutDTO, MatchOutDTO, MatchMessageDTO
+from .like import LikeReactionsDTO, LikeReactionProfileDTO, LikeMessageDTO
+from .skip import SkipMessageDTO

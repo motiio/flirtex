@@ -1,6 +1,6 @@
 from typing import Optional, Type
 
-from sqlalchemy import UUID, and_, case, desc, func, or_, select, text, delete
+from sqlalchemy import UUID, and_, case, delete, desc, func, or_, select, text
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.core.types import Pagination

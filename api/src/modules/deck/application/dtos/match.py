@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 
 from src.core.dtos import BaseDTO
 
@@ -21,3 +21,12 @@ class MatchProfileOutDTO(BaseDTO):
 
 class MatchesOutDTO(BaseDTO):
     profiles: list[MatchProfileOutDTO]
+
+
+class MatchMessageDTO(BaseDTO):
+    match_id: UUID
+    profile_id: UUID = Field(validation_alias=AliasChoices("profile_id", "id"))
+    name: str | None
+    bio: str | None
+    # photo_url: str | None = Field(..., alias="profile_main_photo_url")
+    tg_username: str | None

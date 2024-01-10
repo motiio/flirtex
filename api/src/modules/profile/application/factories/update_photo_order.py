@@ -1,5 +1,5 @@
 from src.config.database import DbSession
-from src.modules.profile.application.usecases.update_photo_order import (
+from src.modules.profile.application.usecases import (
     UpdatePhotoOrderUsecase,
 )
 from src.modules.profile.infrastructure.repositories import (

@@ -23,7 +23,7 @@ class IProfileRepository(IAsyncContextManagerRepository, ABC):
         ...
 
     @abstractmethod
-    async def get(self, *, entity_id: UUID) -> Profile:
+    async def get(self, *, entity_id: UUID) -> Profile | None:
         ...
 
     @abstractmethod

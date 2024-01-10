@@ -3,10 +3,11 @@ job("Run on git push on ./api/") {
         gitPush {
             enabled = true
             anyBranchMatching {
-                +"refs/heads/test"
+                +"test"
             }
             pathFilter {
-                +"api/**"
+                +"backend/api/**"
+                -"backend/api/pyproject.toml"
             }
         }
     }

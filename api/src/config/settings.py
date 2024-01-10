@@ -3,6 +3,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Optional
 
+from pydantic import AliasChoices, Field, PostgresDsn, RedisDsn
 from pydantic_settings import BaseSettings
 
 
@@ -22,7 +23,7 @@ class GlobalConfig(BaseSettings):
 
     BOT_TOKEN: str
 
-    DATABASE_URI: str
+    DATABASE_URI: PostgresDsn
     DATABASE_ENGINE_POOL_SIZE: int = 5
     DATABASE_ENGINE_MAX_OVERFLOW: int = 10
 
@@ -44,13 +45,18 @@ class GlobalConfig(BaseSettings):
     MIN_FILTER_DISTANCE: int = 5
     MAX_FILTER_DISTANCE: int = 100
 
-    REDIS_HOST: str
+    REDIS_HOST: RedisDsn
     DECK_REDIS_DB: int = 0
     DECK_TTL_S: int = 3600
     DECK_BATCH_SIZE: int = 5
 
     RABBITMQ_URL: str
-    RABBITMQ_MATCH_QUEUE: str
+    RABBITMQ_ACTION_NOTIFIER_URL: str = Field(
+        validation_alias=AliasChoices("RABBITMQ_ACTION_NOTIFIER_URL", "RABBITMQ_URL")
+    )
+    RABBITMQ_ACTION_NOTIFIER_QUEUE: str = Field(
+        validation_alias=AliasChoices("RABBITMQ_ACTION_NOTIFIER_QUEUE", "RABBITMQ_QUEUE")
+    )
 
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")

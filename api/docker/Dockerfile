@@ -1,3 +1,4 @@
+
 # Dockerfile
 # Uses multi-stage builds requiring Docker 17.05 or higher
 # See https://docs.docker.com/develop/develop-images/multistage-build/
@@ -19,14 +20,15 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 # builder-base is used to build dependencies
 FROM python-base AS builder-base
-RUN buildDeps="build-essential curl vim netcat" \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends $buildDeps \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential curl vim netcat \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
 ENV POETRY_VERSION=1.5.0
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION}
+
+# Verify Poetry installation
+RUN poetry --version
 
 # Copying Python requirements for caching
 WORKDIR $PYSETUP_PATH
@@ -50,7 +52,6 @@ WORKDIR /api
 COPY ./src/ ./src/
 
 EXPOSE 8080
-RUN apt update && apt install vim -y && apt install telnet -y
 
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]

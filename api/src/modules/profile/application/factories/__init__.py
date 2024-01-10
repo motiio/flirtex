@@ -9,9 +9,7 @@ __all__ = [
     "delete_profile_photo_service_factory",
     "update_photo_order_service_factory",
 ]
-from .create_profile import (
-    create_profile_service_factory,
-)
+from .create_profile import create_profile_service_factory
 from .update_profile import update_profile_service_factory
 from .get_profile import get_profile_service_factory
 from .get_profile_by_id import get_profile_by_id_service_factory

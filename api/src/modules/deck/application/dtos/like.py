@@ -22,4 +22,12 @@ class LikeReactionProfileDTO(BaseDTO):
 
 class LikeReactionsDTO(BaseDTO):
     profiles: list[LikeReactionProfileDTO]
-    
+
+
+class LikeMessageDTO(BaseDTO):
+    id: UUID
+    name: str
+    age: int
+    gender: profile_enums.GenderEnum
+    photos: Optional[list[PhotoOutDTO]]
+

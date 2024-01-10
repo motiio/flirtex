@@ -10,6 +10,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 import src.modules.profile.domain.entities.types as types
 from src.core.models import BaseModel, TimeStampMixin
+from src.modules.auth.api.private.internal.v1 import AuthAPI
+from src.modules.auth.infrastructure.models import UserORM
 from src.modules.profile.application.utils.enums import (
     GenderEnum,
     PhotoProcessStatusEnum,
@@ -52,6 +54,7 @@ class ProfileORM(BaseModel, TimeStampMixin):
     photos: Mapped[list["PhotoORM"]] = relationship(
         back_populates="profile", lazy="selectin", order_by="PhotoORM.displaying_order"
     )
+    owner: Mapped["UserORM"] = relationship(AuthAPI.user_table, back_populates="profiles", lazy="selectin")
 
     location: Mapped["WKBElement"] = mapped_column(
         Geometry(geometry_type="POINT", srid=4326), nullable=True

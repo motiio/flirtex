@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy import UUID, select, delete, and_
+from sqlalchemy import UUID, and_, delete, select
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.modules.deck.application.repositories import ISkipRepository

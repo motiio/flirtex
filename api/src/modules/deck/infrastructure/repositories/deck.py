@@ -7,7 +7,7 @@ from src.modules.deck.application.repositories.deck import IDeckRepository
 
 
 class DeckRepository(
-    BaseSqlAlchemyRepository[
+    BaseSqlAlchemyRepository[  # type: ignore
         None,  # type: ignore
         None,
     ],

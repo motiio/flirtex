@@ -13,13 +13,14 @@ from .interest import Interest
 class Profile(BaseEntity):
     id: UUID
     name: str
-    bio: str | None
     birthdate: date
     gender: int
     interests: list[Interest]
     photos: list[ProfilePhoto]
     owner_id: UUID
-    location: types.Location | None
+    bio: str | None = None
+    location: types.Location | None = None
+    tg_username: str | None = None
 
     # _banned: bool
 
@@ -81,6 +82,9 @@ class Profile(BaseEntity):
 
     def put_location(self, *, location: types.Location | None):
         self.location = location
+
+    def put_tg_username(self, *, tg_username: str | None):
+        self.tg_username = tg_username
 
     @classmethod
     def _calculate_age(cls, *, birthdate: date) -> int:

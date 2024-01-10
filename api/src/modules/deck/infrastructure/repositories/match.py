@@ -1,15 +1,15 @@
 from typing import Type
 
-from sqlalchemy import UUID, and_, desc, func, label, or_, select, text
+from sqlalchemy import UUID, and_, desc, func, or_, select, text
 from sqlalchemy.orm import aliased
 
 from src.core.orm import DictBundle
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.core.types import Pagination
+from src.modules.auth.api.private.internal.v1 import AuthAPI
 from src.modules.deck.application.repositories import IMatchRepository
 from src.modules.deck.domain.entities import Match, MatchProfileDAE
 from src.modules.deck.infrastructure.models import MatchORM
-from src.modules.profile.application.dependencies import AuthAPI
 from src.modules.profile.infrastructure.models import PhotoORM, ProfileORM
 
 
