@@ -3,7 +3,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Optional
 
-from pydantic import AliasChoices, BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field, RedisDsn
 from pydantic_settings import BaseSettings
 
 
@@ -11,9 +11,11 @@ class EnvironmentEnum(str, Enum):
     PRODUCTION = "production"
     LOCAL = "local"
 
+
 class SubModel(BaseModel):
-    foo: str = 'bar'
+    foo: str = "bar"
     apple: int = 1
+
 
 class GlobalConfig(BaseSettings):
     APP_VERSION: str = "0.1"
@@ -23,10 +25,13 @@ class GlobalConfig(BaseSettings):
 
     JWT_SECRET: str
 
-    RABBITMQ_URL: str = Field(validation_alias=AliasChoices("RABBITMQ_URL"))
-    RABBITMQ_QUEUE: str = Field(validation_alias=AliasChoices("RABBITMQ_QUEUE"))
-    IS_DURABLE: bool = True
-    X_DEAD_LETTER_ROUTING_KEY: str
+    REDIS_HOST: RedisDsn = Field(validation_alias=AliasChoices("REDIS_HOST", "REDIS_URL"))
+    NOTIFIER_REDIS_DB: int = Field(
+        validation_alias=AliasChoices("NOTIFIER_REDIS_DB", "REDIS_DB")
+    )
+    STREAM_TTL_S: int = Field(
+        1_209_600, validation_alias=AliasChoices("NOTIFIER_REDIS_DB", "REDIS_DB")
+    )
 
     class Config:
         env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")

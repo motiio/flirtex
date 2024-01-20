@@ -1,21 +1,63 @@
-import json
+import asyncio
 
+import redis
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from jose import JWTError
 
-from src.config.rabbitmq import rabbitmq_connection
+from src.config.redis import RedisSession
 from src.modules.auth import check_token_signature
 
 ws_router = APIRouter()
 
-ws_connections: dict[str, WebSocket] = {}
+
+async def send_messages_from_redis_stream(
+    *, r, stream_name, group_name, consumer_name, websocket, last_id="0"
+):
+    try:
+        await r.xgroup_create(stream_name, group_name, id=last_id, mkstream=True)
+    except redis.ResponseError as e:
+        if not str(e).startswith("BUSYGROUP Consumer Group name already exists"):
+            raise
+    # Первоначальная загрузка всех непрочитанных сообщений
+    while True:
+        streams = await r.xreadgroup(
+            group_name, consumer_name, {stream_name: last_id}, count=10, block=1000
+        )
+        if not streams:
+            break  # Если нет непрочитанных сообщений, выходим из цикла
+        for _, messages in streams:
+            for message_id, message in messages:
+                await websocket.send_json(message)
+                last_id = message_id
+
+    # Переход к чтению новых сообщений
+    last_id = ">"
+    while True:
+        streams = await r.xreadgroup(
+            group_name, consumer_name, {stream_name: last_id}, count=1, block=1000
+        )
+        for _, messages in streams:
+            for message_id, message in messages:
+                await websocket.send_json(message)
+                last_id = message_id
+
+
+async def delete_message_id_from_stream(
+    websocket: WebSocket, stream_name, r, group_name
+):
+    while True:
+        try:
+            # Receive message ID from client
+            message_id_to_delete = await websocket.receive_text()
+            # Delete the message ID from the stream
+            await r.xack(stream_name, group_name, message_id_to_delete)
+            await r.xdel(stream_name, message_id_to_delete)
+        except WebSocketDisconnect:
+            break
 
 
 @ws_router.websocket("/ws")
-async def websocket_endpoint(
-    websocket: WebSocket,
-    access_token: str,
-):
+async def websocket_endpoint(websocket: WebSocket, access_token: str, r: RedisSession):
     await websocket.accept()
     try:
         _, data = check_token_signature(token=access_token)
@@ -23,32 +65,25 @@ async def websocket_endpoint(
         await websocket.close(code=1008, reason="Invalid token")
         return
 
-    user_id_str: str = data.get("sub")
-    ws_connections[user_id_str] = websocket
+    stream_name: str = data.get("sub") #type: ignore
+    group_name: str = "notifier_service_group"
+    consumer_name: str = "notifier_service"
+
     try:
-        if not rabbitmq_connection.queue:
-            await websocket.close(code=1011, reason="Source init error")
-
-        async with rabbitmq_connection.queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                async with message.process(
-                    requeue=True
-                ):  # Управление подтверждением вручную
-                    kwargs = message.body.decode()
-
-                    # Парсим строку JSON в словарь Python
-                    message_dict = json.loads(kwargs)
-
-                    # Извлекаем поле 'message'
-                    message_content = message_dict.get("kwargs", {}).get(
-                        "message", "{}"
-                    )
-
-                    # Парсим строку JSON в словарь Python
-                    message = json.loads(message_content)
-                    if user_id_str == message.get("recipient"):
-                        await ws_connections[user_id_str].send_json(message)
-                        await message.ack()
-
-    except WebSocketDisconnect:
-        ws_connections.pop(user_id_str, None)  # Безопасное удаление
+        del_mesagges_task = asyncio.create_task(
+            delete_message_id_from_stream(
+                websocket=websocket, r=r, stream_name=stream_name, group_name=group_name
+            )
+        )
+        send_message_task = asyncio.create_task(
+            send_messages_from_redis_stream(
+                websocket=websocket,
+                r=r,
+                stream_name=stream_name,
+                group_name=group_name,
+                consumer_name=consumer_name,
+            )
+        )
+        await asyncio.gather(del_mesagges_task, send_message_task)
+    finally:
+        await websocket.close()
