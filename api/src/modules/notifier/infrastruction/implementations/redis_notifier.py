@@ -1,4 +1,3 @@
-
 from src.config.settings import settings
 from src.core.repositories.implementations.redis import BaseRedisRepository
 from src.modules.notifier.application.domain.entities import BaseMessage

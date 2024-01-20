@@ -1,0 +1,9 @@
+http {
+  # redirect http -> https
+  server {
+    listen 80
+      server_name $APP_DOMAINS
+      return 301 https://$host$request_url
+  }
+
+}

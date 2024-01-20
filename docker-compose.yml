@@ -32,8 +32,10 @@ services:
     image: redis:latest
     networks:
       - flirtex-network
+    ports:
+      - 6379:6379
 
-  fastapi_app:
+  api:
     build:
       context: ./api
       dockerfile: ./docker/Dockerfile
@@ -43,12 +45,28 @@ services:
       - rabbitmq
       - pg-db
       - redis
-    environment:
-      - ENVIRONMENT=production
+    env_file:
+      - ./api/docker/.env
     volumes:
       - ./api:/api
     networks:
       - flirtex-network
+        
+  notifier:
+    build:
+      context: ./notifier
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      - api
+    env_file:
+      - ./notifier/docker/.env
+    volumes:
+      - ./notifier:/notifier
+    networks:
+      - flirtex-network
+
 
 networks:
   flirtex-network:

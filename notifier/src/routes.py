@@ -1,11 +1,10 @@
 import asyncio
-
-import redis
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from jose import JWTError
+from src.modules.auth import check_token_signature
 
 from src.config.redis import RedisSession
-from src.modules.auth import check_token_signature
+import redis
 
 ws_router = APIRouter()
 
@@ -14,7 +13,7 @@ async def send_messages_from_redis_stream(
     *, r, stream_name, group_name, consumer_name, websocket, last_id="0"
 ):
     try:
-        await r.xgroup_create(stream_name, group_name, id=last_id, mkstream=True)
+        await r.xgroup_create(stream_name, group_name, id="0", mkstream=True)
     except redis.ResponseError as e:
         if not str(e).startswith("BUSYGROUP Consumer Group name already exists"):
             raise
@@ -38,8 +37,11 @@ async def send_messages_from_redis_stream(
         )
         for _, messages in streams:
             for message_id, message in messages:
+                print(message)
                 await websocket.send_json(message)
+                print(last_id)
                 last_id = message_id
+                print(last_id)
 
 
 async def delete_message_id_from_stream(
@@ -48,10 +50,18 @@ async def delete_message_id_from_stream(
     while True:
         try:
             # Receive message ID from client
-            message_id_to_delete = await websocket.receive_text()
+            response = await websocket.receive_json()
             # Delete the message ID from the stream
-            await r.xack(stream_name, group_name, message_id_to_delete)
-            await r.xdel(stream_name, message_id_to_delete)
+            print(response)
+            if (message_id := response.get("message_id")) is None:
+                continue
+            print(message_id)
+            action=response.get("action", 'ack')
+            print(action)
+            await r.xack(stream_name, group_name, message_id)
+            if action == 'del':
+                await r.xdel(stream_name, message_id)
+
         except WebSocketDisconnect:
             break
 
@@ -65,11 +75,12 @@ async def websocket_endpoint(websocket: WebSocket, access_token: str, r: RedisSe
         await websocket.close(code=1008, reason="Invalid token")
         return
 
-    stream_name: str = data.get("sub") #type: ignore
+    stream_name: str = data.get("sub")
     group_name: str = "notifier_service_group"
     consumer_name: str = "notifier_service"
 
     try:
+        print(0)
         del_mesagges_task = asyncio.create_task(
             delete_message_id_from_stream(
                 websocket=websocket, r=r, stream_name=stream_name, group_name=group_name
@@ -84,6 +95,8 @@ async def websocket_endpoint(websocket: WebSocket, access_token: str, r: RedisSe
                 consumer_name=consumer_name,
             )
         )
+        print(1)
         await asyncio.gather(del_mesagges_task, send_message_task)
+        print(2)
     finally:
         await websocket.close()

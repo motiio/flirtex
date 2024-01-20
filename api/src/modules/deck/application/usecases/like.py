@@ -77,7 +77,6 @@ class LikeUsecase(IUseCase):
             if not his_like:
                 await self._action_notification_service.execute(
                     message=LikeMessage(
-                        message_type="like",
                         recipient=str(target_profile.owner_id),
                         detail=LikeMessageDTO(**source_profile.model_dump()),
                     ),
@@ -90,7 +89,6 @@ class LikeUsecase(IUseCase):
 
             await self._action_notification_service.execute(
                 message=MatchMessage(
-                    message_type="match",
                     recipient=str(target_profile.owner_id),
                     detail=MatchMessageDTO(match_id=match.id, **source_profile.model_dump()),
                 ),
@@ -99,10 +97,9 @@ class LikeUsecase(IUseCase):
 
             await self._action_notification_service.execute(
                 message=MatchMessage(
-                    message_type="match",
                     recipient=str(source_profile.owner_id),
                     detail=MatchMessageDTO(match_id=match.id, **target_profile.model_dump()),
-                ).model_dump_json(),
+                ),
                 stream_name=str(source_profile.owner_id),
             )
 
