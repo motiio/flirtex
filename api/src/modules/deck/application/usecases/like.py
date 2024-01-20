@@ -8,12 +8,9 @@ from src.modules.deck.application.repositories import (
     IMatchRepository,
     ISkipRepository,
 )
-from src.modules.deck.application.utils.notificators import (
-    LikeMessage,
-    MatchMessage,
-    action_notifier,
-)
 from src.modules.deck.domain.entities import Like, Match
+from src.modules.notifier.application.domain.entities import LikeMessage, MatchMessage
+from src.modules.notifier.application.domain.entities.de.message import MatchMessage
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound
 
@@ -26,11 +23,21 @@ class LikeUsecase(IUseCase):
         like_repository: ILikeRepository,
         skip_repository: ISkipRepository,
         match_repository: IMatchRepository,
+        action_notification_service: IUseCase,
     ):
         self._like_repo: ILikeRepository = like_repository
         self._skip_repo: ISkipRepository = skip_repository
         self._match_repo: IMatchRepository = match_repository
         self._profile_repo: IProfileRepository = profile_repository
+        self._action_notification_service: IUseCase = action_notification_service
+
+    async def _make_match(self, *, like_1: Like, like_2: Like) -> Match:
+        match_entitie = Match.create(
+            profile_1=like_1.source_profile, profile_2=like_2.source_profile
+        )
+
+        match = await self._match_repo.create(in_entity=match_entitie)
+        return match
 
     async def execute(  # type: ignore
         self,
@@ -65,29 +72,37 @@ class LikeUsecase(IUseCase):
                 source_profile=source_profile.id, target_profile=target_profile.id
             )
             my_like = await self._like_repo.create(in_entity=like_entitie)
-            action_notifier.send(
-                message=LikeMessage(
-                    message_type="like",
-                    recipient=target_profile.id,
-                    detail=LikeMessageDTO(**source_profile.model_dump()),
-                ).model_dump_json()
-            )
 
-            # Если лайк тебе не был поставлен, то выход
+            # Если лайк тебе не был поставлен, то шлем уведомление и выходим
             if not his_like:
+                await self._action_notification_service.execute(
+                    message=LikeMessage(
+                        message_type="like",
+                        recipient=str(target_profile.owner_id),
+                        detail=LikeMessageDTO(**source_profile.model_dump()),
+                    ),
+                    stream_name=str(target_profile.owner_id),
+                )
                 return None
 
-            # если также был найден лайк, который поставлен тебе, то это Match
-            match_entitie = Match.create(
-                profile_1=my_like.source_profile, profile_2=his_like.source_profile
-            )
+                # если также был найден лайк, который поставлен тебе, то это Match
+            match = await self._make_match(like_1=my_like, like_2=his_like)
 
-            match = await self._match_repo.create(in_entity=match_entitie)
-
-            action_notifier.send(
+            await self._action_notification_service.execute(
                 message=MatchMessage(
                     message_type="match",
-                    recipient=target_profile.id,
+                    recipient=str(target_profile.owner_id),
                     detail=MatchMessageDTO(match_id=match.id, **source_profile.model_dump()),
-                ).model_dump_json()
+                ),
+                stream_name=str(target_profile.owner_id),
             )
+
+            await self._action_notification_service.execute(
+                message=MatchMessage(
+                    message_type="match",
+                    recipient=str(source_profile.owner_id),
+                    detail=MatchMessageDTO(match_id=match.id, **target_profile.model_dump()),
+                ).model_dump_json(),
+                stream_name=str(source_profile.owner_id),
+            )
+

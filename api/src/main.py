@@ -4,10 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory
-from src.config.redis import create_redis_pool
 from src.config.s3 import create_s3_session
 from src.config.settings import settings
-from src.core.middlewares import DatabaseMiddleware, RedisMiddleware
+from src.core.middlewares import DatabaseMiddleware
 from src.modules.auth.api.public.rest import auth_router_v1
 from src.modules.common.api import common_router_v1
 from src.modules.deck.api import deck_router_v1
@@ -40,8 +39,6 @@ api.add_middleware(
     DatabaseMiddleware,
     session_factory=async_session_factory,
 )
-
-api.add_middleware(RedisMiddleware, redis_pool=create_redis_pool())
 
 
 @api.middleware("http")

@@ -1,0 +1,14 @@
+{
+  "queue_name": "math_queue",
+  "actor_name": "action_notifier",
+  "args": [],
+  "kwargs": {
+    "message": "{\"recipient\":\"c2f0857a-8a2e-46dc-b301-39eab86a8658\",\"message_type\":\"like\",\"detail\":{\"id\":\"28a5bbd3-0a7e-432a-8207-7a06c071c61f\",\"name\":\"\u043f\u0430\u043d\u0442\u043e\u0432\",\"age\":31,\"gender\":1,\"photos\":[{\"id\":\"046d1977-83b6-4150-96c9-5100877c87a7\",\"displaying_order\":1,\"url\":\"28a5bbd3-0a7e-432a-8207-7a06c071c61f/photo/046d1977-83b6-4150-96c9-5100877c87a7.webp\"},{\"id\":\"9ac7a079-c8c0-4233-b2da-347e0d0fa62b\",\"displaying_order\":2,\"url\":\"28a5bbd3-0a7e-432a-8207-7a06c071c61f/photo/None.webp\"}]}}",
+    "headers": {
+      "recipient": "c2f0857a-8a2e-46dc-b301-39eab86a8658"
+    }
+  },
+  "options": {},
+  "message_id": "0929739c-7a15-447d-a4ab-773cd42b438e",
+  "message_timestamp": 1705170062857
+}

@@ -45,17 +45,14 @@ class GlobalConfig(BaseSettings):
     MIN_FILTER_DISTANCE: int = 5
     MAX_FILTER_DISTANCE: int = 100
 
-    REDIS_HOST: RedisDsn
-    DECK_REDIS_DB: int = 0
+    REDIS_DECK_URL: RedisDsn
+    REDIS_NOTIFIER_URL: RedisDsn
+    REDIS_DECK_DB: int = Field(0, validation_alias=AliasChoices("REDIS_DECK_DB"))
     DECK_TTL_S: int = 3600
     DECK_BATCH_SIZE: int = 5
-
-    RABBITMQ_URL: str
-    RABBITMQ_ACTION_NOTIFIER_URL: str = Field(
-        validation_alias=AliasChoices("RABBITMQ_ACTION_NOTIFIER_URL", "RABBITMQ_URL")
-    )
-    RABBITMQ_ACTION_NOTIFIER_QUEUE: str = Field(
-        validation_alias=AliasChoices("RABBITMQ_ACTION_NOTIFIER_QUEUE", "RABBITMQ_QUEUE")
+    REDIS_NOTIFIER_DB: int = Field(1, validation_alias=AliasChoices("REDIS_NOTIFIER_DB"))
+    REDIS_STREAM_TTL_S: int = Field(
+        1_209_600, validation_alias=AliasChoices("REDIS_STREAM_TTL_S", "STREAM_TTL")
     )
 
     class Config:

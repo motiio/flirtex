@@ -53,3 +53,4 @@ class JWTAuthFacade:
     @classmethod
     def create(cls) -> "JWTAuthFacade":
         return cls()
+

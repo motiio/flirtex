@@ -1,21 +1,33 @@
+from functools import partial
 from typing import Annotated
 
 from fastapi import Depends
+from pydantic import RedisDsn
 from redis import asyncio as aioredis
-from starlette.requests import Request
 
 from src.config.settings import settings
 
 
-def create_redis_pool():
-    return aioredis.ConnectionPool.from_url(
-        url=settings.REDIS_HOST.unicode_string(), port=6379, db=0, decode_responses=True
+def create_redis_pool(*, redis_url: RedisDsn):
+    conn = aioredis.ConnectionPool.from_url(
+        url=redis_url.unicode_string(),
     )
+    return conn
 
+redis_deck_pool = create_redis_pool(redis_url=settings.REDIS_DECK_URL)
+redis_notifier_pool = create_redis_pool(redis_url=settings.REDIS_NOTIFIER_URL)
 
-async def get_deck_redis(request: Request):
-    await request.state.redis.select(settings.DECK_REDIS_DB)
-    return request.state.redis
+async def get_redis_connection(pool: aioredis.ConnectionPool):
+    try:
+        redis = await aioredis.Redis(connection_pool=pool)
+        yield redis
+    except Exception as e:
+        raise e from None
+    finally:
+        await redis.close()
 
+get_deck_connection = partial(get_redis_connection, redis_deck_pool)
+get_notifier_connection = partial(get_redis_connection, redis_notifier_pool)
 
-DeckRedisSession = Annotated[aioredis.Redis, Depends(get_deck_redis)]
+DeckRedisSession = Annotated[aioredis.Redis, Depends(get_deck_connection)]
+RedisNotifierSession = Annotated[aioredis.Redis, Depends(get_notifier_connection)]

@@ -5,10 +5,11 @@ from src.modules.deck.infrastructure.repositories import (
     MatchRepository,
     SkipRepository,
 )
+from src.modules.notifier.application.dependencies.action_notifier import ActionNotifierService
 from src.modules.profile.infrastructure.repositories.profile import ProfileRepository
 
 
-def like_service_factory(db_session: DbSession):
+def like_service_factory(db_session: DbSession, action_notification_service: ActionNotifierService):
     like_repository = LikeRepository(db_session=db_session)
     skip_repository = SkipRepository(db_session=db_session)
     profile_repository = ProfileRepository(db_session=db_session)
@@ -19,4 +20,5 @@ def like_service_factory(db_session: DbSession):
         like_repository=like_repository,
         skip_repository=skip_repository,
         profile_repository=profile_repository,
+        action_notification_service=action_notification_service
     )
