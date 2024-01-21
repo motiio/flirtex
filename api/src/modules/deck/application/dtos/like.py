@@ -1,5 +1,6 @@
 from typing import Optional
 from uuid import UUID
+from pydantic import validator
 
 from src.core.dtos import BaseDTO
 from src.modules.profile.application.dtos.profile import PhotoOutDTO
@@ -31,3 +32,9 @@ class LikeMessageDTO(BaseDTO):
     gender: profile_enums.GenderEnum
     photos: Optional[list[PhotoOutDTO]]
 
+    @validator("photos", pre=True)
+    def sort_and_get_first_photo(cls, v):
+        if v:
+            sorted_photos = sorted(v, key=lambda photo: photo.get("displaying_order"))
+            return sorted_photos[:1]
+        return v

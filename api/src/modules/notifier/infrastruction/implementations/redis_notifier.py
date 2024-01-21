@@ -2,6 +2,7 @@ from src.config.settings import settings
 from src.core.repositories.implementations.redis import BaseRedisRepository
 from src.modules.notifier.application.domain.entities import BaseMessage
 from src.modules.notifier.application.repositories import IActionNotificationRepository
+import pickle
 
 
 class ActionNotificationRepository(BaseRedisRepository, IActionNotificationRepository):
@@ -12,4 +13,4 @@ class ActionNotificationRepository(BaseRedisRepository, IActionNotificationRepos
         message: BaseMessage,
         ttl: int = settings.REDIS_STREAM_TTL_S,
     ):
-        await self._session.xadd(name=stream_name, fields={"message": message.model_dump_json()})
+        await self._session.xadd(name=stream_name, fields={"payload": message.model_dump_json()})

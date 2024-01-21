@@ -85,7 +85,7 @@ class ProfileRepository(
                 [Interest.create(**interest.dict()) for interest in result.interests]
             )
             entity.add_photos([ProfilePhoto.create(**photo.dict()) for photo in result.photos])
-
+            entity.put_tg_username(tg_username=result.owner.tg_username)
             entity.put_location(location=result.dict_location)
             return entity
 

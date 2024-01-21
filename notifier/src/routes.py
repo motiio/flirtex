@@ -13,20 +13,20 @@ async def send_messages_from_redis_stream(
     *, r, stream_name, group_name, consumer_name, websocket, last_id="0"
 ):
     try:
-        await r.xgroup_create(stream_name, group_name, id="0", mkstream=True)
+        await r.xgroup_create(stream_name, group_name, id=last_id, mkstream=True)
     except redis.ResponseError as e:
         if not str(e).startswith("BUSYGROUP Consumer Group name already exists"):
             raise
     # Первоначальная загрузка всех непрочитанных сообщений
-    while True:
-        streams = await r.xreadgroup(
-            group_name, consumer_name, {stream_name: last_id}, count=10, block=1000
-        )
-        if not streams:
-            break  # Если нет непрочитанных сообщений, выходим из цикла
+    streams = await r.xreadgroup(
+        group_name, consumer_name, {stream_name: last_id}, count=10, block=1000
+    )
+    if streams:
         for _, messages in streams:
             for message_id, message in messages:
-                await websocket.send_json(message)
+                await websocket.send_text(
+                    f'{{"message_id": "{message_id}", "payload":{message.get("payload")}}}'
+                )
                 last_id = message_id
 
     # Переход к чтению новых сообщений
@@ -37,33 +37,23 @@ async def send_messages_from_redis_stream(
         )
         for _, messages in streams:
             for message_id, message in messages:
-                print(message)
-                await websocket.send_json(message)
-                print(last_id)
+                await websocket.send_text(
+                    f'{{"message_id": "{message_id}", "payload":{message.get("payload")}}}'
+                )
                 last_id = message_id
-                print(last_id)
 
 
 async def delete_message_id_from_stream(
     websocket: WebSocket, stream_name, r, group_name
 ):
     while True:
-        try:
-            # Receive message ID from client
-            response = await websocket.receive_json()
-            # Delete the message ID from the stream
-            print(response)
-            if (message_id := response.get("message_id")) is None:
-                continue
-            print(message_id)
-            action=response.get("action", 'ack')
-            print(action)
-            await r.xack(stream_name, group_name, message_id)
-            if action == 'del':
-                await r.xdel(stream_name, message_id)
-
-        except WebSocketDisconnect:
-            break
+        response = await websocket.receive_json()
+        if (message_id := response.get("message_id")) is None:
+            continue
+        action = response.get("action", "del")
+        await r.xack(stream_name, group_name, message_id)
+        if action == "del":
+            await r.xdel(stream_name, message_id)
 
 
 @ws_router.websocket("/ws")
@@ -78,9 +68,10 @@ async def websocket_endpoint(websocket: WebSocket, access_token: str, r: RedisSe
     stream_name: str = data.get("sub")
     group_name: str = "notifier_service_group"
     consumer_name: str = "notifier_service"
+    del_mesagges_task = None
+    send_message_task = None
 
     try:
-        print(0)
         del_mesagges_task = asyncio.create_task(
             delete_message_id_from_stream(
                 websocket=websocket, r=r, stream_name=stream_name, group_name=group_name
@@ -95,8 +86,13 @@ async def websocket_endpoint(websocket: WebSocket, access_token: str, r: RedisSe
                 consumer_name=consumer_name,
             )
         )
-        print(1)
         await asyncio.gather(del_mesagges_task, send_message_task)
-        print(2)
-    finally:
-        await websocket.close()
+    except WebSocketDisconnect:
+        if del_mesagges_task:
+            del_mesagges_task.cancel()
+        if send_message_task:
+            send_message_task.cancel()
+        if send_message_task and del_mesagges_task:
+            await asyncio.gather(
+                del_mesagges_task, send_message_task, return_exceptions=True
+            )
