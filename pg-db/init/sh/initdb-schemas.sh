@@ -4,7 +4,7 @@ set -e
 
 # Perform all actions as $POSTGRES_USER
 export PGUSER="$POSTGRES_USER"
-echo "Starting 12_initdb-schemas.sh"
+echo "Starting 13_initdb-schemas.sh"
 
 
 # Create the 'template_postgis' template db

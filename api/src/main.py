@@ -1,7 +1,5 @@
-import random
 from contextlib import asynccontextmanager
 
-import aio_pika
 import sentry_sdk
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -69,20 +67,3 @@ async def s3_resource_middleware(request: Request, call_next):
     request.state.s3 = create_s3_session()
     response = await call_next(request)
     return response
-
-
-test_router = APIRouter(prefix="/test")
-
-
-@test_router.get("/rmq")
-async def test_rmq(notifier: MatchNotifierConnection):
-    "Kek" + str(random.randint(1, 10))
-    msg = {"type": "match", "target": "asdfasdf"}
-    await notifier.channel.default_exchange.publish(
-        aio_pika.Message(body=msg), routing_key=notifier.queue.name
-    )
-    print("Test")
-    return 1
-
-
-api.include_router(test_router, prefix=settings.API_V1_PREFIX, tags=["Test"])

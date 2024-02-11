@@ -19,12 +19,14 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 
 COPY ../init/conf/pg_hba.conf /
+COPY ../init/conf/postgresql.conf /
 
 RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ../init/sh/initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
 
 COPY ../init/sh/copy-pg-hba.sh /docker-entrypoint-initdb.d/11_pg_hba.sh
-COPY ../init/sh/initdb-schemas.sh /docker-entrypoint-initdb.d/12_initdb-schemas.sh
+COPY ../init/sh/copy-postgresql.sh /docker-entrypoint-initdb.d/12_pg_hba.sh
+COPY ../init/sh/initdb-schemas.sh /docker-entrypoint-initdb.d/13_initdb-schemas.sh
 
 COPY ../init/sh/update-postgis.sh /usr/local/bin
 
