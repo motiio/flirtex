@@ -1,9 +1,15 @@
 http {
   # redirect http -> https
-  server {
-    listen 80
-      server_name $APP_DOMAINS
-      return 301 https://$host$request_url
-  }
+   server {
+      listen 80 http2;
+      listen [::]:80 http2;
+      server_name $APP_DOMAINS;
+      return 301 https://$host$request_url;
+   }
+
+   server {
+     listen 443 ssl http2 default_server;
+     listen [::]:443 http2 default_server;
+   }
 
 }

@@ -1,18 +1,5 @@
 version: "2.1"
 services:
-  rabbitmq:
-    image: rabbitmq:3.12.11-management
-    hostname: rabbitmq
-    restart: always
-    env_file:
-      - ./rabbitmq/docker/.env
-    volumes:
-      - ./rabbitmq/data:/var/lib/rabbitmq
-    ports:
-      - 15672:15672
-    networks:
-      - flirtex-network
-        
   pg-db:
     build:
       context: ./pg-db
@@ -67,6 +54,17 @@ services:
     networks:
       - flirtex-network
 
+  nginx:
+    image: nginx:stable
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - api
+      - notifier
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
 
 networks:
   flirtex-network:
