@@ -34,8 +34,6 @@ job("[PROD]. API deploy") {
         }
     }
 
-/root/.local/bin/poetry
-
     host("Start deployment API to TEST server") {
         shellScript {
             content = """
