@@ -10,7 +10,7 @@ job("[PROD]. API deploy") {
     host("Start deployment API to TEST server") {
         shellScript {
             content = """
-            ls -la
+            pwd
             """
         }
     requirements {
