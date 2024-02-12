@@ -23,7 +23,7 @@ job("[PROD]. API deploy") {
             cd api
             poetry config virtualenvs.create true
             poetry config virtualenvs.in-project true
-            poetry install
+            poetry install --no-root
             """
         }
     }
