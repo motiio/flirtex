@@ -13,5 +13,8 @@ job("[PROD]. API deploy") {
             ls -la
             """
         }
+    requirements {
+         workerTags("ProdPool-1")
+        }
     }
 }
