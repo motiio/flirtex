@@ -20,6 +20,7 @@ job("[PROD]. API deploy") {
 
         shellScript {
             content = """
+            cd api
             poetry config virtualenvs.create false
             poetry install
             """
