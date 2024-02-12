@@ -21,7 +21,8 @@ job("[PROD]. API deploy") {
         shellScript {
             content = """
             cd api
-            poetry config virtualenvs.create false
+            poetry config virtualenvs.create true
+            poetry config virtualenvs.in-project true
             poetry install
             """
         }
@@ -33,7 +34,7 @@ job("[PROD]. API deploy") {
         }
     }
 
-
+/root/.local/bin/poetry
 
     host("Start deployment API to TEST server") {
         shellScript {
