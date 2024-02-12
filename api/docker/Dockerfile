@@ -55,5 +55,5 @@ RUN apt update && apt install vim -y && apt install telnet -y
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["alembic", "upgrade", "heads"]
-CMD ["uvicorn", "--reload", "--host=0.0.0.0", "--port=8080", "src.main:api", "--root-path", "/api"]
+CMD ["gunicorn", "src.main:api", "--workers", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
 

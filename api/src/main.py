@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from src.config.database import async_session_factory
-from src.config.rabbitmq import MatchNotifierConnection, match_notifier_connection
 from src.config.redis import create_redis_pool
 from src.config.s3 import create_s3_session
 from src.config.settings import settings
@@ -27,9 +26,7 @@ sentry_sdk.init(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await match_notifier_connection.connect()
     yield
-    await match_notifier_connection.disconnect()
 
 
 api = FastAPI(
@@ -53,13 +50,6 @@ api.add_middleware(
 )
 
 api.add_middleware(RedisMiddleware, redis_pool=create_redis_pool())
-
-
-@api.middleware("http")
-async def match_notifier_middleware(request: Request, call_next):
-    request.state.match_notifier_connection = match_notifier_connection
-    response = await call_next(request)
-    return response
 
 
 @api.middleware("http")
