@@ -21,11 +21,11 @@ job("[PROD]. API deploy") {
         shellScript {
             content = """
             cd api
-            ls -la 
-            ls -la .venv
             poetry config virtualenvs.create true
             poetry config virtualenvs.in-project true
             poetry install --no-root
+            ls -la 
+            ls -la .venv
             """
         }
     }
