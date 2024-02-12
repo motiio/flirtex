@@ -1,7 +1,7 @@
 job("[PROD]. API deploy") {
     startOn {}
 
-    container(displayName = "Build with Poetry", image = "python:3.12.2-bookworm") {
+    container(displayName = "Build with Poetry", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
