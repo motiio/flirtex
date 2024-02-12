@@ -23,11 +23,10 @@ services:
       context: ./api
       dockerfile: ./docker/Dockerfile
     depends_on:
-      - rabbitmq
       - pg-db
       - redis
-    environment:
-      - ENVIRONMENT=production
+    env_file:
+      - ./api/docker/.env
     volumes:
       - ./api:/api
     networks:
