@@ -6,7 +6,7 @@ job("[PROD]. API deploy") {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
-            storeKey = "poetry-{{ hashFiles('pyproject.toml') }}"
+            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
 
             // Вариант восстановления
             // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
