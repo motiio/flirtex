@@ -15,7 +15,7 @@ job("[PROD]. API deploy") {
             }
 
             // Локальный путь к директории файла кэша
-            localPath = ".venv"
+            localPath = "api/.venv"
         }
 
         shellScript {
