@@ -16,7 +16,7 @@ job("[PROD]. API deploy") {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
-            storeKey = "{{VENV_HASH}}"
+            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
 
             // Вариант восстановления
             // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
@@ -48,7 +48,7 @@ job("[PROD]. API deploy") {
             // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
             file = "Dockerfile"
             // build-time variables
-            args["VENV_HASH"] = "{{ VENV_HASH }}"
+            args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
             args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
             // image labels
             labels["vendor"] = "flirtex"
