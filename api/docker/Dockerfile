@@ -13,7 +13,7 @@ RUN echo $VENV_HASH
 RUN echo $ACCESS_TOKEN
 
 RUN curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
-  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/poetry-$VENV_HASH.tar.gz" \
+  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
   | tar -xz -C .venv
 
 WORKDIR /api
