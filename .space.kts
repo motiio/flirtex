@@ -43,23 +43,22 @@ job("[PROD]. API deploy") {
         env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         shellScript {
             content = """
-            pwd && ls -la ./api
+            pwd && ls -la ./api/docker
             """
         }
-        dockerBuildPush {
-            // path to Docker context (by default, context is working dir)
-            context = "./api"
-            // path to Dockerfile relative to the project root
-            // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
-            file = "docker/Dockerfile"
-            // build-time variables
-            args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-            args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
-            // image labels
-            labels["vendor"] = "flirtex"
-            tags {
-                // use current job run number as a tag - '0.0.run_number'
-                +"flirtex.registry.jetbrains.space/p/connecta/containers/api:{{ MAJAOR_V }}.{{ MINOR_V }}.${"$"}JB_SPACE_EXECUTION_NUMBER"
+        kaniko {
+            build {
+                file = "./api/docker/Dockerfile"
+                labels["vendor"] = "flirtex"
+                args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
+                args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
+            }
+            push("flirtex.registry.jetbrains.space/p/connecta/containers/api") {
+                tags {
+                    // use current job run number as a tag - '0.0.run_number'
+                    +"{{ MAJAOR_V }}.{{ MINOR_V }}.${"$"}JB_SPACE_EXECUTION_NUMBER"
+                }
+
             }
         }
         requirements {
