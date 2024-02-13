@@ -40,7 +40,7 @@ job("[PROD]. API deploy") {
     }
 
     host("Building...") {
-      env["MY_SECRET"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
+      env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
             context = "api/docker"
@@ -49,7 +49,7 @@ job("[PROD]. API deploy") {
             file = "Dockerfile"
             // build-time variables
             args["VENV_HASH"] = "{{ VENV_HASH }}"
-            args["ACCESS_TOKEN"] = "{{ ACCESS_TOKEN }}"
+            args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
             // image labels
             labels["vendor"] = "flirtex"
             tags {
