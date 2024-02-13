@@ -24,7 +24,7 @@ job("[PROD]. API deploy") {
             poetry config virtualenvs.create true
             poetry config virtualenvs.in-project true
             poetry install --no-root
-            poetry run pytest --cov=src --cov-report=term --cov-report=term
+            poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
             """
         }
     }
