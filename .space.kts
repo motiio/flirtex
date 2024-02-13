@@ -9,6 +9,7 @@ job("[PROD]. API deploy") {
         
         text("MAJAOR_V", value = "0")
         text("MINOR_V", value = "0")
+        text("ACCESS_TOKEN", value="{{ project:API_CACHE_ACCESS_TOKEN }}")
     }
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
@@ -47,7 +48,7 @@ job("[PROD]. API deploy") {
             file = "Dockerfile"
             // build-time variables
             args["VENV_HASH"] = "{{ VENV_HASH }}"
-            args["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
+            args["ACCESS_TOKEN"] = "{{ ACCESS_TOKEN }}"
             // image labels
             labels["vendor"] = "flirtex"
             tags {
