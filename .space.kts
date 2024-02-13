@@ -37,11 +37,13 @@ job("[PROD]. API deploy") {
             poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
             """
         }
+    }
 
+    host("Building...") {
         env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
-            context = "api"
+            context = "./api"
             // path to Dockerfile relative to the project root
             // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
             file = "docker/Dockerfile"
@@ -59,7 +61,5 @@ job("[PROD]. API deploy") {
             workerTags("ProdPool-1")
         }
     }
-
 }
-
 
