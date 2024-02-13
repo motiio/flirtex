@@ -43,10 +43,10 @@ job("[PROD]. API deploy") {
       env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
-            context = "api"
+            context = "docker"
             // path to Dockerfile relative to the project root
             // if 'file' is not specified, Docker will look for it in 'context'/Dockerfile
-            file = "docker/Dockerfile"
+            file = "backend/api/docker/Dockerfile"
             // build-time variables
             args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
             args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
