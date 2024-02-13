@@ -44,8 +44,7 @@ job("[PROD]. API deploy") {
         build {
             file = "./api/docker/Dockerfile"
             labels["vendor"] = "flirtex"
-            args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-            args["ACCESS_TOKEN"] = "${"$"}ACCESS_TOKEN"
+            args["WORKERS_COUNT"] = "project:WORKERS_COUNT"
         }
         push("flirtex.registry.jetbrains.space/p/connecta/containers/api") {
             tags {

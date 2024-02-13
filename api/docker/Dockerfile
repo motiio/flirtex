@@ -3,17 +3,34 @@
 # See https://docs.docker.com/develop/develop-images/multistage-build/
 
 # Creating a python base with shared environment variables
-FROM flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest
+FROM python:3.12.2-bookworm
+
+# Устанавливаем необходимые зависимости для Poetry
+RUN buildDeps="build-essential curl vim tar" \
+    && apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends $buildDeps
+
+# Устанавливаем Poetry
+# Вы можете заменить версию Poetry, указав конкретную версию после "@"
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Добавляем директорию bin Poetry в PATH, чтобы можно было запускать Poetry из любого места
+ENV PATH="/root/.local/bin:$PATH"
+
+# Очистка кеша apt для уменьшения размера образа
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG VENV_HASH
 ARG ACCESS_TOKEN
-ARG WORKERS=3
+ARG WORKERS_COUNT=3
+ENV WORKERS=$WORKERS_COUNT
+
+RUN echo $WORKERS
+
 COPY ./api/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 WORKDIR /api
-RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
-  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
-  | tar -xz -C .venv
 COPY ./api/pyproject.toml ./api/poetry.lock ./
 COPY ./api/src/ ./src/
 
@@ -23,5 +40,6 @@ RUN poetry config virtualenvs.create true \
 
 EXPOSE 8080
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["gunicorn", "src.main:api", "--workers", "$WORKERS", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
+CMD gunicorn src.main:api --workers $WORKERS -k uvicorn.workers.UvicornWorker --bind unix:api.sock
+
 
