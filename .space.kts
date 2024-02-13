@@ -51,6 +51,7 @@ job("[PROD]. API deploy") {
             tags {
                 // use current job run number as a tag - '0.0.run_number'
                 +"{{ MAJAOR_V }}.{{ MINOR_V }}.${"$"}JB_SPACE_EXECUTION_NUMBER"
+                +"latest"
             }
 
         }
