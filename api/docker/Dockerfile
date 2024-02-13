@@ -8,7 +8,7 @@ FROM flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest
 ARG VENV_HASH
 ARG ACCESS_TOKEN
 ARG WORKERS=3
-
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 WORKDIR /api
 RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
   "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
@@ -21,6 +21,6 @@ RUN poetry config virtualenvs.create true \
  && poetry install --only main
 
 EXPOSE 8080
-
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["./.venv/bin/gunicorn", "src.main:api", "--workers", "$WORKERS", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
 
