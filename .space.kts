@@ -1,7 +1,7 @@
 job("[PROD]. API deploy") {
     startOn {}
 
-    container(displayName = "Build with Poetry", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
+    container(displayName = "Build and Test with Poetry", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
@@ -24,8 +24,12 @@ job("[PROD]. API deploy") {
             poetry config virtualenvs.create true
             poetry config virtualenvs.in-project true
             poetry install --no-root
-            ls -la 
-            ls -la .venv
+            """
+        }
+        shellScript {
+            content = """
+            cd api
+            poetry run pytest --cov=src --cov-report=term --cov-report=term
             """
         }
     }
@@ -42,8 +46,8 @@ job("[PROD]. API deploy") {
             pwd
             """
         }
-    requirements {
-         workerTags("ProdPool-1")
+        requirements {
+            workerTags("ProdPool-1")
         }
     }
 }
