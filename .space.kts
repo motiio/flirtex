@@ -6,10 +6,10 @@ job("[PROD]. API deploy") {
         text("ENVIRONMENT", value = "prod") {
             options("dev", "prod")
         }
-        
+
         text("MAJAOR_V", value = "0")
         text("MINOR_V", value = "0")
-        secret("ACCESS_TOKEN", value="{{ project:API_CACHE_ACCESS_TOKEN }}")
+        secret("ACCESS_TOKEN", value = "{{ project:API_CACHE_ACCESS_TOKEN }}")
     }
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
@@ -37,10 +37,8 @@ job("[PROD]. API deploy") {
             poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
             """
         }
-    }
 
-    host("Building...") {
-      env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
+        env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
             context = "api"
@@ -61,5 +59,7 @@ job("[PROD]. API deploy") {
             workerTags("ProdPool-1")
         }
     }
+
 }
+
 
