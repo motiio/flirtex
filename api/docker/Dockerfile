@@ -9,10 +9,7 @@ ARG VENV_HASH
 ARG ACCESS_TOKEN
 ARG WORKERS=3
 
-RUN echo $VENV_HASH
-RUN echo $ACCESS_TOKEN
-
-RUN curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
+RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
   "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
   | tar -xz -C .venv
 
