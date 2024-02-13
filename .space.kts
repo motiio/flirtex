@@ -39,20 +39,19 @@ job("[PROD]. API deploy") {
         }
     }
 
-        kaniko {
-            build {
-                file = "./api/docker/Dockerfile"
-                labels["vendor"] = "flirtex"
-                args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-                args["ACCESS_TOKEN"] = "${'$'}ACCESS_TOKEN"
+    kaniko {
+        build {
+            file = "./api/docker/Dockerfile"
+            labels["vendor"] = "flirtex"
+            args["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
+            args["ACCESS_TOKEN"] = "${"$"}ACCESS_TOKEN"
+        }
+        push("flirtex.registry.jetbrains.space/p/connecta/containers/api") {
+            tags {
+                // use current job run number as a tag - '0.0.run_number'
+                +"{{ MAJAOR_V }}.{{ MINOR_V }}.${"$"}JB_SPACE_EXECUTION_NUMBER"
             }
-            push("flirtex.registry.jetbrains.space/p/connecta/containers/api") {
-                tags {
-                    // use current job run number as a tag - '0.0.run_number'
-                    +"{{ MAJAOR_V }}.{{ MINOR_V }}.${"$"}JB_SPACE_EXECUTION_NUMBER"
-                }
 
-            }
         }
     }
 }
