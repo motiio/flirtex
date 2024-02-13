@@ -9,6 +9,7 @@ ARG VENV_HASH
 ARG ACCESS_TOKEN
 ARG WORKERS=3
 COPY ./api/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 WORKDIR /api
 RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
   "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
