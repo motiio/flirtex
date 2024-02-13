@@ -9,7 +9,6 @@ job("[PROD]. API deploy") {
 
         text("MAJAOR_V", value = "0")
         text("MINOR_V", value = "0")
-        secret("ACCESS_TOKEN", value = "{{ project:API_CACHE_ACCESS_TOKEN }}")
     }
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
@@ -40,7 +39,6 @@ job("[PROD]. API deploy") {
     }
 
     kaniko {
-      env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         build {
             file = "./api/docker/Dockerfile"
             labels["vendor"] = "flirtex"
