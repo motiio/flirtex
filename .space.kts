@@ -46,7 +46,6 @@ job("[PROD]. API deploy") {
             pwd && ls -la ./api
             """
         }
-    }
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
             context = "./api"
