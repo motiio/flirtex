@@ -41,6 +41,12 @@ job("[PROD]. API deploy") {
 
     host("Building...") {
         env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
+        shellScript {
+            content = """
+            pwd && ls -la ./api
+            """
+        }
+    }
         dockerBuildPush {
             // path to Docker context (by default, context is working dir)
             context = "./api"
