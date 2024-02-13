@@ -14,8 +14,8 @@ RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
   | tar -xz -C .venv
 
 WORKDIR /api
-COPY pyproject.toml poetry.lock ./
-COPY ./src/ ./src/
+COPY ./api/pyproject.toml ./api/poetry.lock ./
+COPY .api/src/ ./src/
 
 RUN poetry config virtualenvs.create true \
  && poetry config virtualenvs.in-project true \
