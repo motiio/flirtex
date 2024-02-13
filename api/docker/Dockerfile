@@ -9,11 +9,12 @@ ARG VENV_HASH
 ARG ACCESS_TOKEN
 ARG WORKERS=3
 
+
+
+WORKDIR /api
 RUN mkdir .venv && curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
   "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/$VENV_HASH.tar.gz" \
   | tar -xz -C .venv
-
-WORKDIR /api
 COPY ./api/pyproject.toml ./api/poetry.lock ./
 COPY ./api/src/ ./src/
 
