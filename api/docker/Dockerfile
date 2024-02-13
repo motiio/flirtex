@@ -7,10 +7,10 @@ FROM flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest
 
 ARG VENV_HASH
 ARG ACCESS_TOKEN
-ARG WORKERS
+ARG WORKERS=3
 
-RUN curl -f -L -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/poetry-${VENV_HASH}.tar.gz" \
+RUN curl -f -L -H "Authorization: Bearer $ACCESS_TOKEN" \
+  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/poetry-$VENV_HASH.tar.gz" \
   | tar -xz -C .venv
 
 WORKDIR /api
@@ -23,5 +23,5 @@ RUN poetry config virtualenvs.create true \
 
 EXPOSE 8080
 
-CMD ["gunicorn", "src.main:api", "--workers", "${WORKERS}", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
+CMD ["gunicorn", "src.main:api", "--workers", "$WORKERS", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
 
