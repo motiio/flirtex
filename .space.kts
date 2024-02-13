@@ -47,7 +47,7 @@ job("[PROD]. API deploy") {
             file = "Dockerfile"
             // build-time variables
             args["VENV_HASH"] = "{{ VENV_HASH }}"
-            args["ACCESS_TOKEN"] = "{{ project::API_CACHE_ACCESS_TOKEN }}"
+            args["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
             // image labels
             labels["vendor"] = "flirtex"
             tags {
