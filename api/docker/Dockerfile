@@ -3,57 +3,25 @@
 # See https://docs.docker.com/develop/develop-images/multistage-build/
 
 # Creating a python base with shared environment variables
-FROM python:3.12.2-slim-bullseye AS python-base
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100 \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_NO_INTERACTION=1 \
-    PYSETUP_PATH="/opt/pysetup" \
-    VENV_PATH="/opt/pysetup/.venv"
+FROM flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest
 
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
+ARG VENV_HASH
+ARG ACCESS_TOKEN
+ARG WORKERS
 
-# builder-base is used to build dependencies
-FROM python-base AS builder-base
-RUN buildDeps="build-essential curl vim netcat" \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends $buildDeps \
-    && rm -rf /var/lib/apt/lists/*
+RUN curl -f -L -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  "https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/poetry-${VENV_HASH}.tar.gz" \
+  | tar -xz -C .venv
 
-# Install Poetry
-ENV POETRY_VERSION=1.5.0
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION}
-
-# Copying Python requirements for caching
-WORKDIR $PYSETUP_PATH
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --only main
-
-# 'development' stage installs all dev deps and can be used to develop code.
-FROM python-base as development
-ENV FASTAPI_ENV=development
-
-# Copying poetry and venv into image
-COPY --from=builder-base $POETRY_HOME $POETRY_HOME
-COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
-
-# Copying in our entrypoint
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-# Set working directory and copy source code
 WORKDIR /api
+COPY pyproject.toml poetry.lock ./
 COPY ./src/ ./src/
 
-EXPOSE 8080
-RUN apt update && apt install vim -y && apt install telnet -y
+RUN poetry config virtualenvs.create true \
+ && poetry config virtualenvs.in-project true \
+ && poetry install --only main
 
-# Define entrypoint and default command
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["alembic", "upgrade", "heads"]
-CMD ["gunicorn", "src.main:api", "--workers", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
+EXPOSE 8080
+
+CMD ["gunicorn", "src.main:api", "--workers", "${WORKERS}", "-k", "uvicorn.workers.UvicornWorker", "--bind", "unix:api.sock"]
 

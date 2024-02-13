@@ -7,7 +7,8 @@ from pydantic_settings import BaseSettings
 
 
 class EnvironmentEnum(str, Enum):
-    PRODUCTION = "production"
+    PROD = "prod"
+    DEV = "dev"
     LOCAL = "local"
 
 
