@@ -44,7 +44,7 @@ job("[PROD]. API deploy") {
         build {
             file = "./api/docker/Dockerfile"
             labels["vendor"] = "flirtex"
-            args["WORKERS_COUNT"] = "project:WORKERS_COUNT"
+            args["WORKERS_COUNT"] = "{{ project:WORKERS_COUNT }}"
         }
         push("flirtex.registry.jetbrains.space/p/connecta/containers/api") {
             tags {
