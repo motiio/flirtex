@@ -40,7 +40,7 @@ job("[PROD]. API deploy") {
     }
 
     kaniko {
-      env["USERNAME"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
+      env["ACCESS_TOKEN"] = "{{ project:API_CACHE_ACCESS_TOKEN }}"
         build {
             file = "./api/docker/Dockerfile"
             labels["vendor"] = "flirtex"
