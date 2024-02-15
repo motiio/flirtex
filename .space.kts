@@ -73,7 +73,7 @@ job("API Build and deploy") {
             localPath = "api/"
             // Fail job if build/publish/app/ is not found
             optional = false
-            remotePath = "{{ run:file-artifacts.default-repository }}/{{ MAJOR_V }}.{{ MINOR_V }}.{{ run:number }}_api.gz"
+            remotePath = "api.gz"
             archive = true
             onStatus = OnStatus.SUCCESS
         }
@@ -149,8 +149,8 @@ job("API Build and deploy") {
         env["MINOR_V"] = "{{ MINOR_V }}"
         fileInput {
             source = FileSource.FileArtifact(
-                    "{{ run:file-artifacts.default-repository }}",
-                    "{{ MAJOR_V }}.{{ MINOR_V }}.{{ run:number }}_api.gz",
+                    "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
+                    "api.gz",
                     extract = true
             )
             localPath = "./services/"
