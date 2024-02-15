@@ -174,11 +174,11 @@ job("API Build and deploy") {
                         curl -f -L \
                             -H "Authorization: Bearer ${'$'}CACHE_ACCESS_KEY" \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
-                            --output "venv.tar.gz"
+                            --output "/usr/local/src/flirtex/"
                         echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H "Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY" \
-                            https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-files/${'$'}ARTIFACTS_PATH \
+                            https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
                             --output "/usr/local/src/flirtex/""
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
