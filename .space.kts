@@ -73,7 +73,7 @@ job("API Build and deploy") {
             localPath = "api/"
             // Fail job if build/publish/app/ is not found
             optional = false
-            remotePath = "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz"
+            remotePath = "{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz"
             archive = true
             onStatus = OnStatus.SUCCESS
         }
@@ -151,7 +151,7 @@ job("API Build and deploy") {
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
-                    "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
+                    "{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
                     extract = true
             )
             localPath = "services/"
@@ -165,7 +165,7 @@ job("API Build and deploy") {
             content = """
                 chmod 600 /root/.ssh/id_rsa
                 ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> /root/.ssh/known_hosts
-                scp -P ${'$'}SSH_PORT {{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/builds
+                scp -P ${'$'}SSH_PORT {{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/builds
                 scp -P ${'$'}SSH_PORT docker-compose.yml ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
                  # Запуск docker-compose на сервере
                  ssh -p ${'$'}SSH_PORT ${'$'}SSH_USER@${'$'}SSH_HOST << 'ENDSSH'
