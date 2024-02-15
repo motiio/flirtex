@@ -157,10 +157,13 @@ job("API Build and deploy") {
 
         shellScript {
             content = """
+                    sudo apt update
+                    sudo apt install rsync
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
+                    chmod -R 777 ./api
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
-                    sudo rsync -avz --delete -e "scp -i id_rsa \
+                    rsync -avz --delete -e "scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
                         -P ${'$'}SSH_PORT"
