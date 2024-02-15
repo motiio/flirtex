@@ -161,7 +161,8 @@ job("API Build and deploy") {
             content = """
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
-                cp -a ./build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz /usr/local/src/flirtex/api
+                ls -la
+                cp -a ./build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
                 docker-compose pull
                 docker-compose up -d
                 ENDSSH
