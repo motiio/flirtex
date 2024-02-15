@@ -45,18 +45,18 @@ job("API Build and deploy") {
 
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
 //        cache {
-            // Генерация имени файла кэша
-            // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
-            // одинаковым pyproject.toml будут использовать кэшированные зависимости
+        // Генерация имени файла кэша
+        // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
+        // одинаковым pyproject.toml будут использовать кэшированные зависимости
 //            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
 
-            // Вариант восстановления
-            // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
+        // Вариант восстановления
+        // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
 //            restoreKeys {
 //                +"poetry-master"
 //            }
 
-            // Локальный путь к директории файла кэша
+        // Локальный путь к директории файла кэша
 //            localPath = "api/.venv"
 //        }
 
@@ -162,20 +162,3 @@ job("API Build and deploy") {
         }
     }
 }
-
-job("test ssh"){
-    container(displayName = "Run deploy script") {
-
-        env["SSH_HOST"] = "{{ SSH_HOST }}"
-        env["SSH_PORT"] = "{{ SSH_PORT }}"
-        env["SSH_USER"] = "{{ SSH_USER }}"
-
-        shellScript {
-            content = """
-                
-                ""${'"'}
-            """
-        }
-    }
-}
-
