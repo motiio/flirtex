@@ -184,7 +184,7 @@ job("API Build and deploy") {
                         -P ${'$'}SSH_PORT \
                         -r ./docker-compose.yml \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
-              """
+              """.trimIndent()
         }
         requirements {
             workerTags("ProdPool-1")
