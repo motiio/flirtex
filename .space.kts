@@ -15,7 +15,7 @@
 //                +"poetry-master"
 //            }
 //
-            // Локальный путь к директории файла кэша
+// Локальный путь к директории файла кэша
 //            localPath = "api/.venv"
 //        }
 //
@@ -163,27 +163,28 @@ job("API Build and deploy") {
             }
 
         }
-        host(displayName = "Run deploy script") {
+    }
+    host(displayName = "Run deploy script") {
 
-            env["SSH_HOST"] = "{{ SSH_HOST }}"
-            env["SSH_PORT"] = "{{ SSH_PORT }}"
-            env["SSH_USER"] = "{{ SSH_USER }}"
-            env["BUILD_FILE_PATH"] = "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz"
-            fileInput {
-                source = FileSource.FileArtifact(
-                        "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
-                        "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
-                        extract = true
-                )
-                localPath = "services/"
-            }
-            fileInput {
-                source = FileSource.Text("{{ DEPLOY_PK }}")
-                localPath = "/root/.ssh/id_rsa"
-            }
+        env["SSH_HOST"] = "{{ SSH_HOST }}"
+        env["SSH_PORT"] = "{{ SSH_PORT }}"
+        env["SSH_USER"] = "{{ SSH_USER }}"
+        env["BUILD_FILE_PATH"] = "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz"
+        fileInput {
+            source = FileSource.FileArtifact(
+                    "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
+                    "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
+                    extract = true
+            )
+            localPath = "services/"
+        }
+        fileInput {
+            source = FileSource.Text("{{ DEPLOY_PK }}")
+            localPath = "/root/.ssh/id_rsa"
+        }
 
-            shellScript {
-                content = """
+        shellScript {
+            content = """
                 chmod 600 /root/.ssh/id_rsa
                 ssh-keyscan -p ${SSH_PORT} ${SSH_HOST} >> /root/.ssh/known_hosts
                 scp -P ${SSH_PORT} {{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${SSH_USER}@${SSH_HOST}:/usr/local/src/flirtex/builds
@@ -199,7 +200,6 @@ job("API Build and deploy") {
                  ENDSSH
                  ""${'"'}
             """
-            }
         }
     }
 }
