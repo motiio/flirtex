@@ -158,11 +158,11 @@ job("API Build and deploy") {
 
         shellScript {
             content = """
+                ls -l /usr/local/src/flirtex
                 pwd
                 whoami
-                rm -rf /usr/local/src/flirtex/api
-                mkdir -p /usr/local/src/flirtex/api
-                ls -la
+                sudo rm -rf /usr/local/src/flirtex/api
+                sudo mkdir -p /usr/local/src/flirtex/api
                 cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
                 ENDSSH
                 ""${'"'}
