@@ -58,6 +58,8 @@ job("API Tests") {
 //        }
 //    }
 job("API Build and deploy") {
+
+    startOn {}
     parameters {
         text("ENVIRONMENT", value = "PROD") {
             options("DEV", "PROD")
