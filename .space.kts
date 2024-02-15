@@ -165,7 +165,8 @@ job("API Build and deploy") {
                         -o UserKnownHostsFile=./known_hosts \
                         -o StrictHostKeyChecking=no \
                         -o LogLevel=INFO \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST:${'$'}SSH_PORT "\
+                        -p ${'$'}SSH_PORT \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         rm -rf /usr/local/src/flirtex/api/
                         mkdir -p /usr/local/src/flirtex/api/
                         echo Start downloading hash ${'$'}VENV_HASH.tar.gz
