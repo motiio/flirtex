@@ -168,15 +168,15 @@ job("API Build and deploy") {
                         -o StrictHostKeyChecking=no \
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT
-                        ${'$'}SSH_USER@${'$'}SSH_HOST \\
-                        rm -rf /usr/local/src/flirtex/api/ \
-                        mkdir -p /usr/local/src/flirtex/api/ \ 
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        rm -rf /usr/local/src/flirtex/api/
+                        mkdir -p /usr/local/src/flirtex/api/
                         echo Start downloading hash ${'$'}VENV_HASH.tar.gz
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}CACHE_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
                             --output '/usr/local/src/flirtex/'
-                        echo Start downloading artifacts ${'$'}ARTIFACTS_PATH \
+                        echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
