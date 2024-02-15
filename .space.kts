@@ -159,10 +159,8 @@ job("API Build and deploy") {
             content = """
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
+                    ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ~/.ssh/known_hosts
                     scp -i id_rsa \
-                        -o UserKnownHostsFile=/dev/null \
-                        -o StrictHostKeyChecking=no \
-                        -o LogLevel=quiet \
                         -P ${'$'}SSH_PORT
                         -r ./api/*
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/loacl/src/flirtex/api/ "\
