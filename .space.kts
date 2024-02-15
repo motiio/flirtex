@@ -161,10 +161,8 @@ job("API Build and deploy") {
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
-                    echo Start downloading hash ${'$'}VENV_HASH.tar.gz
-                    echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                     ssh -i id_rsa \
-                        -o UserKnownHostsFile=/dev/null \
+                        -o UserKnownHostsFile=./known_hosts \
                         -o StrictHostKeyChecking=no \
                         -o LogLevel=INFO \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:${'$'}SSH_PORT "\
