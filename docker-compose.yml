@@ -17,7 +17,7 @@ services:
     env_file:
       - ./api/docker/.env
     volumes:
-      - ./api:/api
+      - /var/run/postgresql:/var/run/postgresql
     networks:
       - flirtex-network
 
