@@ -159,7 +159,6 @@ job("API Build and deploy") {
             content = """
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
-                    mkdir -p ~/.ssh/known_hosts
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
