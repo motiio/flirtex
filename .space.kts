@@ -45,18 +45,18 @@ job("API Build and deploy") {
 
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
 //        cache {
-            // Генерация имени файла кэша
-            // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
-            // одинаковым pyproject.toml будут использовать кэшированные зависимости
+        // Генерация имени файла кэша
+        // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
+        // одинаковым pyproject.toml будут использовать кэшированные зависимости
 //            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
 
-            // Вариант восстановления
-            // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
+        // Вариант восстановления
+        // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
 //            restoreKeys {
 //                +"poetry-master"
 //            }
 
-            // Локальный путь к директории файла кэша
+        // Локальный путь к директории файла кэша
 //            localPath = "api/.venv"
 //        }
 
@@ -111,18 +111,18 @@ job("API Build and deploy") {
 
                 "DEV" -> {
                     // secrets
-                    api.parameters["BOT_TOKEN"] = Ref("project:DEV__BOT_TOKEN")
+                    api.secrets["BOT_TOKEN"] = Ref("project:DEV__BOT_TOKEN")
 
-                    api.parameters["JWT_SECRET"] = Ref("project:DEV__JWT_SECRET")
+                    api.secrets["JWT_SECRET"] = Ref("project:DEV__JWT_SECRET")
 
-                    api.parameters["S3_ACCESS_KEY_ID"] = Ref("project:DEV__S3_ACCESS_KEY_ID")
-                    api.parameters["S3_SECRET_ACCESS_KEY"] = Ref("project:DEV__S3_SECRET_ACCESS_KEY")
+                    api.secrets["S3_ACCESS_KEY_ID"] = Ref("project:DEV__S3_ACCESS_KEY_ID")
+                    api.secrets["S3_SECRET_ACCESS_KEY"] = Ref("project:DEV__S3_SECRET_ACCESS_KEY")
 
-                    api.parameters["DATABASE_URI"] = Ref("project:DEV__DATABASE_URI")
+                    api.secrets["DATABASE_URI"] = Ref("project:DEV__DATABASE_URI")
 
-                    api.parameters["SENTRY_DSN"] = Ref("project:DEV__SENTRY_DSN")
+                    api.secrets["SENTRY_DSN"] = Ref("project:DEV__SENTRY_DSN")
 
-                    api.parameters["DEPLOY_PK"] = Ref("project:DEV__DEPLOY_PK")
+                    api.secrets["DEPLOY_PK"] = Ref("project:DEV__DEPLOY_PK")
 
                     // params
 
@@ -145,8 +145,7 @@ job("API Build and deploy") {
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
-        env["MAJOR_V"] = "{{ MAJOR_V }}"
-        env["MINOR_V"] = "{{ MINOR_V }}"
+        env["DEPLOY_PK"] = "{{ DEPLOY_PK }}"
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
@@ -158,15 +157,16 @@ job("API Build and deploy") {
 
         shellScript {
             content = """
-                ls -l /usr/local/src/flirtex
-                pwd
-                whoami
-                sudo rm -rf /usr/local/src/flirtex/api
-                sudo mkdir -p /usr/local/src/flirtex/api
-                sudo cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
-                ENDSSH
-                ""${'"'}
-            """
+                    echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
+                    chmod 400 id_rsa
+                    scp -i id_rsa \
+                        -o UserKnownHostsFile=/dev/null \
+                        -o StrictHostKeyChecking=no \
+                        -o LogLevel=quiet \
+                        -P ${'$'}SSH_PORT
+                        -r ./api/*
+                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/loacl/src/flirtex/api/ "\
+              """
         }
         requirements {
             workerTags("ProdPool-1")
