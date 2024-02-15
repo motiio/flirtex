@@ -140,20 +140,12 @@ job("API Build and deploy") {
 
         }
     }
-    host(displayName = "Run deploy script") {
+    host(displayName = "Deploying...") {
 
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
         env["DEPLOY_PK"] = "{{ DEPLOY_PK }}"
-        fileInput {
-            source = FileSource.FileArtifact(
-                    "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
-                    "api.gz",
-                    extract = true
-            )
-            localPath = "./services/"
-        }
 
         shellScript {
             content = """
@@ -184,7 +176,7 @@ job("API Build and deploy") {
                         -o StrictHostKeyChecking=no \
                         -o LogLevel=quiet \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        docker compose restart api
+                        docker compose restart api"
               """
         }
         requirements {
