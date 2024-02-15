@@ -168,17 +168,20 @@ job("API Build and deploy") {
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         rm -rf /usr/local/src/flirtex/api/
-                        mkdir -p /usr/local/src/flirtex/api/
+                        mkdir -p /usr/local/src/flirtex/api/.venv
                         echo Start downloading hash ${'$'}VENV_HASH.tar.gz
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}CACHE_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
-                            --output '/usr/local/src/flirtex/'
+                            --output '/usr/local/src/flirtex/venv.tar.gz'
                         echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
-                            --output '/usr/local/src/flirtex/'"
+                            --output '/usr/local/src/flirtex/api.gz'
+                        tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
+                        tar -xzf /usr/local/src/flirtex/venv.gz -C /usr/local/src/flirtex/api/.venv
+                        "
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
