@@ -50,10 +50,6 @@ class GlobalConfig(BaseSettings):
     DECK_TTL_S: int = 3600
     DECK_BATCH_SIZE: int = 5
 
-    class Config:
-        # env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-        env_file_encoding = "utf-8"
-
 
 class LocalConfig(GlobalConfig):
     """Local configurations."""
@@ -66,7 +62,7 @@ class ProdConfig(GlobalConfig):
     """Production configurations."""
 
     DEBUG: bool = False
-    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.PRODUCTION
+    ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.PROD
 
 
 class FactoryConfig:
@@ -74,7 +70,7 @@ class FactoryConfig:
         self.environment = environment
 
     def __call__(self) -> GlobalConfig:
-        if self.environment == EnvironmentEnum.PRODUCTION.value:
+        if self.environment == EnvironmentEnum.PROD.value:
             return ProdConfig()  # type: ignore
         return LocalConfig()  # type: ignore
 

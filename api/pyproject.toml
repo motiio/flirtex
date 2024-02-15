@@ -10,7 +10,7 @@ python = "^3.12"
 fastapi = "^0.109.2"
 aiogram = "^3.3.0"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
-sentry-sdk = {extras = ["fastapi"], version = "^1.40.3"}
+sentry-sdk = {extras = ["opentelemetry"], version = "^1.40.4"}
 aioboto3 = "^12.3.0"
 pydantic-settings = "^2.1.0"
 geoalchemy2 = {extras = ["shapely"], version = "^0.14.4"}

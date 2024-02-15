@@ -1,29 +1,18 @@
-version: "2.1"
+version: "3.8"
 services:
-  pg-db:
-    build:
-      context: ./pg-db
-      dockerfile: ./docker/Dockerfile  # Путь к вашему Dockerfile для PostgreSQL с PostGIS
-    hostname: db
-    env_file:
-      - ./pg-db/docker/.env
-    volumes:
-      - ./pg-db/data:/var/lib/postgresql/data  # Том для хранения данных
-    networks:
-      - flirtex-network
-    restart: always
-
   redis:
     image: redis:latest
     networks:
       - flirtex-network
 
   api:
-    build:
-      context: ./api
-      dockerfile: ./docker/Dockerfile
+    image: flirtex.registry.jetbrains.space/p/connecta/containers/api:latest
+    deploy:
+      update_config:
+        order: stop-first
+        failure_action: rollback
+        delay: 10s
     depends_on:
-      - pg-db
       - redis
     env_file:
       - ./api/docker/.env
@@ -35,5 +24,3 @@ services:
 networks:
   flirtex-network:
     driver: bridge
-
-

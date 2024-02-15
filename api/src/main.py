@@ -17,6 +17,7 @@ from src.modules.profile.api import profile_router_v1
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
+    traces_sample_rate=1.0,
     environment=settings.ENVIRONMENT,
     integrations=[
         SqlalchemyIntegration(),
