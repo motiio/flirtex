@@ -161,9 +161,9 @@ job("API Build and deploy") {
                     chmod 400 id_rsa
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ~/.ssh/known_hosts
                     scp -i id_rsa \
-                        -P ${'$'}SSH_PORT
-                        -r ./api/*
-                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/loacl/src/flirtex/api/ "\
+                        -P ${'$'}SSH_PORT \
+                        -r ./api/* \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/loacl/src/flirtex/api/
               """
         }
         requirements {
