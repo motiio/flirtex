@@ -14,8 +14,6 @@ services:
         delay: 10s
     depends_on:
       - redis
-    env_file:
-      - ./api/docker/.env
     volumes:
       - /var/run/postgresql:/var/run/postgresql
     networks:
