@@ -159,6 +159,7 @@ job("API Build and deploy") {
         shellScript {
             content = """
                 pwd
+                whoami
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
                 ls -la
