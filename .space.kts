@@ -141,6 +141,7 @@ job("API Build and deploy") {
         }
     }
     host(displayName = "Run deploy script") {
+        runIf("{{ isMainBranch }}")
 
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
@@ -156,8 +157,8 @@ job("API Build and deploy") {
             localPath = "./services/"
         }
 
-        shellScript {
-            content = """
+        content = """
+                pwd
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
                 ls -la
@@ -165,6 +166,7 @@ job("API Build and deploy") {
                 ENDSSH
                 ""${'"'}
             """
+        shellScript {
         }
         requirements {
             workerTags("ProdPool-1")
