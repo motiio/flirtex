@@ -96,6 +96,8 @@ job("API Build and deploy") {
 
                     api.secrets["SENTRY_DSN"] = Ref("project:PROD__SENTRY_DSN")
                     api.secrets["DEPLOY_PK"] = Ref("project:PROD__DEPLOY_PK")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
@@ -123,6 +125,8 @@ job("API Build and deploy") {
                     api.secrets["SENTRY_DSN"] = Ref("project:DEV__SENTRY_DSN")
 
                     api.secrets["DEPLOY_PK"] = Ref("project:DEV__DEPLOY_PK")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:DEV__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:DEV__ARTIFACTS_ACCESS_KEY")
 
                     // params
 
@@ -143,9 +147,14 @@ job("API Build and deploy") {
     host(displayName = "Deploying...") {
 
         env["SSH_HOST"] = "{{ SSH_HOST }}"
+        env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
         env["DEPLOY_PK"] = "{{ DEPLOY_PK }}"
+        env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
+        env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
+        env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
+        env["ARTIFACTS_PATH"] = "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}/api.gz"
 
         shellScript {
             content = """
@@ -158,25 +167,21 @@ job("API Build and deploy") {
                         -o LogLevel=quiet \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         rm -rf /usr/local/src/flirtex/api/ \
-                        mkdir -p /usr/local/src/flirtex/api/"
-                    scp -i id_rsa \
-                        -o UserKnownHostsFile=/dev/null \
-                        -o StrictHostKeyChecking=no \
-                        -P ${'$'}SSH_PORT \
-                        -r ./api/* \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/api/
+                        mkdir -p /usr/local/src/flirtex/api/ \ 
+                        curl -f -L \
+                            -H "Authorization: Bearer ${'$'}CACHE_ACCESS_KEY" \
+                            https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
+                            --output "venv.tar.gz"
+                        curl -f -L \
+                            -H "Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY" \
+                            https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-files/${'$'}ARTIFACTS_PATH \
+                            --output "/usr/local/src/flirtex/""
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
                         -P ${'$'}SSH_PORT \
                         -r ./docker-compose.yml \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
-                    ssh -i id_rsa \
-                        -o UserKnownHostsFile=/dev/null \
-                        -o StrictHostKeyChecking=no \
-                        -o LogLevel=quiet \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        docker compose restart api"
               """
         }
         requirements {
