@@ -112,13 +112,18 @@ job("[PROD]. API deploy") {
 
         }
     }
-    host(displayName = "Restarting app..."){
+}
+job("Deploy FastAPI App with Docker Compose") {
+    host(displayName = "Deploy and start..."){
         shellScript {
             content = """
+                cp docker-compose.yml /usr/local/src/flirtex
+                cd /usr/local/src/flirtex
                 docker-compose pull api
                 docker-compose up -d api
             """
         }
     }
+    
 }
 
