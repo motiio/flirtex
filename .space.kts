@@ -151,32 +151,21 @@ job("API Build and deploy") {
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
-                    "{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
+                    "/urs/local/src/flirtex/build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
                     extract = true
             )
-            localPath = "services/"
-        }
-        fileInput {
-            source = FileSource.Text("{{ DEPLOY_PK }}")
-            localPath = "/root/.ssh/id_rsa"
+            localPath = "/usr/services/"
         }
 
         shellScript {
             content = """
-                chmod 600 /root/.ssh/id_rsa
-                ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> /root/.ssh/known_hosts
-                scp -P ${'$'}SSH_PORT -i /root/.ssh/id_rsa -o ConnectTimeout=10 {{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/builds 
-                scp -P ${'$'}SSH_PORT -i /root/.ssh/id_rsa -o ConnectTimeout=10 docker-compose.yml ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
-                 # Запуск docker-compose на серверc
-                 ssh -p ${'$'}SSH_PORT -i /root/.ssh/id_rsa -o ConnectTimeout=10 ${'$'}SSH_USER@${'$'}SSH_HOST << 'ENDSSH'
-                 cd /usr/local/src/flirtex
-                 rm -rf /usr/local/src/flirtex/api
-                 mkdir -p /usr/local/src/flirtex/api
-                 tar -xzf /usr/local/src/flirtex/builds/${'$'}MAJOR_V/${'$'}MINOR_V.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
-                 docker-compose pull
-                 docker-compose up -d
-                 ENDSSH
-                 ""${'"'}
+                rm -rf /usr/local/src/flirtex/api
+                mkdir -p /usr/local/src/flirtex/api
+                tar -xzf /usr/local/src/flirtex/builds/${'$'}MAJOR_V/${'$'}MINOR_V.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
+                docker-compose pull
+                docker-compose up -d
+                ENDSSH
+                ""${'"'}
             """
         }
     }
