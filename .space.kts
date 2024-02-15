@@ -141,7 +141,6 @@ job("API Build and deploy") {
         }
     }
     host(displayName = "Run deploy script") {
-        runIf("{{ isMainBranch }}")
 
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
