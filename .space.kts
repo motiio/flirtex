@@ -14,16 +14,16 @@ job("[PROD]. API deploy") {
             when (env) {
                 "PROD" -> {
                     // secrets
-                    api.parameters["BOT_TOKEN"] = Ref("project:PROD__BOT_TOKEN")
+                    api.secrets["BOT_TOKEN"] = Ref("project:PROD__BOT_TOKEN")
 
-                    api.parameters["JWT_SECRET"] = Ref("project:PROD__JWT_SECRET")
+                    api.secrets["JWT_SECRET"] = Ref("project:PROD__JWT_SECRET")
 
-                    api.parameters["S3_ACCESS_KEY_ID"] = Ref("project:PROD__S3_ACCESS_KEY_ID")
-                    api.parameters["S3_SECRET_ACCESS_KEY"] = Ref("project:PROD__S3_SECRET_ACCESS_KEY")
+                    api.secrets["S3_ACCESS_KEY_ID"] = Ref("project:PROD__S3_ACCESS_KEY_ID")
+                    api.secrets["S3_SECRET_ACCESS_KEY"] = Ref("project:PROD__S3_SECRET_ACCESS_KEY")
 
-                    api.parameters["DATABASE_URI"] = Ref("project:PROD__DATABASE_URI")
+                    api.secrets["DATABASE_URI"] = Ref("project:PROD__DATABASE_URI")
 
-                    api.parameters["SENTRY_DSN"] = Ref("project:PROD__SENTRY_DSN")
+                    api.secrets["SENTRY_DSN"] = Ref("project:PROD__SENTRY_DSN")
 
                     // params
 
