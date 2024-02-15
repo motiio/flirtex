@@ -180,7 +180,7 @@ job("API Build and deploy") {
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
                             --output '/usr/local/src/flirtex/api.gz'
                         tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
-                        tar -xzf /usr/local/src/flirtex/venv.gz -C /usr/local/src/flirtex/api/.venv
+                        tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/api/.venv
                         "
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
