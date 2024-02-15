@@ -165,7 +165,8 @@ job("API Build and deploy") {
                         -o StrictHostKeyChecking=no \
                         -o LogLevel=quiet \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        rm -rf /usr/local/src/flirtex/api/"
+                        rm -rf /usr/local/src/flirtex/api/ \
+                        mkdir -p /usr/local/src/flirtex/api/"
                     scp -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
