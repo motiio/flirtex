@@ -144,6 +144,8 @@ job("API Build and deploy") {
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
+        env["MAJOR_V"] = "{{ MAJOR_V }}"
+        env["MINOR_V"] = "{{ MINOR_V }}"
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
@@ -160,15 +162,15 @@ job("API Build and deploy") {
         shellScript {
             content = """
                 chmod 600 /root/.ssh/id_rsa
-                ssh-keyscan -p ${SSH_PORT} ${SSH_HOST} >> /root/.ssh/known_hosts
-                scp -P ${SSH_PORT} {{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${SSH_USER}@${SSH_HOST}:/usr/local/src/flirtex/builds
-                scp -P ${SSH_PORT} docker-compose.yml ${SSH_USER}@${SSH_HOST}:/usr/local/src/flirtex/
+                ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> /root/.ssh/known_hosts
+                scp -P ${'$'}SSH_PORT {{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/builds
+                scp -P ${'$'}SSH_PORT docker-compose.yml ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
                  # Запуск docker-compose на сервере
-                 ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} << 'ENDSSH'
+                 ssh -p ${'$'}SSH_PORT ${'$'}SSH_USER@${'$'}SSH_HOST << 'ENDSSH'
                  cd /usr/local/src/flirtex
                  rm -rf /usr/local/src/flirtex/api
                  mkdir -p /usr/local/src/flirtex/api
-                 tar -xzf /usr/local/src/flirtex/builds/{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
+                 tar -xzf /usr/local/src/flirtex/builds/${'$'}MAJOR_V/${'$'}MINOR_V.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
                  docker-compose pull
                  docker-compose up -d
                  ENDSSH
