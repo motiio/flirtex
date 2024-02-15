@@ -73,7 +73,7 @@ job("API Build and deploy") {
             localPath = "api/"
             // Fail job if build/publish/app/ is not found
             optional = false
-            remotePath = "{{ run:file-artifacts.default-repository }}/api/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}_api.gz"
+            remotePath = "{{ run:file-artifacts.default-repository }}/{{ MAJOR_V }}.{{ MINOR_V }}.{{ run:number }}_api.gz"
             archive = true
             onStatus = OnStatus.SUCCESS
         }
@@ -150,11 +150,11 @@ job("API Build and deploy") {
         env["MINOR_V"] = "{{ MINOR_V }}"
         fileInput {
             source = FileSource.FileArtifact(
-                    "{{ run:file-artifacts.default-repository }}/api/{{ MAJOR_V }}",
-                    "{{ MINOR_V }}.{{ run:number }}_api.gz",
+                    "{{ run:file-artifacts.default-repository }}",
+                    "{{ MAJOR_V }}.{{ MINOR_V }}.{{ run:number }}_api.gz",
                     extract = true
             )
-            localPath = "/usr/services/"
+            localPath = "./services/"
         }
 
         shellScript {
@@ -162,7 +162,7 @@ job("API Build and deploy") {
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
                 ls -la
-                cp -a ./{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
+                cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
                 docker-compose pull
                 docker-compose up -d
                 ENDSSH
