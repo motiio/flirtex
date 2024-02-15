@@ -44,31 +44,31 @@ job("API Build and deploy") {
     }
 
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
-//        cache {
-        // Генерация имени файла кэша
-        // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
-        // одинаковым pyproject.toml будут использовать кэшированные зависимости
-//            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
+        cache {
+            // Генерация имени файла кэша
+            // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
+            // одинаковым pyproject.toml будут использовать кэшированные зависимости
+            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
 
-        // Вариант восстановления
-        // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
-//            restoreKeys {
-//                +"poetry-master"
-//            }
+            // Вариант восстановления
+            // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
+            restoreKeys {
+                +"poetry-master"
+            }
 
-        // Локальный путь к директории файла кэша
-//            localPath = "api/.venv"
-//        }
+            // Локальный путь к директории файла кэша
+            localPath = "api/.venv"
+        }
 
-//        shellScript {
-//            content = """
-//            cd api
-//            poetry config virtualenvs.create true
-//            poetry config virtualenvs.in-project true
-//            poetry install --no-root
-//            poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
-//            """
-//        }
+        shellScript {
+            content = """
+            cd api
+            poetry config virtualenvs.create true
+            poetry config virtualenvs.in-project true
+            poetry install --no-root
+            poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
+            """
+        }
         fileArtifacts {
             localPath = "api/"
             // Fail job if build/publish/app/ is not found
@@ -147,18 +147,28 @@ job("API Build and deploy") {
         env["SSH_USER"] = "{{ SSH_USER }}"
         env["MAJOR_V"] = "{{ MAJOR_V }}"
         env["MINOR_V"] = "{{ MINOR_V }}"
+        fileInput {
+            source = FileSource.FileArtifact(
+                    "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
+                    "api.gz",
+                    extract = true
+            )
+            localPath = "./services/"
+        }
 
         shellScript {
             content = """
-                eval $(ssh-agent -s)
-                echo "${'$'}{DEPLOY_PK}" | tr -d '\r' | ssh-add
-                mkdir -p ~/.ssh
-                chmod 700 ~/.ssh
-                ssh-keyscan -p "${'$'}{SSH_PORT}" "${'$'}{SSH_HOST}" >> ~/.ssh/known_hosts
-                chmod 644 ~/.ssh/known_hosts
-                
-                scp -P "${'$'}{SSH_PORT}" -r api/* ${'$'}{SSH_USER}@${'$'}{SSH_HOST}:/usr/loacal/src/flirtex/
-                """.trimIndent()
+                rm -rf /usr/local/src/flirtex/api
+                mkdir -p /usr/local/src/flirtex/api
+                ls -la
+                cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
+                ENDSSH
+                ""${'"'}
+            """
+        }
+        requirements {
+            workerTags("ProdPool-1")
         }
     }
 }
+
