@@ -157,17 +157,20 @@ job("API Build and deploy") {
 
         shellScript {
             content = """
-                    sudo apt update
-                    sudo apt install rsync
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
-                    chmod -R 777 ./api
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
-                    sudo rsync -avz --delete -e "scp -i id_rsa \
+                    ssh -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
-                        -P ${'$'}SSH_PORT"
-                        ./api/ \
+                        -o LogLevel=quiet \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        rm -rf /usr/local/src/flirtex/api/"
+                    scp -i id_rsa \
+                        -o UserKnownHostsFile=/dev/null \
+                        -o StrictHostKeyChecking=no \
+                        -P ${'$'}SSH_PORT \
+                        -r ./api/* \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/api/
               """
         }
