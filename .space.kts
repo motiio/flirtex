@@ -161,6 +161,8 @@ job("API Build and deploy") {
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
+                    echo Start downloading hash ${'$'}VENV_HASH.tar.gz
+                    echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                     ssh -i id_rsa \
                         -o UserKnownHostsFile=/dev/null \
                         -o StrictHostKeyChecking=no \
@@ -168,10 +170,12 @@ job("API Build and deploy") {
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         rm -rf /usr/local/src/flirtex/api/ \
                         mkdir -p /usr/local/src/flirtex/api/ \ 
+                        echo Start downloading hash ${'$'}VENV_HASH.tar.gz
                         curl -f -L \
                             -H "Authorization: Bearer ${'$'}CACHE_ACCESS_KEY" \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
                             --output "venv.tar.gz"
+                        echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H "Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY" \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-files/${'$'}ARTIFACTS_PATH \
