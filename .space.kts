@@ -151,7 +151,7 @@ job("API Build and deploy") {
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
-                    "/urs/local/src/flirtex/build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
+                    "./build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz",
                     extract = true
             )
             localPath = "/usr/services/"
@@ -161,7 +161,7 @@ job("API Build and deploy") {
             content = """
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
-                tar -xzf /usr/local/src/flirtex/builds/${'$'}MAJOR_V/${'$'}MINOR_V.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
+                cp -a ./build/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz /usr/local/src/flirtex/api
                 docker-compose pull
                 docker-compose up -d
                 ENDSSH
