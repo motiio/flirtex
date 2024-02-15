@@ -144,7 +144,6 @@ job("API Build and deploy") {
         env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
-        env["BUILD_FILE_PATH"] = "{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz"
         fileInput {
             source = FileSource.FileArtifact(
                     "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}",
@@ -169,7 +168,7 @@ job("API Build and deploy") {
                  cd /usr/local/src/flirtex
                  rm -rf /usr/local/src/flirtex/api
                  mkdir -p /usr/local/src/flirtex/api
-                 tar -xzf /usr/local/src/flirtex/builds/#${BUILD_FILE_PATH} -C /usr/local/src/flirtex/api
+                 tar -xzf /usr/local/src/flirtex/builds/{{ MAJAOR_V }}/{{ MINOR_V }}.{{ run:number }}/api.gz -C /usr/local/src/flirtex/api
                  docker-compose pull
                  docker-compose up -d
                  ENDSSH
