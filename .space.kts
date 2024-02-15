@@ -157,7 +157,8 @@ job("API Build and deploy") {
             localPath = "./services/"
         }
 
-        content = """
+        shellScript {
+            content = """
                 pwd
                 rm -rf /usr/local/src/flirtex/api
                 mkdir -p /usr/local/src/flirtex/api
@@ -166,7 +167,6 @@ job("API Build and deploy") {
                 ENDSSH
                 ""${'"'}
             """
-        shellScript {
         }
         requirements {
             workerTags("ProdPool-1")
