@@ -39,7 +39,7 @@ job("API Build and deploy") {
         text("ENVIRONMENT", value = "PROD") {
             options("DEV", "PROD")
         }
-        text("MAJAOR_V", value = "0")
+        text("MAJOR_V", value = "0")
         text("MINOR_V", value = "0")
     }
 
@@ -107,6 +107,7 @@ job("API Build and deploy") {
 
                     api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
+                    api.parameters["SSH_USER"] = Ref("project:PROD__SSH_USER")
                 }
 
                 "DEV" -> {
@@ -134,6 +135,7 @@ job("API Build and deploy") {
 
                     api.parameters["SSH_PORT"] = Ref("project:DEV__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:DEV__SSH_HOST")
+                    api.parameters["SSH_USER"] = Ref("project:DEV__SSH_USER")
                 }
             }
 
