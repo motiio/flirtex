@@ -173,6 +173,18 @@ job("API Build and deploy") {
                         -P ${'$'}SSH_PORT \
                         -r ./api/* \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/api/
+                    scp -i id_rsa \
+                        -o UserKnownHostsFile=/dev/null \
+                        -o StrictHostKeyChecking=no \
+                        -P ${'$'}SSH_PORT \
+                        -r ./docker-compose.yml \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
+                    ssh -i id_rsa \
+                        -o UserKnownHostsFile=/dev/null \
+                        -o StrictHostKeyChecking=no \
+                        -o LogLevel=quiet \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        docker compose restart api
               """
         }
         requirements {
