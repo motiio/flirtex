@@ -167,6 +167,7 @@ job("API Build and deploy") {
             -o UserKnownHostsFile=./known_hosts \
             -o StrictHostKeyChecking=no \
             -o LogLevel=INFO \
+            -o 'Port=2222'  \
             \${'$'}SSH_USER@\${'$'}SSH_HOST \\
             "set -e; \\
             echo 'Removing existing directory /usr/local/src/flirtex/api/'; \\
@@ -186,6 +187,7 @@ job("API Build and deploy") {
         scp -i id_rsa \
             -o UserKnownHostsFile=./known_hosts \
             -o StrictHostKeyChecking=no \
+            -o 'Port=2222'
             -P \${'$'}SSH_PORT \
             -r ./docker-compose.yml \
             \${'$'}SSH_USER@\${'$'}SSH_HOST:/usr/local/src/flirtex/
