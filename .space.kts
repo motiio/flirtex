@@ -163,7 +163,7 @@ job("API Build and deploy") {
                 whoami
                 sudo rm -rf /usr/local/src/flirtex/api
                 sudo mkdir -p /usr/local/src/flirtex/api
-                cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
+                sudo cp -a ./services/{{ MAJOR_V }}/{{ MINOR_V }}.{{ run:number }}/api /usr/local/src/flirtex/api
                 ENDSSH
                 ""${'"'}
             """
