@@ -51,6 +51,7 @@ RUN chmod +x /docker-entrypoint.sh
 # Set working directory and copy source code
 WORKDIR /api
 COPY ./src/ ./src/
+COPY ./alembic.ini ./alembic.ini
 
 EXPOSE 8080
 # Define entrypoint and default command
