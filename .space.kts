@@ -216,7 +216,7 @@ job("API Build and deploy") {
                         WORKERS_COUNT=${'$'}WORKERS_COUNT && \
                         docker compose build --no-cache api && \
                         docker image prune -f --filter "until=240h" \
-                        docker compose up -d api
+                        docker compose up api -d
                         "
               """.trimIndent()
         }
