@@ -180,41 +180,6 @@ job("API Build and deploy") {
                         -P ${'$'}SSH_PORT \
                         -r ./docker-compose.yml \
                         ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
-                    ssh -i id_rsa \
-                        -o UserKnownHostsFile=./known_hosts \
-                        -o StrictHostKeyChecking=no \
-                        -o LogLevel=INFO \
-                        -p ${'$'}SSH_PORT \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        rm -rf /usr/local/src/flirtex/api/
-                        mkdir -p /usr/local/src/flirtex/api/.venv
-                        echo Start downloading hash ${'$'}VENV_HASH.tar.gz
-                        curl -f -L \
-                            -H 'Authorization: Bearer ${'$'}CACHE_ACCESS_KEY' \
-                            https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
-                            --output '/usr/local/src/flirtex/venv.tar.gz'
-                        echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
-                        curl -f -L \
-                            -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
-                            https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
-                            --output '/usr/local/src/flirtex/api.gz'
-                        tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
-                        mkdir -p /usr/local/src/flirtex/env/api/.venv
-                        tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
-                        cd /usr/local/src/flirtex
-                        echo Running containerrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                        export BOT_TOKEN=${'$'}BOT_TOKEN \
-                        JWT_SECRET=${'$'}JWT_SECRET \
-                        S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
-                        S3_SECRET_ACCESS_KEY=${'$'}S3_SECRET_ACCESS_KEY \
-                        DATABASE_URI=${'$'}DATABASE_URI \
-                        SENTRY_DSN=${'$'}SENTRY_DSN \
-                        JWT_ACCESS_TOKEN_EXPIRE_SECONDS=${'$'}JWT_ACCESS_TOKEN_EXPIRE_SECONDS \
-                        JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
-                        REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
-                        S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
-                        WORKERS_COUNT=${'$'}WORKERS_COUNT
-                        "
               """.trimIndent()
         }
         requirements {
