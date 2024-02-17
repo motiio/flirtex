@@ -217,7 +217,7 @@ job("API Build and deploy") {
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT \
-                        REDIS_HOST='${'$'}'REDIS_HOST
+                        REDIS_HOST='${'$'}'REDIS_HOST \
                         ENVIRONMENT='${'$'}'ENVIRONMENT
                         docker compose up --build api
                         "
