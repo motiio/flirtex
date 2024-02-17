@@ -202,6 +202,7 @@ job("API Build and deploy") {
                         mkdir -p /usr/local/src/flirtex/env/api/.venv
                         tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
                         cd /usr/local/src/flirtex
+                        "
               """.trimIndent()
         }
         requirements {
