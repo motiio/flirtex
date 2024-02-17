@@ -28,7 +28,6 @@ services:
     volumes:
       - /var/run/postgresql:/var/run/postgresql
       - /usr/local/src/flirtex/api:/api
-      - /usr/local/src/flirtex/api/.venv:/opt/pysetup/.venv
     networks:
       - flirtex-network
 
