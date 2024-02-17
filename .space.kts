@@ -100,9 +100,9 @@ job("API Build and deploy") {
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:PROD__REDIS_NOTIFIER_URL")
+                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:PROD__S3_PHOTO_BUCKET_NAME")
                     api.parameters["WORKERS_COUNT"] = Ref("project:PROD__WORKERS_COUNT")
-                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
 
                     api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
