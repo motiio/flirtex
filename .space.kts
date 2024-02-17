@@ -36,6 +36,9 @@ job("API Build and deploy") {
 
     startOn {}
     parameters {
+        text("ENVIRONMENT", value = "PROD") {
+            options("DEV", "PROD")
+        }
         text("MAJOR_V", value = "0")
         text("MINOR_V", value = "0")
     }
@@ -100,14 +103,13 @@ job("API Build and deploy") {
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:PROD__REDIS_NOTIFIER_URL")
-                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:PROD__S3_PHOTO_BUCKET_NAME")
                     api.parameters["WORKERS_COUNT"] = Ref("project:PROD__WORKERS_COUNT")
+                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
 
                     api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
                     api.parameters["SSH_USER"] = Ref("project:PROD__SSH_USER")
-                    api.parameters["ENVIRONMENT"] = "prod"
                 }
 
                 "DEV" -> {
@@ -139,7 +141,6 @@ job("API Build and deploy") {
                     api.parameters["SSH_PORT"] = Ref("project:DEV__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:DEV__SSH_HOST")
                     api.parameters["SSH_USER"] = Ref("project:DEV__SSH_USER")
-                    api.parameters["ENVIRONMENT"] = "dev"
                 }
             }
 
@@ -162,13 +163,13 @@ job("API Build and deploy") {
         env["JWT_SECRET"] = "{{JWT_SECRET}}"
         env["S3_ACCESS_KEY_ID"] = "{{S3_ACCESS_KEY_ID}}"
         env["S3_SECRET_ACCESS_KEY"] = "{{S3_SECRET_ACCESS_KEY}}"
-        env["DATABASE_URI"] = "{{ DATABASE_URI }}"
+        env["DATABASE_URI"] = "{{DATABASE_URI}}"
         env["SENTRY_DSN"] = "{{SENTRY_DSN}}"
         env["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = "{{JWT_ACCESS_TOKEN_EXPIRE_SECONDS}}"
         env["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = "{{JWT_REFRESH_TOKEN_EXPIRE_SECONDS}}"
         env["REDIS_NOTIFIER_URL"] = "{{REDIS_NOTIFIER_URL}}"
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
-        env["WORKERS_COUNT"] = "{{ WORKERS_COUNT }}"
+        env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
 
         shellScript {
             content = """
