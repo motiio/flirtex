@@ -16,8 +16,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_NO_INTERACTION=1 \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv" \
-    VENV_PATH="/opt/pysetup/.venv" \
-    CACHED_API_VENV="/usr/local/src/flirtex/env/api/.venv"
+    VENV_PATH="/opt/pysetup/.venv"
 
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
@@ -44,7 +43,6 @@ ENV FASTAPI_ENV=production
 # Copying poetry and venv into image
 COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
-COPY $CACHED_API_VENV $VENV_PATH
 
 # Copying in our entrypoint
 COPY docker-entrypoint.sh /docker-entrypoint.sh
