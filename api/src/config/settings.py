@@ -36,7 +36,6 @@ class GlobalConfig(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int
 
-    MAX_PROFILE_PHOTO_SIZE_B: int
     MAX_PROFILE_PHOTOS_COUNT: int = 7
     ACCEPTED_PHOTO_TYPES: tuple = ("JPEG",)
 

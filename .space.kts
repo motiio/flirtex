@@ -36,8 +36,8 @@ job("API Build and deploy") {
 
     startOn {}
     parameters {
-        text("ENVIRONMENT", value = "PROD") {
-            options("DEV", "PROD")
+        text("ENVIRONMENT", value = "prod") {
+            options("dev", "prod")
         }
         text("MAJOR_V", value = "0")
         text("MINOR_V", value = "0")
@@ -171,6 +171,7 @@ job("API Build and deploy") {
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
         env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
         env["REDIS_HOST"] = "{{REDIS_HOST}}"
+        env["ENVIRONMENT"] = "{{ENVIRONMENT}}"
 
         shellScript {
             content = """
