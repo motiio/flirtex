@@ -218,7 +218,7 @@ job("API Build and deploy") {
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT \
                         REDIS_HOST='${'$'}'REDIS_HOST \
-                        ENVIRONMENT='${'$'}'ENVIRONMENT
+                        ENVIRONMENT={{ENVIRONMENT}}
                         docker compose up --build api
                         "
               """.trimIndent()
