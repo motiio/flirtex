@@ -32,6 +32,8 @@ services:
       - /usr/local/src/flirtex/api:/api
     networks:
       - flirtex-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   flirtex-network:
