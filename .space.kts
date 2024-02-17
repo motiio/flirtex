@@ -203,8 +203,7 @@ job("API Build and deploy") {
                         tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
                         cd /usr/local/src/flirtex
                         echo Running container
-                        docker-compose up --build --build-arg \
-                        BOT_TOKEN=${'$'}BOT_TOKEN \
+                        export BOT_TOKEN=${'$'}BOT_TOKEN \
                         JWT_SECRET=${'$'}JWT_SECRET \
                         S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
                         S3_SECRET_ACCESS_KEY=${'$'}S3_SECRET_ACCESS_KEY \
@@ -214,7 +213,10 @@ job("API Build and deploy") {
                         JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
-                        WORKERS_COUNT=${'$'}WORKERS_COUNT
+                        WORKERS_COUNT=${'$'}WORKERS_COUNT && \
+                        docker-compose build --no-cache api && \
+                        docker image prune -f --filter "until=240h" && \
+                        docker images | grep -v ${'$'}(docker images -q | head -n 1) | awk '{print ${'$'}3}' | xargs docker rmi -f
                         "
               """.trimIndent()
         }
