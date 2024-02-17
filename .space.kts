@@ -105,6 +105,7 @@ job("API Build and deploy") {
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:PROD__REDIS_NOTIFIER_URL")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:PROD__S3_PHOTO_BUCKET_NAME")
                     api.parameters["WORKERS_COUNT"] = Ref("project:PROD__WORKERS_COUNT")
+                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
 
                     api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
@@ -133,6 +134,7 @@ job("API Build and deploy") {
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:DEV__REDIS_NOTIFIER_URL")
+                    api.parameters["REDIS_HOST"] = Ref("project:DEV__REDIS_HOST")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:DEV__S3_PHOTO_BUCKET_NAME")
                     api.parameters["WORKERS_COUNT"] = Ref("project:DEV__WORKERS_COUNT")
 
@@ -168,6 +170,7 @@ job("API Build and deploy") {
         env["REDIS_NOTIFIER_URL"] = "{{REDIS_NOTIFIER_URL}}"
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
         env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
+        env["REDIS_HOST"] = "{{REDIS_HOST}}"
 
         shellScript {
             content = """
@@ -214,6 +217,7 @@ job("API Build and deploy") {
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT
+                        REDIS_HOST='${'$'}'REDIS_HOST
                         docker compose up -d --build api
                         "
               """.trimIndent()
