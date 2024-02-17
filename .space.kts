@@ -203,17 +203,6 @@ job("API Build and deploy") {
                         tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
                         cd /usr/local/src/flirtex
                         echo Running containerrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                        export BOT_TOKEN=${'$'}BOT_TOKEN \
-                        JWT_SECRET=${'$'}JWT_SECRET \
-                        S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
-                        S3_SECRET_ACCESS_KEY=${'$'}S3_SECRET_ACCESS_KEY \
-                        DATABASE_URI=${'$'}DATABASE_URI \
-                        SENTRY_DSN=${'$'}SENTRY_DSN \
-                        JWT_ACCESS_TOKEN_EXPIRE_SECONDS=${'$'}JWT_ACCESS_TOKEN_EXPIRE_SECONDS \
-                        JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
-                        REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
-                        S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
-                        WORKERS_COUNT=${'$'}WORKERS_COUNT
                         "
               """.trimIndent()
         }
