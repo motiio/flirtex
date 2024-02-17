@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_NO_INTERACTION=1 \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv" \
-    VENV_PATH="/opt/pysetup/.venv"
+    WORKERS_COUNT=${WORKERS_COUNT}
 
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
@@ -56,5 +56,5 @@ EXPOSE 8080
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD alembic upgrade head
-CMD gunicorn src.main:api --workers $WORKERS_COUNT -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api.sock
+CMD gunicorn src.main:api --workers ${WORKERS_COUNT} -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api.sock
 
