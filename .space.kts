@@ -156,11 +156,30 @@ job("API Build and deploy") {
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
         env["ARTIFACTS_PATH"] = "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}/api.gz"
 
+        /*API service params*/
+        env["BOT_TOKEN"] = {{ "BOT_TOKEN" }}
+        env["JWT_SECRET"] = {{ "JWT_SECRET" }}
+        env["S3_ACCESS_KEY_ID"] = {{ "S3_ACCESS_KEY_ID" }}
+        env["S3_SECRET_ACCESS_KEY"] = {{ "S3_SECRET_ACCESS_KEY" }}
+        env["DATABASE_URI"] = {{ "DATABASE_URI" }}
+        env["SENTRY_DSN"] = {{ "SENTRY_DSN" }}
+        env["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = {{ "JWT_ACCESS_TOKEN_EXPIRE_SECONDS" }}
+        env["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = {{ "JWT_REFRESH_TOKEN_EXPIRE_SECONDS" }}
+        env["REDIS_NOTIFIER_URL"] = {{ "REDIS_NOTIFIER_URL" }}
+        env["S3_PHOTO_BUCKET_NAME"] = {{ "S3_PHOTO_BUCKET_NAME" }}
+        env["WORKERS_COUNT"] = {{ "WORKERS_COUNT" }}
+
         shellScript {
             content = """
                     echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
                     chmod 400 id_rsa
                     ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
+                    scp -i id_rsa \
+                        -o UserKnownHostsFile=/dev/null \
+                        -o StrictHostKeyChecking=no \
+                        -P ${'$'}SSH_PORT \
+                        -r ./docker-compose.yml \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
                     ssh -i id_rsa \
                         -o UserKnownHostsFile=./known_hosts \
                         -o StrictHostKeyChecking=no \
@@ -180,14 +199,23 @@ job("API Build and deploy") {
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
                             --output '/usr/local/src/flirtex/api.gz'
                         tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
-                        tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/api/.venv
+                        mkdir - p /usr/local/src/flirtex/env/api/.venv
+                        tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
+                        cd /usr/local/src/flirtex
+                        echo Running container
+                        docker-compose up --build --build-arg \
+                        BOT_TOKEN=${'$'}BOT_TOKEN \
+                        JWT_SECRET=${'$'}JWT_SECRET \
+                        S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
+                        S3_SECRET_ACCESS_KEY=${'$'}S3_SECRET_ACCESS_KEY \
+                        DATABASE_URI=${'$'}DATABASE_URI \
+                        SENTRY_DSN=${'$'}SENTRY_DSN \
+                        JWT_ACCESS_TOKEN_EXPIRE_SECONDS=${'$'}JWT_ACCESS_TOKEN_EXPIRE_SECONDS \
+                        JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
+                        REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
+                        S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
+                        WORKERS_COUNT=${'$'}WORKERS_COUNT
                         "
-                    scp -i id_rsa \
-                        -o UserKnownHostsFile=/dev/null \
-                        -o StrictHostKeyChecking=no \
-                        -P ${'$'}SSH_PORT \
-                        -r ./docker-compose.yml \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST:/usr/local/src/flirtex/
               """.trimIndent()
         }
         requirements {

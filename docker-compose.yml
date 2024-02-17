@@ -6,7 +6,9 @@ services:
       - flirtex-network
 
   api:
-    image: flirtex.registry.jetbrains.space/p/connecta/containers/api:latest
+    build:
+      context: ./api
+      dockerfile: ./docker/Dockerfile
     deploy:
       update_config:
         order: stop-first
@@ -17,6 +19,7 @@ services:
     volumes:
       - /var/run/postgresql:/var/run/postgresql
       - /usr/local/src/flirtex/api:/api
+      - /usr/local/src/flirtex/env/api/.venv:/opt/pysetup/.venv
     networks:
       - flirtex-network
 
