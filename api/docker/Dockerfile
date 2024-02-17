@@ -4,7 +4,7 @@
 
 # Creating a python base with shared environment variables
 FROM python:3.12.2-bookworm as python-base
-ENV WORKERS_COUNT=${WORKERS_COUNT}
+ARG WORKERS_COUNT
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
