@@ -55,6 +55,5 @@ COPY ./src/ ./src/
 EXPOSE 8080
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD alembic upgrade head
 CMD gunicorn src.main:api --workers ${WORKERS_COUNT} -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api.sock
 

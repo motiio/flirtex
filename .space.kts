@@ -213,8 +213,7 @@ job("API Build and deploy") {
                         JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
-                        WORKERS_COUNT=${'$'}WORKERS_COUNT && \
-                        docker compose build --no-cache api && \
+                        docker compose build --build-arg WORKERS_COUNT={'${'$'}'}WORKERS_COUN --no-cache api && \
                         docker image prune -f --filter "until=240h" && \
                         docker compose up api -d
                         "
