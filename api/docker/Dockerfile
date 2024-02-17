@@ -53,7 +53,6 @@ COPY ./src/ ./src/
 
 EXPOSE 8080
 RUN apt update && apt install vim -y && apt install telnet -y
-RUN ls -la /var/run/postgresql/
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD alembic upgrade head
