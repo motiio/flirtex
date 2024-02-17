@@ -9,9 +9,8 @@ services:
     build:
       context: ./api
       dockerfile: ./docker/Dockerfile
-      args:
-        WORKERS_COUNT: ${WORKERS_COUNT}
     environment:
+      WORKERS_COUNT: ${WORKERS_COUNT}
       BOT_TOKEN: ${BOT_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}

@@ -5,6 +5,7 @@
 # Creating a python base with shared environment variables
 FROM python:3.12.2-bookworm as python-base
 ARG WORKERS_COUNT
+ENV WORKERS_COUNT=${WORKERS_COUNT}
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -67,6 +68,6 @@ RUN apt update && apt install vim -y && apt install telnet -y
 RUN ls -la /var/run/postgresql/
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD alembdic upgrad heads
+CMD alembic upgrade head
 CMD gunicorn src.main:api --workers $WORKERS_COUNT -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api.sock
 
