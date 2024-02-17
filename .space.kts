@@ -141,6 +141,7 @@ job("API Build and deploy") {
                     api.parameters["SSH_PORT"] = Ref("project:DEV__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:DEV__SSH_HOST")
                     api.parameters["SSH_USER"] = Ref("project:DEV__SSH_USER")
+                    api.parameters["REDIS_HOST"] = Ref("project:DEV__REDIS_HOST")
                 }
             }
 
@@ -170,6 +171,7 @@ job("API Build and deploy") {
         env["REDIS_NOTIFIER_URL"] = "{{REDIS_NOTIFIER_URL}}"
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
         env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
+        env["REDIS_HOST"] = "{{REDIS_HOST}}"
 
         shellScript {
             content = """
@@ -216,6 +218,7 @@ job("API Build and deploy") {
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT
+                        REDIS_HOST='${'$'}'REDIS_HOST
                         docker compose up -d --build api
                         "
               """.trimIndent()
