@@ -215,8 +215,7 @@ job("API Build and deploy") {
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT=${'$'}WORKERS_COUNT && \
                         docker compose build --no-cache api && \
-                        docker image prune -f --filter "until=240h" && \
-                        docker images | grep -v ${'$'}(docker images -q | head -n 1) | awk '{print ${'$'}3}' | xargs docker rmi -f
+                        docker image prune -f --filter "until=240h"
                         "
               """.trimIndent()
         }
