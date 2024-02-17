@@ -199,7 +199,7 @@ job("API Build and deploy") {
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
                             --output '/usr/local/src/flirtex/api.gz'
                         tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
-                        mkdir - p /usr/local/src/flirtex/env/api/.venv
+                        mkdir -p /usr/local/src/flirtex/env/api/.venv
                         tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
                         cd /usr/local/src/flirtex
                         echo Running container
