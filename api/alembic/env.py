@@ -3,59 +3,31 @@ import asyncio
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.schema import CreateSchema
 
 from alembic import context
 from src.config.settings import settings as app_settings
 from src.modules import *
 
 # from src.config.models import Base
-
 from src.core.models import BaseModel
 
-CORE_SCHEMA_NAME = "core"
-
+TECH_SCHEMA_NAME = "tech"  # Изменено с "core" на "tech"
 
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table":
-        return object.schema in [None, CORE_SCHEMA_NAME]
+        return object.schema in [None, TECH_SCHEMA_NAME]  # Использование TECH_SCHEMA_NAME
     else:
         return True
 
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# Это объект конфигурации Alembic
 config = context.config
 config.set_main_option("sqlalchemy.url", app_settings.DATABASE_URI)
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-# if config.config_file_name is not None:
-#     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
+# Метаданные вашей модели для поддержки 'autogenerate'
 target_metadata = BaseModel.metadata
 
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -63,11 +35,11 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         include_schemas=True,
+        version_table_schema=TECH_SCHEMA_NAME  # Указывает схему для таблицы версий Alembic
     )
 
     with context.begin_transaction():
         context.run_migrations()
-
 
 def do_run_migrations(connection: Connection) -> None:
     def process_revision_directives(context, revision, directives):
@@ -75,6 +47,9 @@ def do_run_migrations(connection: Connection) -> None:
         if script.upgrade_ops.is_empty():
             directives[:] = []
             print("No changes found skipping revision creation.")
+        else:
+            # Попытка создать схему, если она еще не существует
+            connection.execute(CreateSchema(TECH_SCHEMA_NAME))
 
     context.configure(
         connection=connection,
@@ -82,18 +57,13 @@ def do_run_migrations(connection: Connection) -> None:
         include_schemas=True,
         include_object=include_object,
         process_revision_directives=process_revision_directives,
+        version_table_schema=TECH_SCHEMA_NAME  # Также укажите схему здесь
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
-
 async def run_async_migrations() -> None:
-    """In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -101,17 +71,12 @@ async def run_async_migrations() -> None:
     )
 
     async with connectable.connect() as connection:
-        # connection.dialect.default_schema_name = CORE_SCHEMA_NAME
         await connection.run_sync(do_run_migrations)
 
     await connectable.dispose()
 
-
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
-
     asyncio.run(run_async_migrations())
-
 
 if context.is_offline_mode():
     run_migrations_offline()
