@@ -22,11 +22,6 @@ services:
       JWT_REFRESH_TOKEN_EXPIRE_SECONDS: ${JWT_REFRESH_TOKEN_EXPIRE_SECONDS}
       REDIS_NOTIFIER_URL: ${REDIS_NOTIFIER_URL}
       S3_PHOTO_BUCKET_NAME: ${S3_PHOTO_BUCKET_NAME}
-#    deploy:
-#      update_config:
-#        order: stop-first
-#        failure_action: rollback
-#        delay: 10s
     depends_on:
       - redis
     volumes:

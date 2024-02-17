@@ -202,7 +202,7 @@ job("API Build and deploy") {
                         mkdir -p /usr/local/src/flirtex/env/api/.venv
                         tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
                         cd /usr/local/src/flirtex
-                        echo Running container
+                        echo Running containerrrrrrrrrrrrrrrrrrrrrrrrrrrrr
                         export BOT_TOKEN=${'$'}BOT_TOKEN \
                         JWT_SECRET=${'$'}JWT_SECRET \
                         S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
