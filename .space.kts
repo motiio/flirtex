@@ -207,6 +207,7 @@ job("API Build and deploy") {
                         JWT_SECRET=${'$'}JWT_SECRET \
                         S3_ACCESS_KEY_ID=${'$'}S3_ACCESS_KEY_ID \
                         S3_SECRET_ACCESS_KEY=${'$'}S3_SECRET_ACCESS_KEY \
+                        DATABASE_URI=${'$'}DATABASE_URI \
                         SENTRY_DSN=${'$'}SENTRY_DSN \
                         JWT_ACCESS_TOKEN_EXPIRE_SECONDS=${'$'}JWT_ACCESS_TOKEN_EXPIRE_SECONDS \
                         JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
