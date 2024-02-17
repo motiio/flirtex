@@ -38,7 +38,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry install --only main
 
 # 'prod' stage installs all dev deps and can be used to develop code.
-FROM python-base as 'prod'
+FROM python-base as prod
 ENV FASTAPI_ENV=production
 
 # Copying poetry and venv into image
