@@ -219,7 +219,7 @@ job("API Build and deploy") {
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT \
                         REDIS_HOST='${'$'}'REDIS_HOST
                         ENVIRONMENT='${'$'}'ENVIRONMENT
-                        docker compose up -d --build api
+                        docker compose up --build api
                         "
               """.trimIndent()
         }
