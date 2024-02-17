@@ -157,17 +157,17 @@ job("API Build and deploy") {
         env["ARTIFACTS_PATH"] = "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}/api.gz"
 
         // API service params
-        env["BOT_TOKEN"] = {{ "BOT_TOKEN" }}
-        env["JWT_SECRET"] = {{ "JWT_SECRET" }}
-        env["S3_ACCESS_KEY_ID"] = {{ "S3_ACCESS_KEY_ID" }}
-        env["S3_SECRET_ACCESS_KEY"] = {{ "S3_SECRET_ACCESS_KEY" }}
-        env["DATABASE_URI"] = {{ "DATABASE_URI" }}
-        env["SENTRY_DSN"] = {{ "SENTRY_DSN" }}
-        env["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = {{ "JWT_ACCESS_TOKEN_EXPIRE_SECONDS" }}
-        env["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = {{ "JWT_REFRESH_TOKEN_EXPIRE_SECONDS" }}
-        env["REDIS_NOTIFIER_URL"] = {{ "REDIS_NOTIFIER_URL" }}
-        env["S3_PHOTO_BUCKET_NAME"] = {{ "S3_PHOTO_BUCKET_NAME" }}
-        env["WORKERS_COUNT"] = {{ "WORKERS_COUNT" }}
+        env["BOT_TOKEN"] = "{{BOT_TOKEN}}"
+        env["JWT_SECRET"] = "{{JWT_SECRET}}"
+        env["S3_ACCESS_KEY_ID"] = "{{S3_ACCESS_KEY_ID}}"
+        env["S3_SECRET_ACCESS_KEY"] = "{{S3_SECRET_ACCESS_KEY}}"
+        env["DATABASE_URI"] = "{{DATABASE_URI}}"
+        env["SENTRY_DSN"] = "{{SENTRY_DSN}}"
+        env["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = "{{JWT_ACCESS_TOKEN_EXPIRE_SECONDS}}"
+        env["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = "{{JWT_REFRESH_TOKEN_EXPIRE_SECONDS}}"
+        env["REDIS_NOTIFIER_URL"] = "{{REDIS_NOTIFIER_URL}}"
+        env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
+        env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
 
         shellScript {
             content = """
