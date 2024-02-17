@@ -55,4 +55,3 @@ COPY ./src/ ./src/
 EXPOSE 8080
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
