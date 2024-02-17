@@ -3,7 +3,7 @@
 set -e
 
 # activate our virtual environment here
-. ./.venv/bin/activate
+. /opt/pysetup/.venv/bin/activate
 
 # You can put other setup logic here
 

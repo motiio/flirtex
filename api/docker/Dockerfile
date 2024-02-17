@@ -16,6 +16,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_NO_INTERACTION=1 \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv"
+    CACHED_API_VENV="/usr/local/src/flirtex/env/api/.venv"
 
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
@@ -35,13 +36,14 @@ WORKDIR $PYSETUP_PATH
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --only main
 
-# 'development' stage installs all dev deps and can be used to develop code.
-FROM python-base as development
-ENV FASTAPI_ENV=development
+# 'prod' stage installs all dev deps and can be used to develop code.
+FROM python-base as 'prod'
+ENV FASTAPI_ENV=production
 
 # Copying poetry and venv into image
 COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
+COPY $CACHED_API_VENV $VENV_PATH
 
 # Copying in our entrypoint
 COPY docker-entrypoint.sh /docker-entrypoint.sh
@@ -52,7 +54,6 @@ WORKDIR /api
 COPY ./src/ ./src/
 
 EXPOSE 8080
-RUN apt update && apt install vim -y && apt install telnet -y
 # Define entrypoint and default command
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD alembic upgrade head
