@@ -170,7 +170,6 @@ job("API Build and deploy") {
         env["REDIS_HOST"] = "{{REDIS_HOST}}"
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
         env["WORKERS_COUNT"] = "{{ WORKERS_COUNT }}"
-        env["ENVIRONMENT"] = "{{ ENVIRONMENT }}"
 
         shellScript {
             content = """
@@ -218,7 +217,6 @@ job("API Build and deploy") {
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
                         WORKERS_COUNT='${'$'}'WORKERS_COUNT \
                         REDIS_HOST='${'$'}'REDIS_HOST \
-                        ENVIRONMENT='${'$'}'ENVIRONMENT
                         docker compose up -d --build api
                         "
               """.trimIndent()
