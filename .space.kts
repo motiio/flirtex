@@ -156,7 +156,7 @@ job("API Build and deploy") {
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
         env["ARTIFACTS_PATH"] = "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}/api.gz"
 
-        /*API service params*/
+        // API service params
         env["BOT_TOKEN"] = {{ "BOT_TOKEN" }}
         env["JWT_SECRET"] = {{ "JWT_SECRET" }}
         env["S3_ACCESS_KEY_ID"] = {{ "S3_ACCESS_KEY_ID" }}
