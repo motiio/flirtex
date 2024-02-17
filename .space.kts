@@ -36,9 +36,7 @@ job("API Build and deploy") {
 
     startOn {}
     parameters {
-        text("ENVIRONMENT", value = "PROD") {
-            options("DEV", "PROD")
-        }
+        text("ENVIRONMENT", value = "PROD")
         text("MAJOR_V", value = "0")
         text("MINOR_V", value = "0")
     }
@@ -101,7 +99,7 @@ job("API Build and deploy") {
 
                     // params
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
+                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:PROD__REDIS_NOTIFIER_URL")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:PROD__S3_PHOTO_BUCKET_NAME")
                     api.parameters["WORKERS_COUNT"] = Ref("project:PROD__WORKERS_COUNT")
@@ -132,7 +130,7 @@ job("API Build and deploy") {
                     // params
 
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
+                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:DEV__REDIS_NOTIFIER_URL")
                     api.parameters["REDIS_HOST"] = Ref("project:DEV__REDIS_HOST")
                     api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:DEV__S3_PHOTO_BUCKET_NAME")
@@ -172,6 +170,7 @@ job("API Build and deploy") {
         env["S3_PHOTO_BUCKET_NAME"] = "{{S3_PHOTO_BUCKET_NAME}}"
         env["WORKERS_COUNT"] = "{{WORKERS_COUNT}}"
         env["REDIS_HOST"] = "{{REDIS_HOST}}"
+        env["ENVIRONMENT"] = "{{ENVIRONMENT}}"
 
         shellScript {
             content = """
@@ -217,8 +216,9 @@ job("API Build and deploy") {
                         JWT_REFRESH_TOKEN_EXPIRE_SECONDS=${'$'}JWT_REFRESH_TOKEN_EXPIRE_SECONDS \
                         REDIS_NOTIFIER_URL=${'$'}REDIS_NOTIFIER_URL \
                         S3_PHOTO_BUCKET_NAME=${'$'}S3_PHOTO_BUCKET_NAME \
-                        WORKERS_COUNT='${'$'}'WORKERS_COUNT
+                        WORKERS_COUNT='${'$'}'WORKERS_COUNT \
                         REDIS_HOST='${'$'}'REDIS_HOST
+                        ENVIRONMENT='${'$'}'ENVIRONMENT
                         docker compose up -d --build api
                         "
               """.trimIndent()
