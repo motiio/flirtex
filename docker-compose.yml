@@ -14,6 +14,8 @@ services:
         WORKER_COUNT: ${WORKER_COUNT}
     env_file:
       - ./.secrets/api/.env
+    volumes:
+      - /tmp/api.sock:/tmp/api.sock
     depends_on:
       - redis
     networks:
@@ -42,6 +44,7 @@ services:
     volumes:
       - /usr/local/src/flirtex/webapp:/var/www/app/public
       - /usr/local/src/flirtex/nginx/src/default.conf:/etc/nginx/includes/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt
     networks:
       - flirtex-network
 
