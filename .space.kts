@@ -78,28 +78,11 @@ job("API Build and deploy") {
             when (env) {
                 "PROD" -> {
                     // secrets
-                    api.secrets["BOT_TOKEN"] = Ref("project:PROD__BOT_TOKEN")
-
-                    api.secrets["JWT_SECRET"] = Ref("project:PROD__JWT_SECRET")
-
-                    api.secrets["S3_ACCESS_KEY_ID"] = Ref("project:PROD__S3_ACCESS_KEY_ID")
-                    api.secrets["S3_SECRET_ACCESS_KEY"] = Ref("project:PROD__S3_SECRET_ACCESS_KEY")
-
-                    api.secrets["DATABASE_URI"] = Ref("project:PROD__DATABASE_URI")
-
-                    api.secrets["SENTRY_DSN"] = Ref("project:PROD__SENTRY_DSN")
                     api.secrets["DEPLOY_PK"] = Ref("project:PROD__DEPLOY_PK")
                     api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
                     api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
-                    api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:PROD__JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:PROD__REDIS_NOTIFIER_URL")
-                    api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:PROD__S3_PHOTO_BUCKET_NAME")
-                    api.parameters["WORKERS_COUNT"] = Ref("project:PROD__WORKERS_COUNT")
-                    api.parameters["REDIS_HOST"] = Ref("project:PROD__REDIS_HOST")
-
                     api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
                     api.parameters["SSH_USER"] = Ref("project:PROD__SSH_USER")
@@ -107,33 +90,14 @@ job("API Build and deploy") {
 
                 "DEV" -> {
                     // secrets
-                    api.secrets["BOT_TOKEN"] = Ref("project:DEV__BOT_TOKEN")
-
-                    api.secrets["JWT_SECRET"] = Ref("project:DEV__JWT_SECRET")
-
-                    api.secrets["S3_ACCESS_KEY_ID"] = Ref("project:DEV__S3_ACCESS_KEY_ID")
-                    api.secrets["S3_SECRET_ACCESS_KEY"] = Ref("project:DEV__S3_SECRET_ACCESS_KEY")
-
-                    api.secrets["DATABASE_URI"] = Ref("project:DEV__DATABASE_URI")
-
-                    api.secrets["SENTRY_DSN"] = Ref("project:DEV__SENTRY_DSN")
-
                     api.secrets["DEPLOY_PK"] = Ref("project:DEV__DEPLOY_PK")
                     api.secrets["CACHE_ACCESS_KEY"] = Ref("project:DEV__CACHE_ACCESS_KEY")
                     api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:DEV__ARTIFACTS_ACCESS_KEY")
 
                     // params
-                    api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
-                    api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:DEV__REDIS_NOTIFIER_URL")
-                    api.parameters["REDIS_HOST"] = Ref("project:DEV__REDIS_HOST")
-                    api.parameters["S3_PHOTO_BUCKET_NAME"] = Ref("project:DEV__S3_PHOTO_BUCKET_NAME")
-                    api.parameters["WORKERS_COUNT"] = Ref("project:DEV__WORKERS_COUNT")
-
                     api.parameters["SSH_PORT"] = Ref("project:DEV__SSH_PORT")
                     api.parameters["SSH_HOST"] = Ref("project:DEV__SSH_HOST")
                     api.parameters["SSH_USER"] = Ref("project:DEV__SSH_USER")
-                    api.parameters["REDIS_HOST"] = Ref("project:DEV__REDIS_HOST")
                 }
             }
 
