@@ -10,5 +10,5 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 # Сделайте скрипт исполняемым
 RUN chmod +x /docker-entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
