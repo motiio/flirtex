@@ -15,7 +15,7 @@ services:
     env_file:
       - ./.secrets/api/.env
     volumes:
-      - /tmp/api.sock:/tmp/api.sock
+      - /tmp/api:/tmp/api
     depends_on:
       - redis
     networks:
@@ -45,6 +45,7 @@ services:
       - /usr/local/src/flirtex/webapp:/var/www/app/public
       - /usr/local/src/flirtex/nginx/src/default.conf:/etc/nginx/includes/default.conf
       - /etc/letsencrypt:/etc/letsencrypt
+      - /tmp/api:/tmp/api
     networks:
       - flirtex-network
 

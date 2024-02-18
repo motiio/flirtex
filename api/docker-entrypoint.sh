@@ -15,5 +15,5 @@ else
   # Выполнение миграций
   alembic -c /api/alembic.ini upgrade head
   # Запуск Gunicorn
-  exec gunicorn src.main:api --workers ${WORKERS_COUNT:-4} -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api.sock
+  exec gunicorn src.main:api --workers ${WORKERS_COUNT:-4} -k uvicorn.workers.UvicornWorker --bind unix:/tmp/api/api.sock
 fi
