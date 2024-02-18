@@ -197,6 +197,10 @@ job("API Build and deploy") {
 
 job("Web App deploy") {
     startOn {}
+    parameters {
+        text("ARTIFACTS_PATH", "mono-rep-artifacts/api/build.gz")
+        text("DESTINATION_PATH", "/usr/local/src/flirtex/webapp")
+    }
     container(displayName = "Building and testing...", image = "node:21-alpine3.18") {
         cache {
             // Генерация имени файла кэша
@@ -269,14 +273,13 @@ job("Web App deploy") {
     host(displayName = "Deploying...") {
 
         env["SSH_HOST"] = "{{ SSH_HOST }}"
-        env["SSH_HOST"] = "{{ SSH_HOST }}"
         env["SSH_PORT"] = "{{ SSH_PORT }}"
         env["SSH_USER"] = "{{ SSH_USER }}"
         env["DEPLOY_PK"] = "{{ DEPLOY_PK }}"
         env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
         env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
-        env["ARTIFACTS_PATH"] = "mono-rep-artifacts/api/build.gz"
-        env["DESTINATION_PATH"] = "/usr/local/src/flirtex/webapp"
+        env["ARTIFACTS_PATH"] = "{{ ARTIFACTS_PATH }}"
+        env["DESTINATION_PATH"] = "{{ DESTINATION_PATH }}"
 
         shellScript {
             content = """
@@ -289,6 +292,7 @@ job("Web App deploy") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        mkdir -p ${'$'}DESTINATION_PATH
                         rm -rf ${'$'}DESTINATION_PATH
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_ACCESS_KEY'
                         curl -f -L \
