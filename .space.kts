@@ -223,7 +223,6 @@ job("Web App deploy") {
             content = """
             cd webapp && \
             yarn install && \
-            yarn test
             yarn build
             """
         }

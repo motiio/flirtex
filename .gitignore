@@ -164,7 +164,6 @@ pip-delete-this-directory.txt
 **/selenium-debug.log
 **/yarn-debug.log*
 **/yarn-error.log*
-**/yarn.lock
 
 # End of https://www.gitignore.io/api/macos,visualstudiocode,python
 
