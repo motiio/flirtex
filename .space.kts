@@ -269,13 +269,13 @@ job("[nginx] ci/cd") {
     startOn {}
     parameters {
         text("ARTIFACTS_PATH", "mono-rep-artifacts/nginx/build.gz")
-        text("DESTINATION_PATH", "/usr/local/src/flirtex/nginx")
+        text("DESTINATION_PATH", "/usr/local/src/flirtex/")
         text("ENVIRONMENT", value = "PROD")
     }
     host(displayName = "Build nginx conf") {
         fileArtifacts {
             repository = FileRepository(name = "mono-rep-artifacts", remoteBasePath = "nginx")
-            localPath = "nginx/src/"
+            localPath = "nginx/"
             remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
             optional = false
@@ -340,6 +340,96 @@ job("[nginx] ci/cd") {
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         mkdir -p ${'$'}DESTINATION_PATH/*
+                        rm -rf ${'$'}DESTINATION_PATH/*
+                        echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
+                        curl -f -L \
+                            -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
+                            https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH | \
+                        tar -xz -C ${'$'}DESTINATION_PATH
+                        "
+              """.trimIndent()
+        }
+        requirements {
+            workerTags("ProdPool-1")
+        }
+    }
+}
+
+job("[tg-bot] ci/cd") {
+    startOn {}
+    parameters {
+        text("ARTIFACTS_PATH", "mono-rep-artifacts/tg-bot/build.gz")
+        text("DESTINATION_PATH", "/usr/local/src/flirtex/tg-bot")
+        text("ENVIRONMENT", value = "PROD")
+    }
+    host(displayName = "Build nginx conf") {
+        fileArtifacts {
+            repository = FileRepository(name = "mono-rep-artifacts", remoteBasePath = "tg-bot")
+            localPath = "tg-bot/"
+            remotePath = "build.gz"
+            // Fail job if build/publish/app/ is not found
+            optional = false
+            archive = true
+            onStatus = OnStatus.SUCCESS
+        }
+
+    }
+
+    host(displayName = "Create job parameters") {
+        kotlinScript { api ->
+            val env = api.parameters["ENVIRONMENT"]
+            when (env) {
+                "PROD" -> {
+                    // secrets
+                    api.secrets["DEPLOY_PK"] = Ref("project:PROD__DEPLOY_PK")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
+
+                    // params
+                    api.parameters["SSH_PORT"] = Ref("project:PROD__SSH_PORT")
+                    api.parameters["SSH_HOST"] = Ref("project:PROD__SSH_HOST")
+                    api.parameters["SSH_USER"] = Ref("project:PROD__SSH_USER")
+                }
+
+                "DEV" -> {
+                    // secrets
+                    api.secrets["DEPLOY_PK"] = Ref("project:DEV__DEPLOY_PK")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:DEV__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:DEV__ARTIFACTS_ACCESS_KEY")
+
+                    // params
+                    api.parameters["SSH_PORT"] = Ref("project:DEV__SSH_PORT")
+                    api.parameters["SSH_HOST"] = Ref("project:DEV__SSH_HOST")
+                    api.parameters["SSH_USER"] = Ref("project:DEV__SSH_USER")
+                }
+            }
+
+        }
+    }
+
+    host(displayName = "Deploying...") {
+
+        env["SSH_HOST"] = "{{ SSH_HOST }}"
+        env["SSH_PORT"] = "{{ SSH_PORT }}"
+        env["SSH_USER"] = "{{ SSH_USER }}"
+        env["DEPLOY_PK"] = "{{ DEPLOY_PK }}"
+        env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
+        env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
+        env["ARTIFACTS_PATH"] = "{{ ARTIFACTS_PATH }}"
+        env["DESTINATION_PATH"] = "{{ DESTINATION_PATH }}"
+
+        shellScript {
+            content = """
+                    echo ${'$'}DEPLOY_PK | base64 --decode > id_rsa
+                    chmod 400 id_rsa
+                    ssh-keyscan -p ${'$'}SSH_PORT ${'$'}SSH_HOST >> ./known_hosts
+                    ssh -i id_rsa \
+                        -o UserKnownHostsFile=./known_hosts \
+                        -o StrictHostKeyChecking=no \
+                        -o LogLevel=INFO \
+                        -p ${'$'}SSH_PORT \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        mkdir -p ${'$'}DESTINATION_PATH
                         rm -rf ${'$'}DESTINATION_PATH/*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
