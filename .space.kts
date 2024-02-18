@@ -202,7 +202,7 @@ job("Web App deploy") {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
-            storeKey = "webapp-{{ hashFiles('package.json') }}"
+            storeKey = "webapp-{{ hashFiles('webapp/package.json') }}"
 
             // Вариант восстановления
             // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
