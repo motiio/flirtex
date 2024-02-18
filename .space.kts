@@ -133,14 +133,6 @@ job("API Build and deploy") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        rm -rf /usr/local/src/flirtex/api/*
-                        echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
-                    ssh -i id_rsa \
-                        -o UserKnownHostsFile=./known_hosts \
-                        -o StrictHostKeyChecking=no \
-                        -o LogLevel=INFO \
-                        -p ${'$'}SSH_PORT \
-                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         rm -rf ${'$'}DESTINATION_PATH/*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
