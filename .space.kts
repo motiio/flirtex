@@ -62,10 +62,11 @@ job("API Build and deploy") {
             """
         }
         fileArtifacts {
+            repository = FileRepository(name = "api-artifacts", remoteBasePath = "api")
             localPath = "api/"
+            remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
             optional = false
-            remotePath = "api.gz"
             archive = true
             onStatus = OnStatus.SUCCESS
         }
@@ -148,7 +149,7 @@ job("API Build and deploy") {
         env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
         env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-        env["ARTIFACTS_PATH"] = "{{ run:file-artifacts.default-repository }}/{{ run:file-artifacts.default-base-path }}/api.gz"
+        env["ARTIFACTS_PATH"] = "api-artifacts/api/build.gz"
 
         shellScript {
             content = """
@@ -201,7 +202,7 @@ job("Web App deploy") {
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
-            storeKey = "webapp-{{ hashFiles('api/pyproject.toml') }}"
+            storeKey = "webapp-{{ hashFiles('package.json') }}"
 
             // Вариант восстановления
             // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
@@ -210,7 +211,7 @@ job("Web App deploy") {
             }
 
             // Локальный путь к директории файла кэша
-            localPath = "node_modules"
+            localPath = "webapp/node_modules"
         }
 
         shellScript {
@@ -221,12 +222,12 @@ job("Web App deploy") {
             yarn build
             """
         }
-
         fileArtifacts {
-            localPath = "webapp/build/"
+            repository = FileRepository(name = "webapp-artifacts", remoteBasePath = "webapp")
+            localPath = "webapp/dist/"
+            remotePath = "dist.gz"
             // Fail job if build/publish/app/ is not found
             optional = false
-            remotePath = "build.gz"
             archive = true
             onStatus = OnStatus.SUCCESS
         }
