@@ -223,7 +223,7 @@ job("Web App deploy") {
         }
 
         fileArtifacts {
-            localPath = "build/"
+            localPath = "webapp/build/"
             // Fail job if build/publish/app/ is not found
             optional = false
             remotePath = "build.gz"
