@@ -18,7 +18,7 @@ services:
     networks:
       - flirtex-network
     extra_hosts:
-      - "db:172.17.0.1"
+      - "host.docker.internal:host-gateway"
 networks:
   flirtex-network:
     driver: bridge
