@@ -200,6 +200,7 @@ job("Web App deploy") {
     parameters {
         text("ARTIFACTS_PATH", "mono-rep-artifacts/api/build.gz")
         text("DESTINATION_PATH", "/usr/local/src/flirtex/webapp")
+        text("ENVIRONMENT", value = "PROD")
     }
     container(displayName = "Building and testing...", image = "node:21-alpine3.18") {
         cache {
