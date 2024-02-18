@@ -5,7 +5,7 @@ FROM nginx:stable-alpine
 RUN apk add --no-cache certbot certbot-nginx
 
 # Копирование скрипта для запуска и обновления сертификатов
-COPY entrypoint.sh /entrypoint.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 # Сделайте скрипт исполняемым
 RUN chmod +x /entrypoint.sh
