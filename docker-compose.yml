@@ -34,8 +34,9 @@ services:
       - flirtex-network
 
   nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: ./docker/Dockerfile
     restart: unless-stopped
     tty: true
     ports:
