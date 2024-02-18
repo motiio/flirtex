@@ -8,7 +8,7 @@ RUN apk add --no-cache certbot certbot-nginx
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 # Сделайте скрипт исполняемым
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
