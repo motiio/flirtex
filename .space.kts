@@ -269,7 +269,7 @@ job("[nginx] ci/cd") {
     startOn {}
     parameters {
         text("ARTIFACTS_PATH", "mono-rep-artifacts/nginx/build.gz")
-        text("DESTINATION_PATH", "/usr/local/src/flirtex/")
+        text("DESTINATION_PATH", "/usr/local/src/flirtex/nginx")
         text("ENVIRONMENT", value = "PROD")
     }
     host(displayName = "Build nginx conf") {
