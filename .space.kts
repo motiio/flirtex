@@ -62,7 +62,7 @@ job("API Build and deploy") {
             """
         }
         fileArtifacts {
-            repository = FileRepository(name = "api-artifacts", remoteBasePath = "api")
+            repository = FileRepository(name = "mono-rep-artifacts", remoteBasePath = "api")
             localPath = "api/"
             remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
@@ -149,7 +149,7 @@ job("API Build and deploy") {
         env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
         env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-        env["ARTIFACTS_PATH"] = "api-artifacts/api/build.gz"
+        env["ARTIFACTS_PATH"] = "mono-rep-artifacts/api/build.gz"
 
         shellScript {
             content = """
@@ -223,7 +223,7 @@ job("Web App deploy") {
             """
         }
         fileArtifacts {
-            repository = FileRepository(name = "webapp-artifacts", remoteBasePath = "webapp")
+            repository = FileRepository(name = "mono-rep-artifacts", remoteBasePath = "webapp")
             localPath = "webapp/dist/"
             remotePath = "dist.gz"
             // Fail job if build/publish/app/ is not found
