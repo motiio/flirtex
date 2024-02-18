@@ -133,6 +133,7 @@ job("[api] ci/cd") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        mkdir -p ${'$'}DESTINATION_PATH/*
                         rm -rf ${'$'}DESTINATION_PATH/*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
@@ -248,6 +249,7 @@ job("[webapp] ci/cd") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        mkdir -p ${'$'}DESTINATION_PATH/*
                         rm -rf ${'$'}DESTINATION_PATH/*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
@@ -337,6 +339,7 @@ job("[nginx] ci/cd") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        mkdir -p ${'$'}DESTINATION_PATH/*
                         rm -rf ${'$'}DESTINATION_PATH/*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
