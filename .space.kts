@@ -295,7 +295,7 @@ job("Web App deploy") {
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         mkdir -p ${'$'}DESTINATION_PATH
                         rm -rf ${'$'}DESTINATION_PATH
-                        echo Start downloading artifacts on ${'$'}ARTIFACTS_ACCESS_KEY'
+                        echo Start downloading artifacts on ${'$'}ARTIFACTS_ACCESS_KEY
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH | \
