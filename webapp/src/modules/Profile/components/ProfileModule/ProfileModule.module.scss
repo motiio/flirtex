@@ -1,0 +1,11 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: visible;
+
+  .space {
+    width: 100%;
+    height: var(--tg-navigate-height);
+  }
+}

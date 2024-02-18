@@ -1,0 +1,42 @@
+.sidebarContainer {
+  position: fixed;
+  z-index: 97;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: visible;
+
+  &.back,
+  &.open,
+  &.close, {
+    transition: transform 400ms ease-in-out;
+  }
+
+  &.active {
+    overflow-y: scroll;
+  }
+
+  &.hidden {
+    visibility: hidden;
+  }
+
+  .closeButton {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 88px;
+    padding-bottom: 12px;
+
+    svg {
+      pointer-events: none;
+      width: 24px;
+      height: 24px;
+      stroke: #fff;
+    }
+  }
+
+  .contentWrapper {
+    background-color: var(--tg-theme-secondary-bg-color);
+  }
+}

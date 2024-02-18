@@ -1,0 +1,47 @@
+@keyframes show-sidebar {
+  from {
+    height: 0;
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+    height: 100%;
+  }
+}
+
+@keyframes hide-sidebar {
+  from {
+    height: 100%;
+    visibility: visible;
+  }
+  to {
+    height: 0;
+    visibility: hidden;
+  }
+}
+
+.sidebarContainer {
+  left: 0;
+  bottom: 0;
+  height: 0;
+  width: 100%;
+  max-width: var(--tg-max-width);
+  min-width: var(--tg-min-width);
+  position: fixed;
+  z-index: 99;
+  overflow: hidden;
+  animation: show-sidebar 200ms ease-in-out forwards;
+
+  &.close {
+    animation: hide-sidebar 200ms ease-in-out forwards;
+  }
+
+  .void {
+    height: 25%;
+  }
+
+  .contentWrapper {
+    border-radius: 48px 48px 0 0;
+    background-color: var(--tg-theme-bg-color);
+  }
+}

@@ -1,0 +1,40 @@
+@import "src/modules/Profile/styles/common.module";
+
+.aboutProfileContainer {
+  display: flex;
+  width: 100%;
+
+  .withCounter {
+    display: flex;
+    align-items: center;
+
+    .counter {
+      font-size: 17px;
+      margin-left: 6px;
+      color: var(--tg-theme-hint-color);
+    }
+  }
+
+  .bioTextArea {
+    resize: none;
+    width: calc(100% - 28px);
+    height: 120px;
+    font-size: 17px;
+    font-weight: 400;
+    padding: 12px;
+    border-radius: 12px;
+    color: var(--tg-theme-text-color);
+    background: var(--tg-theme-bg-color);
+    border: 1px solid var(--tg-theme-hint-color);
+
+    &:focus {
+      border-color: var(--tg-theme-button-color);
+      box-shadow: 0 0 4px var(--mui-palette-primary-light);
+    }
+
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  }
+}

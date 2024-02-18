@@ -6,6 +6,7 @@ services:
       - flirtex-network
 
   api:
+    hostname: api
     build:
       context: ./api
       dockerfile: ./docker/Dockerfile
@@ -19,6 +20,31 @@ services:
       - flirtex-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  bot:
+    hostname: bot
+    build:
+      context: ./tg-bot
+      dockerfile: ./docker/Dockerfile
+    env_file:
+      - ./.secrets/bot/.env
+    networks:
+      - flirtex-network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /usr/local/src/flirtex/webapp:/var/www/app/public
+      - /usr/local/src/flirtex/nginx/src/default.conf:/etc/nginx/includes/default.conf
+    networks:
+      - flirtex-network
+
 networks:
   flirtex-network:
     driver: bridge

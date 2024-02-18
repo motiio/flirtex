@@ -1,0 +1,13 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin-bottom: 80px;
+
+  .errorWrapper {
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+}

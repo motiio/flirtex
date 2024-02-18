@@ -1,0 +1,10 @@
+.appCoverModuleContainer {
+  display: flex;
+  height: calc(100svh - var(--tg-navigate-height));
+  justify-content: center;
+  background-color: var(--tg-theme-secondary-bg-color);
+
+  &.disabled {
+    overflow: hidden;
+  }
+}

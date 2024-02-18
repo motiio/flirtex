@@ -1,0 +1,60 @@
+@keyframes show-sticky-block {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sticky {
+  position: fixed;
+  bottom: calc(var(--tg-navigate-height) + 20px);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  animation: show-sticky-block 200ms ease-in-out forwards;
+
+  .actionMenuWrapper {
+    background-color: #F0F0F0;;
+    display: flex;
+    padding: 5px;
+    gap: 20px;
+    box-shadow: 0 5px 10px 1px #0000004D;
+    border-radius: 100px;
+
+    .action {
+      height: 44px;
+      width: 44px;
+      border-radius: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &.skip {
+        background-color: var(--tg-error-color);
+
+        svg {
+          width: 14px;
+          height: 14px;
+        }
+      }
+
+      &.save {
+        background-color: #F3C04B;
+      }
+
+      &.like {
+        background-color: var(--tg-success-color);
+      }
+
+      svg {
+        stroke: #FFFFFF;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}

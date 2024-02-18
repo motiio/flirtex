@@ -1,0 +1,42 @@
+@keyframes show-modal-page {
+  from {
+    height: 0;
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+    height: 100vh;
+  }
+}
+
+@keyframes hide-modal-page {
+  from {
+    height: 100vh;
+    visibility: visible;
+  }
+  to {
+    height: 0;
+    visibility: hidden;
+  }
+}
+
+.modalContainer {
+  left: 0;
+  bottom: 0;
+  height: 0;
+  width: 100%;
+  max-width: var(--tg-max-width);
+  min-width: var(--tg-min-width);
+  position: fixed;
+  z-index: 99;
+  overflow-y: scroll;
+  animation: show-modal-page 200ms ease-in-out forwards;
+  background-color: var(--tg-theme-secondary-bg-color);
+
+  &.close {
+    animation: hide-modal-page 200ms ease-in-out forwards;
+  }
+
+  .contentWrapper {
+  }
+}

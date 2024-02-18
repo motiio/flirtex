@@ -1,0 +1,34 @@
+.chip {
+  color: var(--tg-theme-button-color);
+  background-color: var(--tg-theme-button-text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px;
+  padding: 5px 10px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 18px;
+  gap: 5px;
+  border: 1px solid var(--tg-theme-button-color);
+
+  .icon svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    stroke: var(--tg-theme-button-color);
+  }
+
+  &.selected {
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+
+    .icon svg {
+      stroke: var(--tg-theme-button-text-color);
+    }
+  }
+}

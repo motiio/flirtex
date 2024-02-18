@@ -1,0 +1,38 @@
+.dropdownContainer {
+  display: flex;
+
+  .modalWrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 102;
+  }
+}
+
+.trigger {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  background-color: var(--tg-theme-bg-color);
+  animation: open-dropdown 300ms ease-in-out forwards;
+  border-radius: 5px;
+  box-shadow: 0 0.95px 1.583px 0 rgba(0, 0, 0, 0.20), 0 0.317px 5.7px 0 rgba(0, 0, 0, 0.12), 0 1.583px 3.167px 0 rgba(0, 0, 0, 0.14);
+  z-index: 103;
+}
+
+@keyframes open-dropdown {
+  0% {
+    visibility: hidden;
+    opacity: 0;
+  }
+  100% {
+    visibility: visible;
+    opacity: 1;
+  }
+}

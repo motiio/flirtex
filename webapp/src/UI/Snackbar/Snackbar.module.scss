@@ -1,0 +1,82 @@
+.container {
+  z-index: 999;
+  position: fixed;
+  width: 100%;
+  display: flex;
+  bottom: var(--tg-navigate-height);
+  animation: show-snackbar 200ms ease-in-out forwards;
+  font-size: 14px;
+  color: var(--tg-theme-button-text-color);
+
+  &.hidden {
+    animation: hide-snackbar 200ms ease-in-out forwards;
+  }
+
+  &.withoutNavigation {
+    bottom: 0;
+  }
+
+  .alert {
+    background-color: color-mix(in srgb, var(--toast-background), transparent 20%);
+    margin: 20px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+
+    .icon {
+      margin-right: 10px;
+
+      svg {
+        width: 25px;
+        height: 25px;
+      }
+
+      &.success svg {
+        stroke: var(--tg-success-color);
+      }
+
+      &.info svg {
+        stroke: var(--tg-warning-color);
+      }
+
+      &.error svg {
+        stroke: var(--tg-error-color);
+      }
+
+      &.label svg {
+        font-weight: 500;
+      }
+    }
+
+    .description {
+    }
+
+    .closeText {
+      margin-left: auto;
+      font-weight: 500;
+      color: var(--tg-theme-link-color);
+    }
+  }
+}
+
+@keyframes show-snackbar {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hide-snackbar {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+

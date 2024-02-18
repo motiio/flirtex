@@ -1,0 +1,81 @@
+.inputContainer {
+  position: relative;
+  width: 100%;
+
+  .inputUnderlined {
+    width: calc(100% - 20px);
+
+    input {
+      background-color: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+      border: none;
+      border: 1px solid var(--tg-theme-hint-color);
+      border-radius: 7px;
+      width: 100%;
+      font-size: 15px;
+      line-height: 18px;
+      padding: 15px 10px;
+      margin-bottom: 5px;
+    }
+
+    .inputLabel {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      color: var(--tg-theme-text-color);
+      transition: top .2s;
+    }
+
+    .inputHelper {
+      font-size: 13px;
+      color: var(--tg-theme-hint-color);
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    input:focus + .inputLabel,
+    input:valid + .inputLabel {
+      top: 0;
+      font-size: 12px;
+    }
+
+    input:disabled {
+      background: var(--tg-theme-button-disabled-color);
+      cursor: not-allowed;
+    }
+
+    &:not(.inputDanger) input:focus + .inputLabel {
+      color: var(--tg-theme-button-color);
+    }
+
+    &:not(.inputDanger) input:focus {
+      border-color: var(--tg-theme-button-color);
+    }
+
+    input:disabled + .inputLabel,
+    input:disabled ~ .inputHelper {
+      color: var(--tg-theme-button-disabled-text-color);
+    }
+  }
+
+  .inputDanger {
+    .input {
+      border-color: var(--tg-theme-text-destructive-color);
+    }
+
+    .inputLabel,
+    .inputHelper {
+      border-color: var(--tg-theme-text-destructive-color);
+    }
+
+    input {
+      border-color: var(--tg-theme-text-destructive-color);
+    }
+
+    input:hover {
+      border-color: var(--tg-theme-text-destructive-color);
+    }
+  }
+}

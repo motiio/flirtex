@@ -1,0 +1,44 @@
+@import "src/components/Profile/styles/common.module";
+
+.nameContainer {
+  display: flex;
+  width: 100%;
+
+  .customBlock {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nameWrapper {
+    display: flex;
+  }
+
+  .customTitle {
+    margin-bottom: 0;
+  }
+
+  .genderWrapper {
+    margin-left: 12px;
+
+    svg {
+      height: 24px;
+      width: 24px;
+      stroke: var(--tg-theme-button-color);
+    }
+  }
+
+  .distance {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--tg-theme-text-color);
+    }
+  }
+}

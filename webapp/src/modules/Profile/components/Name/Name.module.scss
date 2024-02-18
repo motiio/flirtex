@@ -1,0 +1,25 @@
+@import "src/modules/Profile/styles/common.module";
+
+.nameContainer {
+  display: flex;
+  width: 100%;
+
+  .customBlock {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .customTitle {
+    margin-bottom: 0;
+  }
+
+  .genderWrapper {
+    margin-left: 12px;
+
+    svg {
+      height: 24px;
+      width: 24px;
+      stroke: var(--tg-theme-button-color);
+    }
+  }
+}

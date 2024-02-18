@@ -1,0 +1,27 @@
+@import "src/modules/Profile/styles/common.module";
+
+.interestsContainer {
+  display: flex;
+  width: 100%;
+
+  .withCounter {
+    display: flex;
+    align-items: center;
+
+    .counter {
+      font-size: 17px;
+      margin-left: 6px;
+      color: var(--tg-theme-hint-color);
+    }
+  }
+
+  .chipsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.skeletonChips {
+  margin-right: 12px;
+  margin-bottom: 12px;
+}

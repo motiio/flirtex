@@ -1,0 +1,50 @@
+body {
+    font-family: "Roboto";
+    margin: 0;
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    user-select: none;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+input {
+    font-family: "Roboto";
+}
+
+textarea {
+    font-family: "Roboto";
+}
+
+#root {
+    max-width: var(--tg-max-width);
+    min-width: var(--tg-min-width);
+    margin: 0 auto;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+:root {
+    --tg-theme-button-color: #50A8EB;
+    --tg-theme-button-text-color: #FFFFFF;
+    --tg-theme-button-disabled-color: #E9E8E8;
+    --tg-theme-button-disabled-text-color: #BABABA;
+    --tg-theme-second-button-color: color-mix(in srgb, var(--tg-theme-button-color) 10%, var(--tg-theme-bg-color));
+    --tg-theme-link-color: #3A95D5;
+    --tg-theme-text-color: #222222;
+    --tg-theme-text-destructive-color: #CC2929;
+    --tg-theme-button-confirm-color: #4ECC5E;
+    --tg-theme-hint-color: #999999;
+    --tg-theme-bg-color: #FFFFFF;
+    --tg-theme-secondary-bg-color: #F0F0F0;
+    --tg-warning-color: #F3C04B;
+    --tg-error-color: #EE686F;
+    --tg-success-color: #71E079;
+    --tg-color-scheme: dark;
+    --tg-max-width: 450px;
+    --tg-min-width: 320px;
+    --tg-navigate-height: 48px;
+    --toast-background: #272F38;
+}

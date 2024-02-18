@@ -1,0 +1,50 @@
+@keyframes tab-selected {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.tabsContainer {
+  position: sticky;
+  top: 0;
+  display: flex;
+  width: 100vw;
+  background-color: var(--tg-theme-bg-color);
+  z-index: 99;
+
+  .tab {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .titleWrapper {
+      .title {
+        color: var(--tg-theme-hint-color);
+        font-size: 15px;
+        line-height: 18px;
+        margin-top: 8px;
+        font-weight: 500;
+        margin-bottom: 15px;
+
+        &.selected {
+          margin-bottom: 12px;
+          color: var(--tg-theme-button-color);
+          transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        }
+      }
+
+      .selectedLine {
+        background-color: var(--tg-theme-button-color);
+        border-radius: 2px 2px 0 0;
+        height: 3px;
+        width: 100%;
+        animation: tab-selected 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      }
+    }
+  }
+}

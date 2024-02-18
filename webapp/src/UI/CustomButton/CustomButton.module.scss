@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  border-radius: 8px;
+  justify-content: center;
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+
+  .textWrapper {
+    margin: 16px 10px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .loaderWrapper {
+    width: 32px;
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  &.disabled {
+    background-color: var(--tg-theme-button-disabled-color);
+    color: var(--tg-theme-button-disabled-text-color);
+  }
+
+  &.loading {
+    justify-content: space-between;
+  }
+}

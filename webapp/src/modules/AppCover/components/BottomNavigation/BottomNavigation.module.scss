@@ -1,0 +1,40 @@
+.navigationWrapper {
+  z-index: 98;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: var(--tg-max-width);
+  min-width: var(--tg-min-width);
+  height: var(--tg-navigate-height);
+  background-color: var(--tg-theme-bg-color);
+
+
+  .line {
+    border-top: 1px solid var(--tg-theme-secondary-bg-color);
+  }
+
+  .linksWrapper {
+    display: flex;
+    margin-top: 10px;
+  }
+
+  a {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    svg {
+      width: 25px;
+      height: 25px;
+      stroke: var(--tg-theme-text-color);
+    }
+
+    &.selected {
+      svg {
+        stroke: var(--tg-theme-link-color);
+      }
+    }
+  }
+}

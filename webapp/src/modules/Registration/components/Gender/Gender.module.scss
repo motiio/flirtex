@@ -1,0 +1,11 @@
+@import "src/modules/Registration/styles/common.module";
+
+.genderWrapper {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+
+  .customGender {
+    width: 100%;
+  }
+}

@@ -1,0 +1,32 @@
+@keyframes opacity-animation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.topBarActions {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: calc(100vw - 24px);
+  display: flex;
+  padding: 12px;
+  justify-content: space-between;
+  background-color: var(--tg-theme-bg-color);
+  border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+  animation: opacity-animation 500ms ease-in-out forwards;
+
+  .icon {
+    cursor: pointer;
+
+    svg {
+      width: 25px;
+      height: 25px;
+      stroke: var(--tg-theme-text-color);
+    }
+  }
+}

@@ -1,0 +1,11 @@
+@import "src/components/Profile/styles/common.module";
+
+.aboutProfileContainer {
+  display: flex;
+  width: 100%;
+
+  p {
+    margin: 0;
+    font-size: 17px;
+  }
+}

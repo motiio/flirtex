@@ -1,0 +1,52 @@
+.dropdownMenuContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 2px 0;
+
+  .itemWrapper {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 9px 16px;
+
+    &.error {
+      .text {
+        color: var(--tg-error-color);
+      }
+
+      .icon {
+        svg {
+          stroke: var(--tg-error-color);
+        }
+      }
+    }
+
+    &.disable {
+      .text {
+        color: var(--tg-theme-button-disabled-text-color);
+      }
+
+      .icon {
+        svg {
+          stroke: var(--tg-theme-button-disabled-text-color);
+        }
+      }
+    }
+
+    .icon {
+      display: flex;
+      margin-right: 16px;
+
+      svg {
+        width: 23px;
+        height: 23px;
+        stroke: var(--tg-theme-hint-color);
+      }
+    }
+
+    .text {
+      font-size: 15px;
+      line-height: 18px;
+    }
+  }
+}

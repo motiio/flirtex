@@ -1,0 +1,44 @@
+.circularLoader {
+  animation: rotation 1s linear infinite;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  border: 3px solid #FFF;
+
+  &.sizeXS {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+    border-bottom-color: transparent;
+  }
+
+  &.sizeS {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+    border-bottom-color: transparent;
+  }
+
+  &.sizeM {
+    width: 48px;
+    height: 48px;
+    border-width: 5px;
+    border-bottom-color: transparent;
+  }
+
+  &.sizeL {
+    width: 64px;
+    height: 64px;
+    border-width: 5px;
+    border-bottom-color: transparent;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

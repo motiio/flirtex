@@ -1,0 +1,26 @@
+.cardsContainer {
+  margin-top: 12px;
+  padding-bottom: var(--tg-navigate-height);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  .loaderWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 12px 0;
+
+    .loader {
+      border-color: var(--tg-theme-button-color);
+      border-bottom-color: transparent;
+    }
+  }
+
+  .observer {
+    height: 1px;
+    background: transparent;
+    margin-bottom: var(--tg-navigate-height);
+  }
+}

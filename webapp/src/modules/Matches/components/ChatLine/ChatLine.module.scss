@@ -1,0 +1,51 @@
+.chatLine {
+  display: flex;
+  padding: 10px 10px 10px 20px;
+  background-color: var(--tg-theme-bg-color);
+  border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+
+  .information {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+
+    .nameWrapper {
+      .name {
+        font-size: 15px;
+        line-height: 19px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .description {
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--tg-theme-button-disabled-text-color);
+        width: 200px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .imageWrapper {
+    width: 58px;
+    height: 58px;
+    border-radius: 58px;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+
+    img {
+      border-radius: 58px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+    }
+  }
+}

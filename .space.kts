@@ -1,7 +1,5 @@
 job("API Tests") {
     startOn {}
-
-
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
             // Генерация имени файла кэша
@@ -33,7 +31,6 @@ job("API Tests") {
 }
 
 job("API Build and deploy") {
-
     startOn {}
     parameters {
         text("ENVIRONMENT", value = "PROD")
@@ -42,31 +39,28 @@ job("API Build and deploy") {
     }
 
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
-//        cache {
-        // Генерация имени файла кэша
-        // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
-        // одинаковым pyproject.toml будут использовать кэшированные зависимости
-//            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-
-        // Вариант восстановления
-        // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
-//            restoreKeys {
-//                +"poetry-master"
-//            }
-
-        // Локальный путь к директории файла кэша
-//            localPath = "api/.venv"
-//        }
-
-//        shellScript {
-//            content = """
-//            cd api
-//            poetry config virtualenvs.create true
-//            poetry config virtualenvs.in-project true
-//            poetry install --no-root
-//            poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
-//            """
-//        }
+        cache {
+         Генерация имени файла кэша
+         Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
+         одинаковым pyproject.toml будут использовать кэшированные зависимости
+            storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
+//         Вариант восстановления
+//         Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
+            restoreKeys {
+                +"poetry-master"
+            }
+//         Локальный путь к директории файла кэша
+            localPath = "api/.venv"
+        }
+        shellScript {
+            content = """
+            cd api
+            poetry config virtualenvs.create true
+            poetry config virtualenvs.in-project true
+            poetry install --no-root
+            poetry run pytest --cov=src --cov-report=term --cov-config=.coveragerc
+            """
+        }
         fileArtifacts {
             localPath = "api/"
             // Fail job if build/publish/app/ is not found
@@ -128,7 +122,6 @@ job("API Build and deploy") {
                     api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:DEV__ARTIFACTS_ACCESS_KEY")
 
                     // params
-
                     api.parameters["JWT_ACCESS_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_ACCESS_TOKEN_EXPIRE_SECONDS")
                     api.parameters["JWT_REFRESH_TOKEN_EXPIRE_SECONDS"] = Ref("project:DEV__JWT_REFRESH_TOKEN_EXPIRE_SECONDS")
                     api.parameters["REDIS_NOTIFIER_URL"] = Ref("project:DEV__REDIS_NOTIFIER_URL")
@@ -201,3 +194,42 @@ job("API Build and deploy") {
     }
 }
 
+job("Web App deploy") {
+    startOn {}
+    container(displayName = "Building and testing...", image = "node:21-alpine3.18") {
+        cache {
+            // Генерация имени файла кэша
+            // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
+            // одинаковым pyproject.toml будут использовать кэшированные зависимости
+            storeKey = "webapp-{{ hashFiles('api/pyproject.toml') }}"
+
+            // Вариант восстановления
+            // Если нужный файл кэша не найден, использовать кэш из 'poetry-master.tar.gz'
+            restoreKeys {
+                +"webapp-master"
+            }
+
+            // Локальный путь к директории файла кэша
+            localPath = "node_modules"
+        }
+
+        shellScript {
+            content = """
+            cd webapp && \
+            yarn install && \
+            yarn test
+            yarn build
+            """
+        }
+
+        fileArtifacts {
+            localPath = "build/"
+            // Fail job if build/publish/app/ is not found
+            optional = false
+            remotePath = "build.gz"
+            archive = true
+            onStatus = OnStatus.SUCCESS
+        }
+
+    }
+}
