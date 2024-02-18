@@ -114,6 +114,7 @@ job("API Build and deploy") {
         env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
         env["ARTIFACTS_PATH"] = "mono-rep-artifacts/api/build.gz"
+        env["DESTINATION_PATH"] = "/usr/local/src/flirtex/api"
 
         shellScript {
             content = """
@@ -132,21 +133,20 @@ job("API Build and deploy") {
                         -o LogLevel=INFO \
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
-                        rm -rf /usr/local/src/flirtex/api/
-                        mkdir -p /usr/local/src/flirtex/api/.venv
-                        echo Start downloading hash ${'$'}VENV_HASH.tar.gz
-                        curl -f -L \
-                            -H 'Authorization: Bearer ${'$'}CACHE_ACCESS_KEY' \
-                            https://files.pkg.jetbrains.space/flirtex/p/connecta/default-automation-caches/caches/backend/${'$'}VENV_HASH.tar.gz \
-                            --output '/usr/local/src/flirtex/venv.tar.gz'
+                        rm -rf /usr/local/src/flirtex/api/*
                         echo Start downloading artifacts ${'$'}ARTIFACTS_PATH
+                    ssh -i id_rsa \
+                        -o UserKnownHostsFile=./known_hosts \
+                        -o StrictHostKeyChecking=no \
+                        -o LogLevel=INFO \
+                        -p ${'$'}SSH_PORT \
+                        ${'$'}SSH_USER@${'$'}SSH_HOST "\
+                        rm -rf ${'$'}DESTINATION_PATH/*
+                        echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
-                            https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH \
-                            --output '/usr/local/src/flirtex/api.gz'
-                        tar -xzf /usr/local/src/flirtex/api.gz -C /usr/local/src/flirtex/api
-                        mkdir -p /usr/local/src/flirtex/env/api/.venv
-                        tar -xzf /usr/local/src/flirtex/venv.tar.gz -C /usr/local/src/flirtex/env/api/.venv
+                            https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH | \
+                        tar -xz -C ${'$'}DESTINATION_PATH
                         cd /usr/local/src/flirtex
                         echo Running container
                         docker compose up --build -d api
