@@ -5,7 +5,7 @@ import { TokensI } from '../../utils/interfaces';
 import { MAX_TIMEOUT_TIME } from '../../utils/constants';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://lovolab.ru/api/v1',
+  baseUrl: 'https://test.flirtex.fun/api/v1',
   timeout: MAX_TIMEOUT_TIME,
   prepareHeaders: (headers, { getState }) => {
     // By default, if we have a token in the store, let's use that for authenticated requests
