@@ -126,7 +126,7 @@ job("[api] ci/cd") {
         env["CACHE_ACCESS_KEY"] = "{{ CACHE_ACCESS_KEY }}"
         env["ARTIFACTS_ACCESS_KEY"] = "{{ ARTIFACTS_ACCESS_KEY }}"
         env["VENV_HASH"] = "poetry-{{ hashFiles('api/pyproject.toml') }}"
-        env["ARTIFACTS_PATH"] = "mono-rep-artifacts/api/build.gz"
+        env["ARTIFACTS_PATH"] = "test-mono-rep-artifacts/api/build.gz"
         env["DESTINATION_PATH"] = "/usr/local/src/flirtex/api"
 
         shellScript {
@@ -168,7 +168,7 @@ job("[api] ci/cd") {
 job("[webapp] ci/cd") {
     startOn {}
     parameters {
-        text("ARTIFACTS_PATH", "mono-rep-artifacts/webapp/dist.gz")
+        text("ARTIFACTS_PATH", "test-mono-rep-artifacts/webapp/dist.gz")
         text("DESTINATION_PATH", "/usr/local/src/flirtex/webapp")
         text("ENVIRONMENT", value = "TEST")
     }
@@ -294,7 +294,7 @@ job("[webapp] ci/cd") {
 job("[nginx] ci/cd") {
     startOn {}
     parameters {
-        text("ARTIFACTS_PATH", "mono-rep-artifacts/nginx/build.gz")
+        text("ARTIFACTS_PATH", "test-mono-rep-artifacts/nginx/build.gz")
         text("DESTINATION_PATH", "/usr/local/src/flirtex/nginx")
         text("ENVIRONMENT", value = "TEST")
     }
@@ -396,7 +396,7 @@ job("[nginx] ci/cd") {
 job("[tg-bot] ci/cd") {
     startOn {}
     parameters {
-        text("ARTIFACTS_PATH", "mono-rep-artifacts/tg-bot/build.gz")
+        text("ARTIFACTS_PATH", "test-mono-rep-artifacts/tg-bot/build.gz")
         text("DESTINATION_PATH", "/usr/local/src/flirtex/tg-bot")
         text("ENVIRONMENT", value = "TEST")
     }

@@ -8,8 +8,9 @@ from pydantic_settings import BaseSettings
 
 class EnvironmentEnum(str, Enum):
     PROD = "PROD"
-    TEST = "TEST"
+    DEV = "DEV"
     LOCAL = "LOCAL"
+    TEST = "TEST"
 
 
 class GlobalConfig(BaseSettings):
