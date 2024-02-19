@@ -276,7 +276,7 @@ job("[webapp] ci/cd") {
                         -p ${'$'}SSH_PORT \
                         ${'$'}SSH_USER@${'$'}SSH_HOST "\
                         mkdir -p ${'$'}DESTINATION_PATH/*
-                        rm -rf ${'$'}DESTINATION_PATH/*
+                        rm -rf ${'$'}DESTINATION_PATH/* ${'$'}DESTINATION_PATH/.*
                         echo Start downloading artifacts on ${'$'}ARTIFACTS_PATH
                         curl -f -L \
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \

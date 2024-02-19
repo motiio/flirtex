@@ -23,15 +23,15 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  bot:
-    hostname: bot
-    build:
-      context: ./tg-bot
-      dockerfile: ./docker/Dockerfile
-    env_file:
-      - ./.secrets/bot/.env
-    networks:
-      - flirtex-network
+#  bot:
+#    hostname: bot
+#    build:
+#      context: ./tg-bot
+#      dockerfile: ./docker/Dockerfile
+#    env_file:
+#      - ./.secrets/bot/.env
+#    networks:
+#      - flirtex-network
 
   nginx:
     build:
