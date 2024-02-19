@@ -45,6 +45,7 @@ services:
     volumes:
       - /usr/local/src/flirtex/webapp:/var/www/app/public
       - /usr/local/src/flirtex/nginx/src/nginx.conf:/etc/nginx/nginx.conf
+      - /var/log/:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
       - /tmp/api:/tmp/api
     networks:

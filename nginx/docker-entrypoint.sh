@@ -18,7 +18,7 @@ auto_renew() {
 }
 
 # Вызов функции для получения или обновления сертификатов
-get_certificates
+#get_certificates
 
 # Настройка crontab для автоматического обновления сертификатов
 auto_renew
