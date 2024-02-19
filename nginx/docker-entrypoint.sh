@@ -3,7 +3,7 @@
 # Функция для получения сертификатов с Certbot
 get_certificates() {
     certbot certonly --nginx \
-    -d flirtex.fun -d www.flirtex.fun -d "*.flirtex.fun" \
+    -d flirtex.fun -d "*.flirtex.fun" \
     --non-interactive \
     --agree-tos \
     --email motiio.none@gmail.com \
@@ -18,7 +18,7 @@ auto_renew() {
 }
 
 # Вызов функции для получения или обновления сертификатов
-get_certificates
+#get_certificates
 
 # Настройка crontab для автоматического обновления сертификатов
 auto_renew
