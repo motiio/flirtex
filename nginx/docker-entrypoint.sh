@@ -3,7 +3,7 @@
 # Функция для получения сертификатов с Certbot
 get_certificates() {
     certbot certonly --nginx \
-    -d flirtex.fun -d www.flirtex.fun \
+    -d flirtex.fun -d www.flirtex.fun -d "*.flirtex.fun" \
     --non-interactive \
     --agree-tos \
     --email motiio.none@gmail.com \
