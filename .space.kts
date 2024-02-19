@@ -92,8 +92,8 @@ job("[api] ci/cd") {
                 "TEST" -> {
                     // secrets
                     api.secrets["DEPLOY_PK"] = Ref("project:TEST__DEPLOY_PK")
-                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:TEST__CACHE_ACCESS_KEY")
-                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:TEST__ARTIFACTS_ACCESS_KEY")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
                     api.parameters["SSH_PORT"] = Ref("project:TEST__SSH_PORT")
@@ -228,8 +228,8 @@ job("[webapp] ci/cd") {
                 "TEST" -> {
                     // secrets
                     api.secrets["DEPLOY_PK"] = Ref("project:TEST__DEPLOY_PK")
-                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:TEST__CACHE_ACCESS_KEY")
-                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:TEST__ARTIFACTS_ACCESS_KEY")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
                     api.parameters["SSH_PORT"] = Ref("project:TEST__SSH_PORT")
@@ -330,8 +330,8 @@ job("[nginx] ci/cd") {
                 "TEST" -> {
                     // secrets
                     api.secrets["DEPLOY_PK"] = Ref("project:TEST__DEPLOY_PK")
-                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:TEST__CACHE_ACCESS_KEY")
-                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:TEST__ARTIFACTS_ACCESS_KEY")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
                     api.parameters["SSH_PORT"] = Ref("project:TEST__SSH_PORT")
@@ -432,8 +432,8 @@ job("[tg-bot] ci/cd") {
                 "TEST" -> {
                     // secrets
                     api.secrets["DEPLOY_PK"] = Ref("project:TEST__DEPLOY_PK")
-                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:TEST__CACHE_ACCESS_KEY")
-                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:TEST__ARTIFACTS_ACCESS_KEY")
+                    api.secrets["CACHE_ACCESS_KEY"] = Ref("project:PROD__CACHE_ACCESS_KEY")
+                    api.secrets["ARTIFACTS_ACCESS_KEY"] = Ref("project:PROD__ARTIFACTS_ACCESS_KEY")
 
                     // params
                     api.parameters["SSH_PORT"] = Ref("project:TEST__SSH_PORT")
