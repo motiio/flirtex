@@ -2,7 +2,7 @@ job("[api] tests") {
     startOn {}
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
-            location = CacheLocation.FileRepository(name = "test__mono-rep-cache", remoteBasePath = "api")
+            location = CacheLocation.FileRepository(name = "test-mono-rep-cache", remoteBasePath = "api")
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
@@ -41,7 +41,7 @@ job("[api] ci/cd") {
 
     container(displayName = "Testing...", image = "flirtex.registry.jetbrains.space/p/connecta/containers/3.12.2-poetry:latest") {
         cache {
-           location = CacheLocation.FileRepository(name = "test__mono-rep-cache", remoteBasePath = "api")
+           location = CacheLocation.FileRepository(name = "test-mono-rep-cache", remoteBasePath = "api")
 //         Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
 //         одинаковым pyproject.toml будут использовать кэшированные зависимости
             storeKey = "poetry-{{ hashFiles('api/pyproject.toml') }}"
@@ -63,7 +63,7 @@ job("[api] ci/cd") {
             """
         }
         fileArtifacts {
-            repository = FileRepository(name = "test__mono-rep-artifacts", remoteBasePath = "api")
+            repository = FileRepository(name = "test-mono-rep-artifacts", remoteBasePath = "api")
             localPath = "api/"
             remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
@@ -174,7 +174,7 @@ job("[webapp] ci/cd") {
     }
     container(displayName = "Building and testing...", image = "node:21-alpine3.18") {
         cache {
-            location = CacheLocation.FileRepository(name = "test__mono-rep-cache", remoteBasePath = "webapp")
+            location = CacheLocation.FileRepository(name = "test-mono-rep-cache", remoteBasePath = "webapp")
             // Генерация имени файла кэша
             // Использование хэша файла pyproject.toml гарантирует, что все запуски задач с
             // одинаковым pyproject.toml будут использовать кэшированные зависимости
@@ -198,7 +198,7 @@ job("[webapp] ci/cd") {
             """
         }
         fileArtifacts {
-            repository = FileRepository(name = "test__mono-rep-artifacts", remoteBasePath = "webapp")
+            repository = FileRepository(name = "test-mono-rep-artifacts", remoteBasePath = "webapp")
             localPath = "webapp/dist/"
             remotePath = "dist.gz"
             // Fail job if build/publish/app/ is not found
@@ -300,7 +300,7 @@ job("[nginx] ci/cd") {
     }
     host(displayName = "Build nginx conf") {
         fileArtifacts {
-            repository = FileRepository(name = "test__mono-rep-artifacts", remoteBasePath = "nginx")
+            repository = FileRepository(name = "test-mono-rep-artifacts", remoteBasePath = "nginx")
             localPath = "nginx/"
             remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
@@ -402,7 +402,7 @@ job("[tg-bot] ci/cd") {
     }
     host(displayName = "Build nginx conf") {
         fileArtifacts {
-            repository = FileRepository(name = "test__mono-rep-artifacts", remoteBasePath = "tg-bot")
+            repository = FileRepository(name = "test-mono-rep-artifacts", remoteBasePath = "tg-bot")
             localPath = "tg-bot/"
             remotePath = "build.gz"
             // Fail job if build/publish/app/ is not found
