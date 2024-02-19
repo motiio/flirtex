@@ -44,7 +44,7 @@ services:
       - "443:443"
     volumes:
       - /usr/local/src/flirtex/webapp:/var/www/app/public
-      - /usr/local/src/flirtex/nginx/src/default.conf:/etc/nginx/includes/default.conf
+      - /usr/local/src/flirtex/nginx/src/default.conf:/etc/nginx/conf.d/default.conf
       - /etc/letsencrypt:/etc/letsencrypt
       - /tmp/api:/tmp/api
     networks:
