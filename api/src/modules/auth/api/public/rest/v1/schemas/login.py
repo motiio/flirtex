@@ -1,4 +1,3 @@
-import orjson
 from aiogram.utils.web_app import safe_parse_webapp_init_data
 from pydantic import Field, computed_field
 
@@ -16,7 +15,6 @@ class TelegramLoginRequestSchema(BaseSchema):
             data = safe_parse_webapp_init_data(
                 token=settings.BOT_TOKEN,
                 init_data=self.init_data,
-                _loads=orjson.loads,
             )
             if data.get("user", {}).get("is_bot"):
                 raise ValueError
