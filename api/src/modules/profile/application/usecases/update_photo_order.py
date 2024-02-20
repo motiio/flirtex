@@ -30,7 +30,9 @@ class UpdatePhotoOrderUsecase(IUseCase):
             if not profile:
                 raise ProfileNotFound
 
-            id_to_order_map = {item.photo_id: item.displaying_order for item in in_dto.photo_orders}
+            id_to_order_map = {
+                item.photo_id: item.displaying_order for item in in_dto.photo_orders
+            }
 
             photos = await self._photo_repo.fetch(
                 entities_ids=list(id_to_order_map.keys()),
@@ -43,7 +45,9 @@ class UpdatePhotoOrderUsecase(IUseCase):
 
             return UpdatePhotosOrderOutDTO(
                 photos=[
-                    PhotoOrderDTO(displaying_order=photo.displaying_order, photo_id=photo.id)
+                    PhotoOrderDTO(
+                        displaying_order=photo.displaying_order, photo_id=photo.id
+                    )
                     for photo in photos
                 ]
             )

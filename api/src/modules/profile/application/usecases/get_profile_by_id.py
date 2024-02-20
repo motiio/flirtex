@@ -18,7 +18,9 @@ class GetProfileByIdUsecase(IUseCase):
     ):
         self._profile_repo: IProfileRepository = profile_repository
 
-    async def execute(self, wanted_profile_id: UUID, owner_id: UUID) -> ProfileWithDistanceOutDTO:
+    async def execute(
+        self, wanted_profile_id: UUID, owner_id: UUID
+    ) -> ProfileWithDistanceOutDTO:
         async with self._profile_repo:
             owner_profile = await self._profile_repo.get_by_owner(owner_id=owner_id)
             if not owner_profile:
@@ -28,8 +30,7 @@ class GetProfileByIdUsecase(IUseCase):
                 raise ProfileNotFound
 
             return ProfileWithDistanceOutDTO(
-                    **wanted_profile.model_dump(),
-                    coords_1=owner_profile.location,
-                    coords_2=wanted_profile.location,
-                )
-
+                **wanted_profile.model_dump(),
+                coords_1=owner_profile.location,
+                coords_2=wanted_profile.location,
+            )

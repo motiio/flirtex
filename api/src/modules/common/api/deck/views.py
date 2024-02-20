@@ -42,7 +42,9 @@ async def like(
         target_profile=liked_profile.id,
     )
 
-    await CreateLike(repository=LikeRepository(db_session=db_session)).execute(in_schema=like_data)
+    await CreateLike(repository=LikeRepository(db_session=db_session)).execute(
+        in_schema=like_data
+    )
     worker.add_task(
         check_match,
         db_session=db_session,
@@ -68,9 +70,13 @@ async def skip(
         repository=ProfileRepository(db_session=db_session)
     ).execute(profile_id=skip.profile)
 
-    skip_data = SkipInCreateSchema(source_profile=profile.id, target_profile=skiped_profile.id)
+    skip_data = SkipInCreateSchema(
+        source_profile=profile.id, target_profile=skiped_profile.id
+    )
 
-    await CreateSkip(repository=SkipRepository(db_session=db_session)).execute(in_schema=skip_data)
+    await CreateSkip(repository=SkipRepository(db_session=db_session)).execute(
+        in_schema=skip_data
+    )
 
 
 @deck_router.post(
@@ -90,6 +96,10 @@ async def save(
         repository=ProfileRepository(db_session=db_session)
     ).execute(profile_id=save.profile)
 
-    save_data = SaveInCreateSchema(source_profile=profile.id, target_profile=saved_profile.id)
+    save_data = SaveInCreateSchema(
+        source_profile=profile.id, target_profile=saved_profile.id
+    )
 
-    await CreateSave(repository=SaveRepository(db_session=db_session)).execute(in_schema=save_data)
+    await CreateSave(repository=SaveRepository(db_session=db_session)).execute(
+        in_schema=save_data
+    )

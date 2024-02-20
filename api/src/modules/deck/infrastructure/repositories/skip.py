@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy import UUID, select, delete, and_
+from sqlalchemy import UUID, and_, delete, select
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.modules.deck.application.repositories import ISkipRepository
@@ -33,7 +33,9 @@ class SkipRepository(
         result = (await self._db_session.execute(q)).scalars().first()
         return result
 
-    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> Skip | None:
+    async def delete_by_target(
+        self, *, source_profile: UUID, target_profile: UUID
+    ) -> Skip | None:
         q = (
             delete(self._table)
             .where(
@@ -46,5 +48,5 @@ class SkipRepository(
         )
         result = (await self._db_session.execute(q)).scalars().first()
         if result:
-         return self._entity.create(**result.dict())
+            return self._entity.create(**result.dict())
         return None

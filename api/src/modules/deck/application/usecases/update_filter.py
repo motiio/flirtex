@@ -32,7 +32,9 @@ class UpdateFilterUsecase(IUseCase):
             if not existent_profile:
                 raise ProfileNotFound
 
-            existent_filter = await self._filter_repo.get_by_profile(profile_id=existent_profile.id)
+            existent_filter = await self._filter_repo.get_by_profile(
+                profile_id=existent_profile.id
+            )
             if not existent_filter:
                 raise FilterNotFound
 

@@ -1,6 +1,6 @@
 from typing import Optional, Type
 
-from sqlalchemy import UUID, and_, case, desc, func, or_, select, text, delete
+from sqlalchemy import UUID, and_, case, delete, desc, func, or_, select, text
 
 from src.core.repositories.implementations.sqlalchemy import BaseSqlAlchemyRepository
 from src.core.types import Pagination
@@ -25,7 +25,9 @@ class LikeRepository(
     def _entity(self) -> Type[Like]:
         return Like
 
-    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> Like | None:
+    async def delete_by_target(
+        self, *, source_profile: UUID, target_profile: UUID
+    ) -> Like | None:
         q = (
             delete(self._table)
             .where(
@@ -38,7 +40,7 @@ class LikeRepository(
         )
         result = (await self._db_session.execute(q)).scalars().first()
         if result:
-         return self._entity.create(**result.dict())
+            return self._entity.create(**result.dict())
         return None
 
     async def get_likes_by_profiles(
@@ -49,9 +51,9 @@ class LikeRepository(
         1 - Лайк, поставленные source_profile или None
         2 - Лайк, поставелнные target_profile или None
         """
-        ordering = case({self._table.source_profile == source_profile: 1}, else_=0).label(
-            "ordering"
-        )
+        ordering = case(
+            {self._table.source_profile == source_profile: 1}, else_=0
+        ).label("ordering")
 
         q = select(self._table, ordering).where(
             or_(
@@ -70,7 +72,9 @@ class LikeRepository(
         likes_ordering = [(record[0], record[1]) for record in records]
 
         my_like = next((like for like, order in likes_ordering if order == 1), None)
-        other_like = next((like for like, order in likes_ordering if like != my_like), None)
+        other_like = next(
+            (like for like, order in likes_ordering if like != my_like), None
+        )
 
         return (my_like, other_like)
 
@@ -107,7 +111,10 @@ class LikeRepository(
             )
             .where(
                 and_(
-                    and_(self._table.target_profile == target_profile_id, MatchORM.id.is_(None)),
+                    and_(
+                        self._table.target_profile == target_profile_id,
+                        MatchORM.id.is_(None),
+                    ),
                     SkipORM.id.is_(None),
                 )
             )
@@ -118,7 +125,9 @@ class LikeRepository(
         # Добавляем сортировку, если параметр order_by предоставлен
         if order_by is not None:
             if order_by.startswith("-"):  # Проверка на сортировку по убыванию
-                q = q.order_by(desc(text(order_by[1:])))  # Отрезаем '-' для desc сортировки
+                q = q.order_by(
+                    desc(text(order_by[1:]))
+                )  # Отрезаем '-' для desc сортировки
             else:
                 q = q.order_by(text(order_by))  # Используем как есть для asc сортировки
 

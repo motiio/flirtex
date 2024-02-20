@@ -9,26 +9,23 @@ from src.modules.deck.domain.entities import Like
 
 class ILikeRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def create(self, *, in_entity: Like) -> Like:
-        ...
+    async def create(self, *, in_entity: Like) -> Like: ...
 
     @abstractmethod
     async def get_likes_by_profiles(
         self, *, target_profile: UUID, source_profile: UUID
-    ) -> tuple[Like | None, Like | None]:
-        ...
+    ) -> tuple[Like | None, Like | None]: ...
 
     @abstractmethod
-    async def delete(self, *, entity_id: UUID) -> Like:
-        ...
+    async def delete(self, *, entity_id: UUID) -> Like: ...
 
     @abstractmethod
-    async def get(self, *, entity_id: UUID) -> Like | None:
-        ...
+    async def get(self, *, entity_id: UUID) -> Like | None: ...
 
     @abstractmethod
-    async def delete_by_target(self, *, source_profile: UUID, target_profile: UUID) -> Like | None:
-        ...
+    async def delete_by_target(
+        self, *, source_profile: UUID, target_profile: UUID
+    ) -> Like | None: ...
 
     @abstractmethod
     async def get_likes_by_target_except_match(
@@ -38,5 +35,4 @@ class ILikeRepository(IAsyncContextManagerRepository, ABC):
         offset: int = 0,
         limit: int = 30,
         order_by: Optional[str] = None,
-    ) -> tuple[list[Like], Pagination]:
-        ...
+    ) -> tuple[list[Like], Pagination]: ...

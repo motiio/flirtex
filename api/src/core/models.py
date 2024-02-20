@@ -68,8 +68,12 @@ BaseModel = declarative_base(cls=CustomBase)
 class TimeStampMixin:
     """Timestamping mixin"""
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9998)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, sort_order=9999)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9998
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, sort_order=9999
+    )
 
     @staticmethod
     def _updated_at(mapper, connection, target):

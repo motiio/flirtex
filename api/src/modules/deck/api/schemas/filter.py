@@ -20,11 +20,15 @@ class UpdateFilterRequestSchema(BaseSchema):
             raise ValueError("Invalid age_to value. Must be < age_from")
 
         self.age_to = (
-            settings.MAX_PROFILE_AGE if self.age_to > settings.MAX_PROFILE_AGE else self.age_to
+            settings.MAX_PROFILE_AGE
+            if self.age_to > settings.MAX_PROFILE_AGE
+            else self.age_to
         )
 
         self.age_from = (
-            settings.MIN_PROFILE_AGE if self.age_from < settings.MIN_PROFILE_AGE else self.age_from
+            settings.MIN_PROFILE_AGE
+            if self.age_from < settings.MIN_PROFILE_AGE
+            else self.age_from
         )
         return self
 
