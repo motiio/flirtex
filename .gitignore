@@ -11,6 +11,7 @@
 **/.mypy_cache
 
 **/.idea
+**/.secrets
 # Icon must end with two \r
 Icon
 
