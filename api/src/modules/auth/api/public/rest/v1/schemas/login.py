@@ -16,8 +16,8 @@ class TelegramLoginRequestSchema(BaseSchema):
                 token=settings.BOT_TOKEN,
                 init_data=self.init_data,
             )
-            if data.get("user", {}).get("is_bot"):
+            if data.user.dict().get("user", {}).get("is_bot"):
                 raise ValueError
         except ValueError:
             raise InvalidInitData from None
-        return data
+        return data.user.dict()
