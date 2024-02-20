@@ -19,7 +19,9 @@ class BaseInMemorySqlAlchemnyRepository(
         return None
 
     async def fetch(self, *, entities_ids: List[UUID]) -> List[ENTITY] | None:  # type: ignore
-        entries = [value for key, value in self._db_session.items() if key in entities_ids]
+        entries = [
+            value for key, value in self._db_session.items() if key in entities_ids
+        ]
         return [self._entity.create(**entry.dict()) for entry in entries]
 
     async def list(self) -> List[ENTITY] | None:  # type: ignore
@@ -43,7 +45,9 @@ class BaseInMemorySqlAlchemnyRepository(
 
     async def update(self, *, in_entity: ENTITY) -> ENTITY | None:  # type: ignore
         if self._db_session.get(in_entity.id):
-            result = self._db_session[in_entity.id] = self._table(**in_entity.model_dump())
+            result = self._db_session[in_entity.id] = self._table(
+                **in_entity.model_dump()
+            )
 
             if result:
                 return self._entity.create(**result.model_dump())

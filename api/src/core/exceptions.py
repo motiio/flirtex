@@ -3,5 +3,4 @@ class DoesNotExists(Exception):
         super().__init__(*args)
 
 
-class AlreadyExists(Exception):
-    ...
+class AlreadyExists(Exception): ...

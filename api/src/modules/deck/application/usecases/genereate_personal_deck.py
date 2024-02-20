@@ -36,7 +36,9 @@ class GenereatePersonalDeckUsecase(IUseCase):
                     batch_size=settings.DECK_BATCH_SIZE,
                 )
             except DeckNoLongerExists:
-                profiles_to_fetch = await self._deck_repo.generate(profile_id=existent_profile.id)
+                profiles_to_fetch = await self._deck_repo.generate(
+                    profile_id=existent_profile.id
+                )
 
             batch = await self._profile_repo.fetch(
                 entities_ids=profiles_to_fetch[: settings.DECK_BATCH_SIZE]

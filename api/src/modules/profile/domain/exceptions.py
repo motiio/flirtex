@@ -18,7 +18,9 @@ PhotoAlreadyExists = HTTPException(
 
 PhotosLimit = HTTPException(
     status_code=HTTP_400_BAD_REQUEST,
-    detail={"msg": "The limit of the number of photos has been reached. Min = 1, max = 7"},
+    detail={
+        "msg": "The limit of the number of photos has been reached. Min = 1, max = 7"
+    },
 )
 
 InvalidOrderList = HTTPException(

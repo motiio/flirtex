@@ -4,7 +4,9 @@ from uuid import UUID
 from pydantic import model_validator
 
 from src.core.schemas import BaseSchema
-from src.modules.profile.api.public.rest.v1.schemas.out.interest import ReadInterestOutSchema
+from src.modules.profile.api.public.rest.v1.schemas.out.interest import (
+    ReadInterestOutSchema,
+)
 from src.modules.profile.application.utils import enums as profile_enums
 
 from .photo import ReadPhotoOutSchema

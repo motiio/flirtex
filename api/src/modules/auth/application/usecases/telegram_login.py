@@ -1,9 +1,6 @@
-from typing import Optional, cast
-
-from pydantic import Field
+from aiogram.utils.web_app import WebAppInitData, WebAppUser
 
 from src.config.settings import settings
-from src.core.dtos import BaseDTO
 from src.core.usecases import IUseCase
 from src.modules.auth.application.dtos import (
     TelegramLoginInDTO,
@@ -15,15 +12,7 @@ from src.modules.auth.application.repositories import (
 )
 from src.modules.auth.application.utils.jwt import generate_token
 from src.modules.auth.domain.entities import RefreshTokenDAE, User
-
-
-class _TelegramUserInfo(BaseDTO):
-    tg_id: int = Field(alias="id")
-    tg_username: Optional[str] = Field(alias="username")
-    tg_first_name: Optional[str] = Field(alias="first_name")
-    tg_last_name: Optional[str] = Field(None, alias="last_name")
-    tg_is_premium: Optional[bool] = Field(None, alias="is_premium")
-    tg_language_code: Optional[str] = Field(None, alias="language_code")
+from src.modules.auth.domain.exceptions import InitDataUserNotFound
 
 
 class TelegramLoginUsecase(IUseCase):
@@ -37,13 +26,22 @@ class TelegramLoginUsecase(IUseCase):
         self._refresh_token_repo: IRefreshTokenRepository = refresh_token_repository
 
     async def execute(self, in_dto: TelegramLoginInDTO) -> TelegramLoginOutDTO:
-        tg_user_info: _TelegramUserInfo = _TelegramUserInfo(
-            **cast(dict, in_dto.tg_login_data.get("user"))
-        )
+        web_app_init_data: WebAppInitData = in_dto.web_app_init_data
+        tg_user: WebAppUser | None = web_app_init_data.user
+        if not tg_user:
+            raise InitDataUserNotFound
+
         async with self._user_repo, self._refresh_token_repo:
-            user = await self._user_repo.get_by_tg_id(tg_id=tg_user_info.tg_id)
+            user = await self._user_repo.get_by_tg_id(tg_id=tg_user.id)
             if not user:
-                user = User.create(**tg_user_info.model_dump())
+                user = User.create(
+                    tg_id=tg_user.id,
+                    tg_username=tg_user.username,
+                    tg_last_name=tg_user.last_name,
+                    tg_first_name=tg_user.first_name,
+                    tg_language_code=tg_user.language_code,
+                    tg_is_premium=False,
+                )
                 await self._user_repo.create(in_entity=user)
 
             await self._refresh_token_repo.expire_user_tokens(

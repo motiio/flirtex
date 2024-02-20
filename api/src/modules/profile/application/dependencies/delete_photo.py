@@ -7,4 +7,6 @@ from src.modules.profile.application.factories import (
     delete_profile_photo_service_factory,
 )
 
-DeleteProfilePhotoService = Annotated[IUseCase, Depends(delete_profile_photo_service_factory)]
+DeleteProfilePhotoService = Annotated[
+    IUseCase, Depends(delete_profile_photo_service_factory)
+]

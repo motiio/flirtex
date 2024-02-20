@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
-from src.modules.deck.application.repositories import ISkipRepository, ILikeRepository
+from src.modules.deck.application.repositories import ILikeRepository, ISkipRepository
 from src.modules.deck.domain.entities import Skip
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound

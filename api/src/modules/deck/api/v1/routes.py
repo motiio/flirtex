@@ -69,7 +69,9 @@ async def get_deck_batch(
     user_id: CurrentUser,
     personal_deck_service: PersonalDeckService,
 ):
-    profiles_batch: DeckBatchOutDTO = await personal_deck_service.execute(user_id=user_id)
+    profiles_batch: DeckBatchOutDTO = await personal_deck_service.execute(
+        user_id=user_id
+    )
     return profiles_batch
 
 
@@ -114,9 +116,12 @@ async def matches(
     limit: int = Query(default=10, ge=1, le=50),
     offset: int = Query(default=0, ge=0),
 ):
-    matches, pagination = await matches_service.execute(user_id=user_id, limit=limit, offset=offset)
+    matches, pagination = await matches_service.execute(
+        user_id=user_id, limit=limit, offset=offset
+    )
     return MatchesOutSchema(
-        profiles=[profile.model_dump() for profile in matches.profiles], pagination=pagination
+        profiles=[profile.model_dump() for profile in matches.profiles],
+        pagination=pagination,
     )
 
 

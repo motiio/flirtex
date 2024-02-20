@@ -1,8 +1,10 @@
+from aiogram.utils.web_app import WebAppInitData
+
 from src.core.dtos import BaseDTO
 
 
 class TelegramLoginInDTO(BaseDTO):
-    tg_login_data: dict
+    web_app_init_data: WebAppInitData
     user_agent: str
 
 

@@ -6,5 +6,4 @@ from src.core.aio import IAsyncContextManagerRepository
 
 class IDeckRepository(IAsyncContextManagerRepository, ABC):
     @abstractmethod
-    async def generate(self, *, profile_id: UUID) -> list[UUID]:
-        ...
+    async def generate(self, *, profile_id: UUID) -> list[UUID]: ...

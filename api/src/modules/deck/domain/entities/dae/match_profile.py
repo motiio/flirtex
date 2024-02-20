@@ -29,6 +29,6 @@ class MatchProfileDAE:
             profile_name=profile_name,
             profile_bio=profile_bio,
             profile_main_photo_url=profile_main_photo_url,
-            user_tg_username=user_tg_username
+            user_tg_username=user_tg_username,
         )
         return match_profile_dae
