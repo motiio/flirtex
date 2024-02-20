@@ -292,7 +292,18 @@ job("[webapp] ci/cd") {
 }
 
 job("[nginx] ci/cd") {
-    startOn {}
+    startOn {
+      gitPush {
+            anyBranchMatching {
+                +"test"
+            }
+            pathFilter {
+                +"nginx/**"
+            }
+
+        }
+
+    }
     parameters {
         text("ARTIFACTS_PATH", "test-mono-rep-artifacts/nginx/build.gz")
         text("DESTINATION_PATH", "/usr/local/src/flirtex/nginx")
@@ -384,6 +395,8 @@ job("[nginx] ci/cd") {
                             -H 'Authorization: Bearer ${'$'}ARTIFACTS_ACCESS_KEY' \
                             https://files.pkg.jetbrains.space/flirtex/p/connecta/${'$'}ARTIFACTS_PATH | \
                         tar -xz -C ${'$'}DESTINATION_PATH
+                        cd ${'$'}DESTINATION_PATH/..
+                        docker compose restart nginx
                         "
               """.trimIndent()
         }
