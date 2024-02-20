@@ -45,7 +45,7 @@ async def login(
     """
     credentials: TelegramLoginOutDTO = await login_service.execute(
         in_dto=TelegramLoginInDTO(
-            **login_data.model_dump(),
+            web_app_init_data=login_data.validated_init_data,
             user_agent=user_agent,
         )
     )

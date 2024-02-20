@@ -9,7 +9,10 @@ InvalidInitData = HTTPException(
     status_code=HTTP_422_UNPROCESSABLE_ENTITY,
     detail={"msg": "Invalid init datat"},
 )
-
+InitDataUserNotFound = HTTPException(
+    status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+    detail={"msg": "Invalid init datat"},
+)
 InvalidJWTToken = HTTPException(
     status_code=HTTP_401_UNAUTHORIZED,
     detail={"msg": "Invalid authentication credentials"},

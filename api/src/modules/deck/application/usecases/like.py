@@ -1,7 +1,11 @@
 from uuid import UUID
 
 from src.core.usecases import IUseCase
-from src.modules.deck.application.repositories import ILikeRepository, IMatchRepository, ISkipRepository
+from src.modules.deck.application.repositories import (
+    ILikeRepository,
+    IMatchRepository,
+    ISkipRepository,
+)
 from src.modules.deck.domain.entities import Like, Match
 from src.modules.profile.application.repositories.profile import IProfileRepository
 from src.modules.profile.domain.exceptions import ProfileNotFound, TargetProfileNotFound
@@ -39,7 +43,6 @@ class LikeUsecase(IUseCase):
             my_like, his_like = await self._like_repo.get_likes_by_profiles(
                 target_profile=target_profile.id, source_profile=source_profile.id
             )
-
 
             _ = await self._skip_repo.delete_by_target(
                 source_profile=source_profile.id,

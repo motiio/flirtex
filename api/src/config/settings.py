@@ -57,6 +57,13 @@ class LocalConfig(GlobalConfig):
     DEBUG: bool = True
     ENVIRONMENT: EnvironmentEnum = EnvironmentEnum.LOCAL
 
+    class Config:
+        extra = "allow"
+        env_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "../../../.secrets/api/.env"
+        )
+        env_file_encoding = "utf-8"
+
 
 class ProdConfig(GlobalConfig):
     """Production configurations."""

@@ -88,7 +88,9 @@ async def get_profile_by_id(
 
     - HTTPExceptions: **HTTP_401_UNAUTHORIZED**. If user's initData is invalid
     """
-    profile: ProfileOutDTO = await get_profile_service.execute(wanted_profile_id=profile_id, owner_id=user_id)
+    profile: ProfileOutDTO = await get_profile_service.execute(
+        wanted_profile_id=profile_id, owner_id=user_id
+    )
 
     return profile.model_dump()
 
@@ -241,6 +243,8 @@ async def update_photo_order(
     update_photo_order_service: UpdatePhotoOrderService,
 ):
     new_order: UpdatePhotosOrderOutDTO = await update_photo_order_service.execute(
-        in_dto=UpdatePhotosOrderInDTO(user_id=user_id, photo_orders=displayin_order.new_order)
+        in_dto=UpdatePhotosOrderInDTO(
+            user_id=user_id, photo_orders=displayin_order.new_order
+        )
     )
     return new_order.model_dump()

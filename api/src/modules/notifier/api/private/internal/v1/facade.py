@@ -7,8 +7,4 @@ security = HTTPBearer()
 
 class NotifierFacade:
     @staticmethod
-    def produce(
-        *,
-        message
-    ) -> UUID:
-        ...
+    def produce(*, message) -> UUID: ...

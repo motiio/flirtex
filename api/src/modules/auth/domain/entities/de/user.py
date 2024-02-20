@@ -8,22 +8,22 @@ from src.core.entities import BaseEntity
 class User(BaseEntity):
     id: UUID
     tg_id: int
-    tg_username: str
+    tg_username: str | None
     tg_first_name: str
-    tg_last_name: str
+    tg_last_name: str | None
     tg_is_premium: bool
-    tg_language_code: str
+    tg_language_code: str | None
     # _banned: bool
 
     def __init__(
         self,
         id: UUID,
         tg_id: int,
-        tg_username: str,
+        tg_username: str | None,
         tg_first_name: str,
-        tg_last_name: str,
+        tg_last_name: str | None,
         tg_is_premium: bool,
-        tg_language_code: str,
+        tg_language_code: str | None,
         # banned: bool = False,
     ):
         self.id = id
@@ -41,10 +41,10 @@ class User(BaseEntity):
         *,
         id: UUID | None = None,
         tg_id: int,
-        tg_username: str,
+        tg_username: str | None,
         tg_first_name: str,
-        tg_last_name: str,
-        tg_language_code: str,
+        tg_last_name: str | None,
+        tg_language_code: str | None,
         tg_is_premium: bool,
         # banned: bool = False,
         **kwargs,

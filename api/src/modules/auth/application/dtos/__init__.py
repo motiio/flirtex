@@ -9,4 +9,7 @@ from src.modules.auth.application.dtos.telegram_login import (
     TelegramLoginInDTO,
     TelegramLoginOutDTO,
 )
-from src.modules.auth.application.dtos.update_token import UpdateTokenInDTO, UpdateTokenOutDTO
+from src.modules.auth.application.dtos.update_token import (
+    UpdateTokenInDTO,
+    UpdateTokenOutDTO,
+)

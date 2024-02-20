@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy import UUID, and_, desc, func, label, or_, select, text
+from sqlalchemy import UUID, and_, desc, func, or_, select, text
 from sqlalchemy.orm import aliased
 
 from src.core.orm import DictBundle
@@ -61,10 +61,15 @@ class MatchRepository(
             .join(
                 p2,
                 p2.id
-                == func.coalesce(func.nullif(self._table.profile_1, p1.id), self._table.profile_2),
+                == func.coalesce(
+                    func.nullif(self._table.profile_1, p1.id), self._table.profile_2
+                ),
             )
             .join(AuthAPI.user_table, p2.owner_id == AuthAPI.user_table.id)  # type: ignore
-            .outerjoin(PhotoORM, and_(p2.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1))
+            .outerjoin(
+                PhotoORM,
+                and_(p2.id == PhotoORM.profile_id, PhotoORM.displaying_order == 1),
+            )
             .where(p1.id == profile_id)
         )
 
@@ -74,12 +79,15 @@ class MatchRepository(
         # Добавляем сортировку, если параметр order_by предоставлен
         if order_by is not None:
             if order_by.startswith("-"):  # Проверка на сортировку по убыванию
-                q = q.order_by(desc(text(order_by[1:])))  # Отрезаем '-' для desc сортировки
+                q = q.order_by(
+                    desc(text(order_by[1:]))
+                )  # Отрезаем '-' для desc сортировки
             else:
                 q = q.order_by(text(order_by))  # Используем как есть для asc сортировки
 
         q = q.offset(offset).limit(limit)
         entries = await self._db_session.execute(q)
         return [
-            self._match_profile_dae.create(**entry.match_profile_dae) for entry in entries
+            self._match_profile_dae.create(**entry.match_profile_dae)
+            for entry in entries
         ], Pagination(total=total, offset=offset, limit=limit)

@@ -14,11 +14,16 @@ from src.core.models import BaseModel
 
 TECH_SCHEMA_NAME = "tech"  # Изменено с "core" на "tech"
 
+
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table":
-        return object.schema in [None, TECH_SCHEMA_NAME]  # Использование TECH_SCHEMA_NAME
+        return object.schema in [
+            None,
+            TECH_SCHEMA_NAME,
+        ]  # Использование TECH_SCHEMA_NAME
     else:
         return True
+
 
 # Это объект конфигурации Alembic
 config = context.config
@@ -26,6 +31,7 @@ config.set_main_option("sqlalchemy.url", app_settings.DATABASE_URI)
 
 # Метаданные вашей модели для поддержки 'autogenerate'
 target_metadata = BaseModel.metadata
+
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
@@ -35,11 +41,12 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         include_schemas=True,
-        version_table_schema=TECH_SCHEMA_NAME  # Указывает схему для таблицы версий Alembic
+        version_table_schema=TECH_SCHEMA_NAME,  # Указывает схему для таблицы версий Alembic
     )
 
     with context.begin_transaction():
         context.run_migrations()
+
 
 def do_run_migrations(connection: Connection) -> None:
     def process_revision_directives(context, revision, directives):
@@ -57,11 +64,12 @@ def do_run_migrations(connection: Connection) -> None:
         include_schemas=True,
         include_object=include_object,
         process_revision_directives=process_revision_directives,
-        version_table_schema=TECH_SCHEMA_NAME  # Также укажите схему здесь
+        version_table_schema=TECH_SCHEMA_NAME,  # Также укажите схему здесь
     )
 
     with context.begin_transaction():
         context.run_migrations()
+
 
 async def run_async_migrations() -> None:
     connectable = async_engine_from_config(
@@ -75,8 +83,10 @@ async def run_async_migrations() -> None:
 
     await connectable.dispose()
 
+
 def run_migrations_online() -> None:
     asyncio.run(run_async_migrations())
+
 
 if context.is_offline_mode():
     run_migrations_offline()

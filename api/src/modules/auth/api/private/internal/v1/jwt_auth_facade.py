@@ -42,7 +42,8 @@ class JWTAuthFacade:
         uuid = JWTAuthFacade._get_user(jwt_token=token)
         if not uuid:
             raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials"
+                status_code=HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
             )
         return uuid
 

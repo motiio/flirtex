@@ -66,7 +66,9 @@ class ProfileORM(BaseModel, TimeStampMixin):
 
         shply_geom = to_shape(self.location)
         coordinates = shply_geom.coords[0]
-        return cast(types.Location, {"longitude": coordinates[0], "latitude": coordinates[1]})
+        return cast(
+            types.Location, {"longitude": coordinates[0], "latitude": coordinates[1]}
+        )
 
     def __repr__(self):
         return f"Profile[{self.id=}, {self.owner_id=}, {self.name=}, {self.birthdate=}, {self.gender=}, Interests={','.join([interest.name for interest in self.interests])}]"
@@ -75,7 +77,9 @@ class ProfileORM(BaseModel, TimeStampMixin):
 class PhotoORM(BaseModel, TimeStampMixin):
     __table_args__ = {"schema": "core"}
 
-    profile_id: Mapped[UUID] = mapped_column(ForeignKey("core.profile.id", ondelete="CASCADE"))
+    profile_id: Mapped[UUID] = mapped_column(
+        ForeignKey("core.profile.id", ondelete="CASCADE")
+    )
     displaying_order: Mapped[int] = mapped_column(Integer)
     status: Mapped[PhotoProcessStatusEnum] = mapped_column(
         Enum(PhotoProcessStatusEnum, schema="core"),

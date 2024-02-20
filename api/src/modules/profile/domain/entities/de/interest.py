@@ -16,7 +16,9 @@ class Interest(BaseEntity):
         self.icon = icon
 
     @classmethod
-    def create(cls, *, id: UUID | None = None, name: str, icon: str, **kwargs) -> "Interest":
+    def create(
+        cls, *, id: UUID | None = None, name: str, icon: str, **kwargs
+    ) -> "Interest":
         if id is None:
             id = uuid4()
 

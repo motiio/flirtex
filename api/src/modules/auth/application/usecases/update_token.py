@@ -26,7 +26,9 @@ class UpdateTokenUsecase(IUseCase):
 
     async def execute(self, in_dto: UpdateTokenInDTO) -> UpdateTokenOutDTO:
         async with self._user_repo, self._refresh_token_repo:
-            existent_user: User | None = await self._user_repo.get(entity_id=in_dto.user)
+            existent_user: User | None = await self._user_repo.get(
+                entity_id=in_dto.user
+            )
             if not existent_user:
                 raise UserNotFound
 

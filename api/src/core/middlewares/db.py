@@ -7,7 +7,9 @@ from sqlalchemy.ext.asyncio import async_scoped_session
 from starlette.middleware.base import BaseHTTPMiddleware
 
 REQUEST_ID_CTX_KEY: Final[str] = "request_id"
-_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(REQUEST_ID_CTX_KEY, default=None)
+_request_id_ctx_var: ContextVar[Optional[str]] = ContextVar(
+    REQUEST_ID_CTX_KEY, default=None
+)
 
 
 def get_request_id() -> Optional[str]:
@@ -28,7 +30,9 @@ class DatabaseMiddleware(BaseHTTPMiddleware):
         request_id = str(uuid1())
         ctx_token = _request_id_ctx_var.set(request_id)
         try:
-            db_session = async_scoped_session(self.session_factory, scopefunc=get_request_id)
+            db_session = async_scoped_session(
+                self.session_factory, scopefunc=get_request_id
+            )
             request.state.db = db_session()
             response = await call_next(request)
         except Exception as e:

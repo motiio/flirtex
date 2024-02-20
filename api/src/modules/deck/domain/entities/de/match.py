@@ -33,4 +33,3 @@ class Match(BaseEntity):
             profile_2=profile_2,
         )
         return match
-

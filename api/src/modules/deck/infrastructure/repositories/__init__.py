@@ -1,4 +1,9 @@
-__all__ = ["FilterRepository", "LikeRepository", "SkipRepository", "MatchRepository",]
+__all__ = [
+    "FilterRepository",
+    "LikeRepository",
+    "SkipRepository",
+    "MatchRepository",
+]
 
 from .filter import (
     FilterRepository,
